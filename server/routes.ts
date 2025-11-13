@@ -256,6 +256,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== SETUP ENDPOINTS (Production) =====
+  
+  // Initialize admin user (one-time setup for production)
+  // Requires SETUP_SECRET environment variable
+  app.post("/api/setup/init-admin", async (req, res) => {
+    try {
+      const { secret } = req.body;
+      const SETUP_SECRET = process.env.SETUP_SECRET || "evia-setup-2024";
+      
+      // Verify setup secret
+      if (!secret || secret !== SETUP_SECRET) {
+        return res.status(403).json({ error: "Invalid setup secret" });
+      }
+      
+      // Check if any admin user already exists
+      const existingAdmin = await storage.getUserByEmail("admin@evia.com");
+      if (existingAdmin) {
+        return res.status(400).json({ 
+          error: "Admin user already exists",
+          message: "Setup has already been completed"
+        });
+      }
+      
+      // Create admin user
+      const passwordHash = await bcrypt.hash("admin123", 10);
+      const adminUser = await storage.createUser({
+        name: "Admin User",
+        email: "admin@evia.com",
+        passwordHash,
+        role: "ADMIN"
+      });
+      
+      console.log("✅ Production admin user created successfully");
+      
+      res.json({
+        success: true,
+        message: "Admin user created successfully",
+        user: {
+          email: adminUser.email,
+          name: adminUser.name,
+          role: adminUser.role
+        },
+        credentials: {
+          email: "admin@evia.com",
+          password: "admin123",
+          note: "Please change this password after first login"
+        }
+      });
+    } catch (error) {
+      console.error("Setup error:", error);
+      res.status(500).json({ error: "Failed to initialize admin user" });
+    }
+  });
+
   // ===== ADMIN ENDPOINTS =====
 
   // Admin login
