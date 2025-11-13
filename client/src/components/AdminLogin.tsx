@@ -26,7 +26,7 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
             <Lock className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-3xl font-serif font-semibold mb-2">
-            Evia Operations
+            Ivea Operations
           </h1>
           <p className="text-muted-foreground">
             Staff Portal
@@ -47,7 +47,7 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@evia.com"
+                  placeholder="admin@ivea.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required

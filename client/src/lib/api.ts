@@ -217,3 +217,27 @@ export async function addMedia(token: string, orderId: string, data: {
   
   return response.json();
 }
+
+export async function createOrder(token: string, data: {
+  customerName: string;
+  phone: string;
+  email?: string;
+  totalAmount: number;
+  externalOrderId?: string;
+}) {
+  const response = await fetch("/api/admin/orders", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to create order");
+  }
+  
+  return response.json();
+}

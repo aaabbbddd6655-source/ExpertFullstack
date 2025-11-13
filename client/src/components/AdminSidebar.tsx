@@ -29,7 +29,7 @@ export default function AdminSidebar({ activeItem, onNavigate, onLogout }: Admin
   return (
     <Sidebar>
       <SidebarHeader className="p-6">
-        <h2 className="text-2xl font-serif font-semibold">Evia</h2>
+        <h2 className="text-2xl font-serif font-semibold">Ivea</h2>
         <p className="text-sm text-muted-foreground">Operations Portal</p>
       </SidebarHeader>
       <SidebarContent>

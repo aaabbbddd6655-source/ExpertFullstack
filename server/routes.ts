@@ -5,6 +5,8 @@ import { emailService } from "./services/email";
 import express from "express";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { z } from "zod";
+import { insertCustomerSchema, insertOrderSchema } from "@shared/schema";
 
 const JWT_SECRET = process.env.SESSION_SECRET || "evia-secret-key-change-in-production";
 
@@ -378,9 +380,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get customer info and current stage for each order
       const ordersWithDetails = await Promise.all(
         orders.map(async (order) => {
-          const customer = await storage.getCustomerByPhone(
-            (await storage.getOrderById(order.id))!.customerId
-          );
+          const customer = await storage.getCustomerById(order.customerId);
           const stages = await storage.getStagesByOrderId(order.id);
           const currentStage = stages.find(s => s.id === order.currentStageId) || stages[0];
 
@@ -388,7 +388,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
             ...order,
             customerName: customer?.fullName,
             phone: customer?.phone,
-            currentStage: currentStage?.stageType
+            email: customer?.email,
+            currentStage: currentStage?.stageType,
+            createdAt: order.createdAt
           };
         })
       );
@@ -397,6 +399,98 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Get orders error:", error);
       res.status(500).json({ error: "Failed to fetch orders" });
+    }
+  });
+
+  // Create new order (admin only)
+  app.post("/api/admin/orders", authenticateToken, async (req, res) => {
+    try {
+      // Validate request body
+      const createOrderSchema = z.object({
+        customerName: z.string().min(1, "Customer name is required"),
+        phone: z.string().min(1, "Phone number is required"),
+        email: z.string().email().optional().or(z.literal("")),
+        totalAmount: z.coerce.number().positive("Total amount must be positive"),
+        externalOrderId: z.string().optional()
+      });
+
+      const validatedData = createOrderSchema.parse(req.body);
+      const { customerName, phone, email, totalAmount, externalOrderId } = validatedData;
+
+      // Create or get customer
+      let customerRecord = await storage.getCustomerByPhone(phone);
+      if (!customerRecord) {
+        customerRecord = await storage.createCustomer({
+          fullName: customerName,
+          phone,
+          email: email || null
+        });
+      }
+
+      // Generate order ID if not provided
+      const orderNumber = externalOrderId || `IV-${Date.now().toString().slice(-8)}`;
+
+      // Create order
+      const order = await storage.createOrder({
+        externalOrderId: orderNumber,
+        customerId: customerRecord.id,
+        totalAmount: totalAmount,
+        status: "PENDING_MEASUREMENT",
+        progressPercent: 5,
+        currentStageId: null
+      });
+
+      // Create default stages
+      const stageTypes = [
+        "ORDER_RECEIVED",
+        "SITE_MEASUREMENT",
+        "DESIGN_APPROVAL",
+        "MATERIALS_PROCUREMENT",
+        "PRODUCTION_CUTTING",
+        "PRODUCTION_STITCHING",
+        "PRODUCTION_ASSEMBLY",
+        "FINISHING",
+        "QUALITY_CHECK",
+        "PACKAGING",
+        "DELIVERY_SCHEDULING",
+        "INSTALLATION",
+        "RATING"
+      ];
+
+      const stages = [];
+      for (const stageType of stageTypes) {
+        const stage = await storage.createStage({
+          orderId: order.id,
+          stageType: stageType as any,
+          status: stageType === "ORDER_RECEIVED" ? "DONE" : "PENDING",
+          startedAt: stageType === "ORDER_RECEIVED" ? new Date() : null,
+          completedAt: stageType === "ORDER_RECEIVED" ? new Date() : null,
+          notes: stageType === "ORDER_RECEIVED" ? "Order confirmed and payment received" : null
+        });
+        
+        if (stageType === "ORDER_RECEIVED") {
+          await storage.updateOrder(order.id, { currentStageId: stage.id });
+        }
+        
+        stages.push(stage);
+      }
+
+      // Create order received event
+      await storage.createEvent({
+        orderId: order.id,
+        stageId: stages[0].id,
+        eventType: "STATUS_CHANGE",
+        description: "Order created by admin",
+        createdByUserId: (req as any).user.userId
+      });
+
+      // Send email
+      await emailService.sendOrderReceivedEmail(customerRecord, order);
+
+      res.json({ order, customer: customerRecord, stages });
+    } catch (error) {
+      console.error("Create order error:", error);
+      res.status(500).json({ error: "Failed to create order" });
     }
   });
 

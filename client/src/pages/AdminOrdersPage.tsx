@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import OrdersTable from "@/components/OrdersTable";
 import OrderFilters from "@/components/OrderFilters";
+import NewOrderDialog from "@/components/NewOrderDialog";
 import { Plus } from "lucide-react";
 import { getOrders } from "@/lib/api";
 import { getToken } from "@/lib/auth";
@@ -18,6 +19,7 @@ export default function AdminOrdersPage({ onViewOrder }: AdminOrdersPageProps) {
   const [stage, setStage] = useState("all");
   const [dateFrom, setDateFrom] = useState<Date>();
   const [dateTo, setDateTo] = useState<Date>();
+  const [showNewOrderDialog, setShowNewOrderDialog] = useState(false);
 
   const token = getToken();
 
@@ -67,7 +69,7 @@ export default function AdminOrdersPage({ onViewOrder }: AdminOrdersPageProps) {
             Manage and track all customer orders
           </p>
         </div>
-        <Button data-testid="button-new-order">
+        <Button onClick={() => setShowNewOrderDialog(true)} data-testid="button-new-order">
           <Plus className="w-4 h-4 mr-2" />
           New Order
         </Button>
@@ -97,6 +99,11 @@ export default function AdminOrdersPage({ onViewOrder }: AdminOrdersPageProps) {
       ) : (
         <OrdersTable orders={formattedOrders} onViewOrder={onViewOrder} />
       )}
+
+      <NewOrderDialog 
+        open={showNewOrderDialog} 
+        onOpenChange={setShowNewOrderDialog} 
+      />
     </div>
   );
 }

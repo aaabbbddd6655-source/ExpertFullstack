@@ -1,8 +1,8 @@
-# Evia Order Tracking Platform
+# Ivea Order Tracking Platform
 
 ## Overview
 
-The Evia Order Tracking Platform is a production-ready, fully functional web application for tracking custom interior decor orders through a complete lifecycle: from raw materials procurement through production, quality control, delivery, and installation. The platform features two distinct interfaces:
+The Ivea Order Tracking Platform is a production-ready, fully functional web application for tracking custom interior decor orders through a complete lifecycle: from raw materials procurement through production, quality control, delivery, and installation. The platform features two distinct interfaces:
 
 1. **Customer Portal** - A premium, minimal interface where customers can track their orders using phone number + order number authentication
 2. **Admin Dashboard** - A comprehensive operations interface for managing orders, stages, appointments, and customer communications

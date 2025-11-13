@@ -13,6 +13,9 @@ import AdminLogin from "@/components/AdminLogin";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminOrdersPage from "@/pages/AdminOrdersPage";
 import AdminOrderDetailsPage from "@/pages/AdminOrderDetailsPage";
+import AdminDashboardPage from "@/pages/AdminDashboardPage";
+import AdminCustomersPage from "@/pages/AdminCustomersPage";
+import AdminSettingsPage from "@/pages/AdminSettingsPage";
 import * as api from "@/lib/api";
 import * as auth from "@/lib/auth";
 
@@ -127,22 +130,13 @@ function AdminRouter() {
                   <AdminOrdersPage onViewOrder={(id) => setSelectedOrderId(id)} />
                 )}
                 {activePage === "dashboard" && (
-                  <div>
-                    <h1 className="text-3xl font-serif font-semibold mb-4">Dashboard</h1>
-                    <p className="text-muted-foreground">Dashboard overview coming soon...</p>
-                  </div>
+                  <AdminDashboardPage />
                 )}
                 {activePage === "customers" && (
-                  <div>
-                    <h1 className="text-3xl font-serif font-semibold mb-4">Customers</h1>
-                    <p className="text-muted-foreground">Customer management coming soon...</p>
-                  </div>
+                  <AdminCustomersPage />
                 )}
                 {activePage === "settings" && (
-                  <div>
-                    <h1 className="text-3xl font-serif font-semibold mb-4">Settings</h1>
-                    <p className="text-muted-foreground">Settings panel coming soon...</p>
-                  </div>
+                  <AdminSettingsPage />
                 )}
               </>
             )}

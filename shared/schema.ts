@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { pgTable, text, varchar, integer, timestamp, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, varchar, integer, numeric, timestamp, pgEnum } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -65,7 +65,7 @@ export const orders = pgTable("orders", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   externalOrderId: text("external_order_id").notNull().unique(),
   customerId: varchar("customer_id").notNull().references(() => customers.id),
-  totalAmount: integer("total_amount").notNull(),
+  totalAmount: numeric("total_amount", { precision: 10, scale: 2 }).notNull(),
   status: orderStatusEnum("status").notNull().default("PENDING_MEASUREMENT"),
   progressPercent: integer("progress_percent").notNull().default(0),
   currentStageId: varchar("current_stage_id"),

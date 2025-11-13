@@ -18,7 +18,7 @@ export class ConsoleEmailService implements EmailService {
     console.log(`Total Amount: $${order.totalAmount.toLocaleString()}`);
     console.log(`\nYou can track your order at any time using your phone number and order number.`);
     console.log(`\nWe'll keep you updated as your order progresses through each stage.`);
-    console.log(`\nBest regards,\nThe Evia Team`);
+    console.log(`\nBest regards,\nThe Ivea Team`);
     console.log("=====================================\n");
   }
 
@@ -51,7 +51,7 @@ export class ConsoleEmailService implements EmailService {
     }
     console.log(`\nOrder Number: ${order.externalOrderId}`);
     console.log(`Current Progress: ${order.progressPercent}%`);
-    console.log(`\nBest regards,\nThe Evia Team`);
+    console.log(`\nBest regards,\nThe Ivea Team`);
     console.log("=====================================\n");
   }
 
@@ -67,7 +67,7 @@ export class ConsoleEmailService implements EmailService {
       console.log(`Notes: ${appointment.notes}`);
     }
     console.log(`\nOur team will arrive on time and ensure professional installation.`);
-    console.log(`\nBest regards,\nThe Evia Team`);
+    console.log(`\nBest regards,\nThe Ivea Team`);
     console.log("=====================================\n");
   }
 
@@ -79,7 +79,7 @@ export class ConsoleEmailService implements EmailService {
     console.log(`\nWe hope you're enjoying your new custom interior!`);
     console.log(`\nYour feedback is important to us. Please take a moment to rate your experience.`);
     console.log(`\nThank you for choosing Evia!`);
-    console.log(`\nBest regards,\nThe Evia Team`);
+    console.log(`\nBest regards,\nThe Ivea Team`);
     console.log("=====================================\n");
   }
 }

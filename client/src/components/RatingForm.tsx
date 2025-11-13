@@ -27,7 +27,7 @@ export default function RatingForm({ orderId, onSubmit }: RatingFormProps) {
       <CardHeader>
         <CardTitle className="text-2xl font-serif">Rate Your Experience</CardTitle>
         <CardDescription>
-          We'd love to hear about your experience with Evia
+          We'd love to hear about your experience with Ivea
         </CardDescription>
       </CardHeader>
       <CardContent>
