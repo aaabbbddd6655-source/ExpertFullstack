@@ -30,6 +30,7 @@ const db = drizzle(pool, { schema });
 export interface IStorage {
   // Customer operations
   getCustomerByPhone(phone: string): Promise<Customer | undefined>;
+  getCustomerById(id: string): Promise<Customer | undefined>;
   createCustomer(customer: InsertCustomer): Promise<Customer>;
   
   // Order operations
@@ -85,6 +86,11 @@ export class DatabaseStorage implements IStorage {
   // Customer operations
   async getCustomerByPhone(phone: string): Promise<Customer | undefined> {
     const results = await db.select().from(schema.customers).where(eq(schema.customers.phone, phone));
+    return results[0];
+  }
+
+  async getCustomerById(id: string): Promise<Customer | undefined> {
+    const results = await db.select().from(schema.customers).where(eq(schema.customers.id, id));
     return results[0];
   }
 

@@ -356,12 +356,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const appointment = await storage.getAppointmentByOrderId(id);
       const rating = await storage.getRatingByOrderId(id);
 
-      // Get customer info - need to find customer by ID
-      const customers = await storage.getCustomerByPhone(order.customerId as any);
+      // Get customer info by ID
+      const customer = await storage.getCustomerById(order.customerId);
 
       res.json({
         order,
-        customer: customers,
+        customer,
         stages,
         events,
         media,
