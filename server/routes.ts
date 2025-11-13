@@ -262,12 +262,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Requires SETUP_SECRET environment variable
   app.post("/api/setup/init-admin", async (req, res) => {
     try {
+      const SETUP_SECRET = process.env.SETUP_SECRET;
+      
+      // Refuse to run if SETUP_SECRET is not configured
+      if (!SETUP_SECRET) {
+        return res.status(503).json({ error: "Setup endpoint not configured" });
+      }
+      
       const { secret } = req.body;
-      const SETUP_SECRET = process.env.SETUP_SECRET || "evia-setup-2024";
       
       // Verify setup secret
       if (!secret || secret !== SETUP_SECRET) {
-        return res.status(403).json({ error: "Invalid setup secret" });
+        return res.status(403).json({ error: "Access denied" });
       }
       
       // Check if any admin user already exists

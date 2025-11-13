@@ -61,9 +61,7 @@ function AdminRouter() {
 
   const handleLogin = async (email: string, password: string) => {
     try {
-      console.log('Attempting login with:', email);
       const response = await api.adminLogin(email, password);
-      console.log('Login response:', response);
       auth.saveAuth(response.token, response.user);
       setIsLoggedIn(true);
       toast({
@@ -71,7 +69,6 @@ function AdminRouter() {
         description: `Logged in as ${response.user.name}`
       });
     } catch (error: any) {
-      console.error('Login error:', error);
       toast({
         title: "Login failed",
         description: error.message || "Invalid credentials",
