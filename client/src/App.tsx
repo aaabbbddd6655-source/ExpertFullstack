@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { useToast } from "@/hooks/use-toast";
 import NotFound from "@/pages/not-found";
 import OrderLookup from "@/components/OrderLookup";
 import CustomerTrackingPage from "@/pages/CustomerTrackingPage";
@@ -12,38 +13,83 @@ import AdminLogin from "@/components/AdminLogin";
 import AdminSidebar from "@/components/AdminSidebar";
 import AdminOrdersPage from "@/pages/AdminOrdersPage";
 import AdminOrderDetailsPage from "@/pages/AdminOrderDetailsPage";
+import * as api from "@/lib/api";
+import * as auth from "@/lib/auth";
 
 function CustomerRouter() {
-  const [showTracking, setShowTracking] = useState(false);
+  const [orderData, setOrderData] = useState<api.OrderLookupResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
-  if (showTracking) {
-    return <CustomerTrackingPage onBack={() => setShowTracking(false)} />;
+  const handleLookup = async (phone: string, orderNumber: string) => {
+    setIsLoading(true);
+    try {
+      const data = await api.lookupOrder(phone, orderNumber);
+      setOrderData(data);
+    } catch (error: any) {
+      toast({
+        title: "Order not found",
+        description: error.message || "Please check your phone number and order number",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (orderData) {
+    return (
+      <CustomerTrackingPage 
+        orderData={orderData}
+        onBack={() => setOrderData(null)} 
+      />
+    );
   }
 
-  return (
-    <OrderLookup 
-      onLookup={(phone, orderNumber) => {
-        console.log("Order lookup:", { phone, orderNumber });
-        setShowTracking(true);
-      }}
-    />
-  );
+  return <OrderLookup onLookup={handleLookup} isLoading={isLoading} />;
 }
 
 function AdminRouter() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activePage, setActivePage] = useState("orders");
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    setIsLoggedIn(auth.isAuthenticated());
+  }, []);
+
+  const handleLogin = async (email: string, password: string) => {
+    try {
+      const response = await api.adminLogin(email, password);
+      auth.saveAuth(response.token, response.user);
+      setIsLoggedIn(true);
+      toast({
+        title: "Welcome back!",
+        description: `Logged in as ${response.user.name}`
+      });
+    } catch (error: any) {
+      toast({
+        title: "Login failed",
+        description: error.message || "Invalid credentials",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleLogout = () => {
+    auth.clearAuth();
+    setIsLoggedIn(false);
+    setActivePage("orders");
+    setSelectedOrderId(null);
+    toast({
+      title: "Signed out",
+      description: "You have been successfully logged out"
+    });
+  };
 
   if (!isLoggedIn) {
-    return (
-      <AdminLogin 
-        onLogin={(email, password) => {
-          console.log("Admin login:", { email, password });
-          setIsLoggedIn(true);
-        }}
-      />
-    );
+    return <AdminLogin onLogin={handleLogin} />;
   }
 
   const sidebarStyle = {
@@ -60,10 +106,7 @@ function AdminRouter() {
             setActivePage(page);
             setSelectedOrderId(null);
           }}
-          onLogout={() => {
-            console.log("Logout");
-            setIsLoggedIn(false);
-          }}
+          onLogout={handleLogout}
         />
         <div className="flex flex-col flex-1">
           <header className="flex items-center justify-between p-4 border-b bg-card">

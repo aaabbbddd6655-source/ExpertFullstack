@@ -1,4 +1,5 @@
 import { ArrowLeft } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import OrderSummary from "@/components/OrderSummary";
@@ -6,6 +7,10 @@ import OrderTimeline from "@/components/OrderTimeline";
 import StageManager from "@/components/StageManager";
 import AppointmentForm from "@/components/AppointmentForm";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { getOrderDetails, updateStage, createAppointment } from "@/lib/api";
+import { getToken } from "@/lib/auth";
+import { useToast } from "@/hooks/use-toast";
+import { queryClient } from "@/lib/queryClient";
 
 interface AdminOrderDetailsPageProps {
   orderId: string;
@@ -13,42 +18,93 @@ interface AdminOrderDetailsPageProps {
 }
 
 export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDetailsPageProps) {
-  const mockOrder = {
-    orderNumber: "EV-2024-0123",
-    customerName: "Sarah Johnson",
-    phone: "+1 (555) 123-4567",
-    createdAt: "2024-01-15T10:00:00Z",
-    totalAmount: 3500,
-    status: "DESIGN_APPROVAL",
-    progressPercent: 25
-  };
+  const { toast } = useToast();
+  const token = getToken();
 
-  const mockStages = [
-    {
-      id: "1",
-      stageType: "ORDER_RECEIVED",
-      status: "DONE" as const,
-      completedAt: "2024-01-15T10:00:00Z",
-      notes: "Order confirmed and payment received"
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["/api/admin/orders", orderId],
+    queryFn: async () => {
+      if (!token) {
+        throw new Error("Not authenticated");
+      }
+      return getOrderDetails(token, orderId);
     },
-    {
-      id: "2",
-      stageType: "SITE_MEASUREMENT",
-      status: "DONE" as const,
-      startedAt: "2024-01-16T09:00:00Z",
-      completedAt: "2024-01-16T11:00:00Z",
-      notes: "Measurements completed. Window: 120\" x 84\""
+    enabled: !!token && !!orderId
+  });
+
+  const updateStageMutation = useMutation({
+    mutationFn: async ({ stageId, status, notes }: { stageId: string; status: string; notes: string }) => {
+      if (!token) {
+        throw new Error("Not authenticated");
+      }
+      return updateStage(token, orderId, stageId, status, notes);
     },
-    {
-      id: "3",
-      stageType: "DESIGN_APPROVAL",
-      status: "IN_PROGRESS" as const,
-      startedAt: "2024-01-17T08:00:00Z",
-      notes: "Design mockup sent to customer"
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders", orderId] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
+      toast({
+        title: "Success",
+        description: "Stage updated successfully"
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to update stage",
+        variant: "destructive"
+      });
     }
-  ];
+  });
 
-  const currentStage = mockStages.find(s => s.status === "IN_PROGRESS") || mockStages[0];
+  const createAppointmentMutation = useMutation({
+    mutationFn: async (appointmentData: { scheduledAt: string; locationAddress: string; notes: string }) => {
+      if (!token) {
+        throw new Error("Not authenticated");
+      }
+      return createAppointment(token, orderId, appointmentData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders", orderId] });
+      toast({
+        title: "Success",
+        description: "Appointment saved successfully"
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save appointment",
+        variant: "destructive"
+      });
+    }
+  });
+
+  if (error) {
+    toast({
+      title: "Error",
+      description: "Failed to fetch order details",
+      variant: "destructive"
+    });
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">Loading order details...</p>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <p className="text-muted-foreground">Order not found</p>
+      </div>
+    );
+  }
+
+  const { order, customer, stages, appointment } = data;
+  const currentStage = stages.find((s: any) => s.status === "IN_PROGRESS") || stages[0];
 
   return (
     <div className="space-y-6">
@@ -65,14 +121,22 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
-          <OrderSummary {...mockOrder} />
+          <OrderSummary 
+            orderNumber={order.externalOrderId}
+            customerName={customer.fullName}
+            phone={customer.phone}
+            createdAt={order.createdAt}
+            totalAmount={order.totalAmount}
+            status={order.status}
+            progressPercent={order.progressPercent}
+          />
           
           <Card>
             <CardHeader>
               <CardTitle className="text-2xl font-serif">Order Timeline</CardTitle>
             </CardHeader>
             <CardContent>
-              <OrderTimeline stages={mockStages} />
+              <OrderTimeline stages={stages} />
             </CardContent>
           </Card>
         </div>
@@ -80,14 +144,15 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
         <div className="space-y-6">
           <StageManager
             stage={currentStage}
-            onUpdate={(id, status, notes) => {
-              console.log("Update stage:", { id, status, notes });
+            onUpdate={(stageId, status, notes) => {
+              updateStageMutation.mutate({ stageId, status, notes });
             }}
           />
 
           <AppointmentForm
-            onSubmit={(data) => {
-              console.log("Appointment created:", data);
+            appointment={appointment}
+            onSubmit={(appointmentData) => {
+              createAppointmentMutation.mutate(appointmentData);
             }}
           />
 

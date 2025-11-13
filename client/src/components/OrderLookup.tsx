@@ -8,9 +8,10 @@ import heroBackground from "@assets/generated_images/Premium_interior_hero_backg
 
 interface OrderLookupProps {
   onLookup: (phone: string, orderNumber: string) => void;
+  isLoading?: boolean;
 }
 
-export default function OrderLookup({ onLookup }: OrderLookupProps) {
+export default function OrderLookup({ onLookup, isLoading = false }: OrderLookupProps) {
   const [phone, setPhone] = useState("");
   const [orderNumber, setOrderNumber] = useState("");
 
@@ -86,8 +87,9 @@ export default function OrderLookup({ onLookup }: OrderLookupProps) {
                 type="submit" 
                 className="w-full h-12 text-base font-medium"
                 data-testid="button-lookup"
+                disabled={isLoading}
               >
-                Track My Order
+                {isLoading ? "Looking up..." : "Track My Order"}
               </Button>
             </form>
           </CardContent>

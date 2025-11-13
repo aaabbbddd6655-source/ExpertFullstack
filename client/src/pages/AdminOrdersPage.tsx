@@ -1,71 +1,62 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import OrdersTable from "@/components/OrdersTable";
 import OrderFilters from "@/components/OrderFilters";
 import { Plus } from "lucide-react";
+import { getOrders } from "@/lib/api";
+import { getToken } from "@/lib/auth";
+import { useToast } from "@/hooks/use-toast";
 
 interface AdminOrdersPageProps {
   onViewOrder: (orderId: string) => void;
 }
 
 export default function AdminOrdersPage({ onViewOrder }: AdminOrdersPageProps) {
+  const { toast } = useToast();
   const [status, setStatus] = useState("all");
   const [stage, setStage] = useState("all");
   const [dateFrom, setDateFrom] = useState<Date>();
   const [dateTo, setDateTo] = useState<Date>();
 
-  const mockOrders = [
-    {
-      id: "1",
-      orderNumber: "EV-2024-0123",
-      customerName: "Sarah Johnson",
-      phone: "+1 (555) 123-4567",
-      status: "DESIGN_APPROVAL",
-      currentStage: "DESIGN_APPROVAL",
-      progressPercent: 25,
-      createdAt: "2024-01-15T10:00:00Z"
+  const token = getToken();
+
+  const { data: orders = [], isLoading, error } = useQuery({
+    queryKey: ["/api/admin/orders", status, stage, dateFrom?.toISOString(), dateTo?.toISOString()],
+    queryFn: async () => {
+      if (!token) {
+        throw new Error("Not authenticated");
+      }
+
+      const filters: any = {};
+      if (status !== "all") filters.status = status;
+      if (stage !== "all") filters.stageType = stage;
+      if (dateFrom) filters.fromDate = dateFrom.toISOString();
+      if (dateTo) filters.toDate = dateTo.toISOString();
+
+      return getOrders(token, filters);
     },
-    {
-      id: "2",
-      orderNumber: "EV-2024-0124",
-      customerName: "Michael Chen",
-      phone: "+1 (555) 234-5678",
-      status: "IN_PRODUCTION",
-      currentStage: "PRODUCTION_CUTTING",
-      progressPercent: 45,
-      createdAt: "2024-01-14T14:30:00Z"
-    },
-    {
-      id: "3",
-      orderNumber: "EV-2024-0125",
-      customerName: "Emma Davis",
-      phone: "+1 (555) 345-6789",
-      status: "QUALITY_CHECK",
-      currentStage: "QUALITY_CHECK",
-      progressPercent: 75,
-      createdAt: "2024-01-13T09:15:00Z"
-    },
-    {
-      id: "4",
-      orderNumber: "EV-2024-0126",
-      customerName: "James Wilson",
-      phone: "+1 (555) 456-7890",
-      status: "READY_FOR_INSTALL",
-      currentStage: "DELIVERY_SCHEDULING",
-      progressPercent: 85,
-      createdAt: "2024-01-12T16:45:00Z"
-    },
-    {
-      id: "5",
-      orderNumber: "EV-2024-0127",
-      customerName: "Olivia Martinez",
-      phone: "+1 (555) 567-8901",
-      status: "COMPLETED",
-      currentStage: "RATING",
-      progressPercent: 100,
-      createdAt: "2024-01-10T11:20:00Z"
-    }
-  ];
+    enabled: !!token
+  });
+
+  if (error) {
+    toast({
+      title: "Error",
+      description: "Failed to fetch orders. Please try again.",
+      variant: "destructive"
+    });
+  }
+
+  const formattedOrders = orders.map((order: any) => ({
+    id: order.id,
+    orderNumber: order.externalOrderId,
+    customerName: order.customerName,
+    phone: order.phone,
+    status: order.status,
+    currentStage: order.currentStage,
+    progressPercent: order.progressPercent,
+    createdAt: order.createdAt
+  }));
 
   return (
     <div className="space-y-6">
@@ -99,7 +90,13 @@ export default function AdminOrdersPage({ onViewOrder }: AdminOrdersPageProps) {
         }}
       />
 
-      <OrdersTable orders={mockOrders} onViewOrder={onViewOrder} />
+      {isLoading ? (
+        <div className="flex items-center justify-center py-12">
+          <p className="text-muted-foreground">Loading orders...</p>
+        </div>
+      ) : (
+        <OrdersTable orders={formattedOrders} onViewOrder={onViewOrder} />
+      )}
     </div>
   );
 }
