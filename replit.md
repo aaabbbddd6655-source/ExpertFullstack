@@ -11,6 +11,15 @@ The system integrates with external e-commerce platforms via webhooks and provid
 
 **Current Status:** ✅ **Production Ready** - All features implemented, tested, and verified working with real database and API integration.
 
+**Recent Updates (Nov 2025):**
+- ✅ Added Dashboard page with real-time order statistics, customer metrics, and recent activity
+- ✅ Added Customers page with search functionality and order counts per customer
+- ✅ Added Settings page for user profile and system information
+- ✅ Implemented New Order creation with decimal currency support (numeric 10,2)
+- ✅ Updated admin credentials to match "Ivea" branding (admin@ivea.com)
+- ✅ Fixed backend API to return complete customer data for all pages
+- ✅ All features validated with end-to-end testing
+
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.

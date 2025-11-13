@@ -427,8 +427,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Generate order ID if not provided
-      const orderNumber = externalOrderId || `IV-${Date.now().toString().slice(-8)}`;
+      // Generate unique order ID if not provided
+      const orderNumber = externalOrderId || `IV-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
       // Create order
       const order = await storage.createOrder({
