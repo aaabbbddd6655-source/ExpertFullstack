@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Package } from "lucide-react";
+import { Package, Lock } from "lucide-react";
 import heroBackground from "@assets/generated_images/Premium_interior_hero_background_0b86cbc2.png";
 
 interface OrderLookupProps {
@@ -95,9 +96,20 @@ export default function OrderLookup({ onLookup, isLoading = false }: OrderLookup
           </CardContent>
         </Card>
 
-        <p className="text-center text-white/60 text-sm mt-6">
-          Having trouble? Contact our support team
-        </p>
+        <div className="text-center mt-6 space-y-2">
+          <p className="text-white/60 text-sm">
+            Having trouble? Contact our support team
+          </p>
+          <Link href="/admin">
+            <button 
+              className="text-white/50 hover:text-white/80 text-xs flex items-center gap-1 mx-auto transition-colors"
+              data-testid="link-admin"
+            >
+              <Lock className="w-3 h-3" />
+              Staff Login
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );
