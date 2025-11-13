@@ -1,0 +1,453 @@
+Prompt to Replit:
+
+You are an expert full-stack engineer.
+Build a production-ready web application called "Evia Order Tracking Platform" that connects with:
+
+Ivea Online Store (existing e-commerce)
+
+Ivea Internal Operations System
+
+Customer-facing Order Tracking Portal
+
+The main goal:
+Let customers track their orders using phone number + order number, and let the internal team manage order stages from raw materials → production → quality check → delivery → installation → rating, with email automation at every stage.
+
+1. Tech Stack (suggested)
+
+Frontend: React (or Next.js if you prefer), TypeScript
+
+Backend: Node.js (Express or Next.js API routes)
+
+Database: PostgreSQL (via Prisma ORM or similar)
+
+Auth: Simple phone-based login (mocked OTP for now) or direct access via order number + phone
+
+Email: Use a pluggable email service (create an EmailService file with functions and mock implementation)
+
+Make sure the project is structured clearly with:
+
+/frontend (if not using full Next.js)
+
+/backend
+
+.env.example with all required configuration variables.
+
+2. Core Entities (Database Models)
+
+Design clean database models for:
+
+Customer
+
+id
+
+fullName
+
+phone
+
+email (optional)
+
+Order
+
+id
+
+externalOrderId (from the existing Evia store)
+
+customerId (FK)
+
+totalAmount
+
+status (enum: PENDING_MEASUREMENT, DESIGN_APPROVAL, MATERIALS_PROCUREMENT, IN_PRODUCTION, QUALITY_CHECK, PACKAGING, READY_FOR_INSTALL, INSTALLED, COMPLETED, CANCELLED)
+
+progressPercent (0–100)
+
+currentStageId (FK to OrderStage)
+
+createdAt
+
+updatedAt
+
+OrderStage
+
+id
+
+orderId (FK)
+
+stageType (enum)
+
+ORDER_RECEIVED
+
+SITE_MEASUREMENT
+
+DESIGN_APPROVAL
+
+MATERIALS_PROCUREMENT
+
+PRODUCTION_CUTTING
+
+PRODUCTION_STITCHING
+
+PRODUCTION_ASSEMBLY
+
+FINISHING
+
+QUALITY_CHECK
+
+PACKAGING
+
+DELIVERY_SCHEDULING
+
+INSTALLATION
+
+RATING
+
+status (enum: PENDING, IN_PROGRESS, DONE)
+
+startedAt
+
+completedAt
+
+notes (text)
+
+OrderEvent
+
+id
+
+orderId (FK)
+
+stageId (FK to OrderStage, nullable)
+
+eventType (enum: STATUS_CHANGE, NOTE_ADDED, MEDIA_ADDED, APPOINTMENT_SET)
+
+description
+
+createdByUserId (FK to User, nullable)
+
+createdAt
+
+MediaFile
+
+id
+
+orderId (FK)
+
+stageId (FK)
+
+url
+
+type (enum: IMAGE, DOCUMENT)
+
+createdAt
+
+User (Staff)
+
+id
+
+name
+
+email
+
+role (enum: ADMIN, OPERATIONS, PRODUCTION, QUALITY, INSTALLATION, SUPPORT)
+
+passwordHash (simple login for now)
+
+InstallationAppointment
+
+id
+
+orderId (FK)
+
+scheduledAt
+
+locationAddress
+
+notes
+
+CustomerRating
+
+id
+
+orderId (FK)
+
+rating (1–5)
+
+comment
+
+createdAt
+
+Make sure relationships are properly defined and migrations are ready to run.
+
+3. Backend API Design
+
+Build a REST (or Next.js API) backend with the following endpoints:
+
+Public / Customer-facing
+
+POST /api/public/order-lookup
+
+Input: { phone, orderNumber }
+
+Returns:
+
+Order summary
+
+Current status
+
+Progress percent
+
+Timeline of stages (with status, dates)
+
+Media per stage
+
+GET /api/public/orders/:orderId/timeline
+
+Returns detailed timeline for the order
+
+POST /api/public/orders/:orderId/rating
+
+Input: { rating, comment }
+
+Saves the rating and updates order status to COMPLETED if installed.
+
+Webhooks / Integration
+
+POST /api/webhooks/store-order-created
+
+This will be called by the Evia Store when a new order is placed.
+
+Input: { externalOrderId, customer: {...}, totalAmount, items: [...], phone }
+
+Logic:
+
+Create Customer if not exists (by phone).
+
+Create Order with initial status ORDER_RECEIVED and progressPercent = 5.
+
+Create default stages for the order.
+
+POST /api/webhooks/internal-status-update
+
+For future integration with the internal operations system.
+
+Input: { externalOrderId, stageType, status, notes, progressPercent }
+
+Updates corresponding OrderStage and Order.progressPercent.
+
+Adds an OrderEvent.
+
+Admin / Internal
+
+POST /api/admin/login
+
+Simple email/password login, returns JWT or session token.
+
+GET /api/admin/orders
+
+Query params: status, stageType, fromDate, toDate
+
+Returns paginated list with key information.
+
+GET /api/admin/orders/:id
+
+Full order details, stages, events, media, rating, appointment.
+
+PATCH /api/admin/orders/:id/status
+
+Change global order status and/or progress.
+
+PATCH /api/admin/orders/:id/stages/:stageId
+
+Update a specific stage status (PENDING → IN_PROGRESS → DONE), add notes, timestamps.
+
+POST /api/admin/orders/:id/media
+
+Add media file metadata entry (for now, just URL string).
+
+POST /api/admin/orders/:id/appointment
+
+Create or update installation appointment.
+
+Implement input validation and return meaningful error messages.
+
+4. Automation Logic (Email)
+
+Implement an EmailService abstraction with methods like:
+
+sendOrderReceivedEmail(customer, order)
+
+sendStageChangedEmail(customer, order, stage)
+
+sendInstallationScheduledEmail(customer, appointment)
+
+sendRatingRequestEmail(customer, order)
+
+For now, implement these functions as console logs and centralize them, so that in the future we can plug a real email provider (like SendGrid, SES, etc.).
+
+Trigger emails on:
+
+New order creation
+
+Stage changed to DESIGN_APPROVAL (ask customer to review/approve the design)
+
+Stage changed to READY_FOR_INSTALL (ask to confirm installation date)
+
+Stage changed to INSTALLED (ask for rating)
+
+5. Frontend – Customer Portal (UI/UX)
+
+Build a clean, modern UI for customers with:
+
+1) Order Lookup Page
+
+Inputs: phone number, order number
+
+On submit → call /api/public/order-lookup
+
+If found → redirect to Order Tracking page
+
+2) Order Tracking Page
+
+Show:
+
+Order summary (order number, date, items summary, total amount)
+
+Customer info (name, phone)
+
+Large progress bar (0–100%)
+
+Timeline component with stages:
+
+ORDER RECEIVED
+
+SITE MEASUREMENT
+
+DESIGN APPROVAL
+
+MATERIALS PROCUREMENT
+
+PRODUCTION (can show sub-stages as nested or grouped)
+
+QUALITY CHECK
+
+PACKAGING
+
+DELIVERY SCHEDULING
+
+INSTALLATION
+
+RATING
+
+Each stage shows:
+
+Status (Pending, In Progress, Done)
+
+Date/time
+
+Notes
+
+Media thumbnails (images/documents)
+
+At the bottom:
+
+If order is INSTALLED and no rating yet → show rating form (1–5 stars + comment).
+
+Style:
+
+Minimal, premium look (like a high-end interior decor brand).
+
+6. Frontend – Admin Dashboard
+
+Build an internal dashboard for staff:
+
+Admin Login Page
+
+Email + password → call /api/admin/login
+
+Orders Overview Page
+
+Table with:
+
+Order #
+
+Customer name
+
+Phone
+
+Current status
+
+Current stage
+
+Progress %
+
+Created date
+
+Filters:
+
+By global order status
+
+By stage type
+
+Date range
+
+Order Details Page
+
+Show:
+
+Order summary
+
+Stages list with ability to:
+
+Change stage status (Pending → In Progress → Done)
+
+Add notes
+
+Timeline of events
+
+Media gallery
+
+Installation appointment form (date/time/address)
+
+Customer rating (if exists)
+
+When staff changes stage or status:
+
+Call corresponding backend endpoints
+
+Trigger email logic on backend
+
+7. Code Quality & Structure
+
+Use TypeScript where possible.
+
+Separate layers:
+
+controllers
+
+services
+
+repositories / data-access
+
+models / schemas
+
+Use environment variables for any configurable values.
+
+Add basic seed script to populate:
+
+A sample admin user
+
+A few sample customers and orders with stages.
+
+8. What to deliver
+
+A working full-stack project inside this Replit environment.
+
+Instructions in README.md:
+
+How to run migrations
+
+How to start backend
+
+How to start frontend
+
+Example webhook payloads for integrations.
+
+Focus on clean architecture, realistic data models, and UX that would be understandable for both customers and operations staff.
