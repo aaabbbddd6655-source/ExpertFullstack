@@ -15,7 +15,7 @@ import OrderSummary from "@/components/OrderSummary";
 import OrderTimeline from "@/components/OrderTimeline";
 import StageManager from "@/components/StageManager";
 import AppointmentForm from "@/components/AppointmentForm";
-import { getOrderDetails, updateStage, createAppointment, sendEmailUpdate, cancelOrder, addMedia } from "@/lib/api";
+import { getOrderDetails, updateStage, createAppointment, sendEmailUpdate, cancelOrder, addMedia, createStage, deleteStage } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -69,9 +69,8 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
       }
       return updateStage(token, orderId, stageId, status, notes);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders", orderId] });
-      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders"] });
+    onSuccess: async () => {
+      await queryClient.refetchQueries({ queryKey: ["/api/admin/orders", orderId] });
       toast({
         title: "Success",
         description: "Stage updated successfully"
@@ -191,6 +190,48 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
     }
   });
 
+  const createStageMutation = useMutation({
+    mutationFn: async (stageData: { stageType: string; status: string; notes?: string }) => {
+      if (!token) throw new Error("Not authenticated");
+      return createStage(token, orderId, stageData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders", orderId] });
+      toast({
+        title: "Success",
+        description: "Stage added successfully"
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to add stage",
+        variant: "destructive"
+      });
+    }
+  });
+
+  const deleteStageMutation = useMutation({
+    mutationFn: async (stageId: string) => {
+      if (!token) throw new Error("Not authenticated");
+      return deleteStage(token, orderId, stageId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/orders", orderId] });
+      toast({
+        title: "Success",
+        description: "Stage deleted successfully"
+      });
+    },
+    onError: (error: Error) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete stage",
+        variant: "destructive"
+      });
+    }
+  });
+
   if (error) {
     toast({
       title: "Error",
@@ -216,7 +257,6 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
   }
 
   const { order, customer, stages, appointment } = data;
-  const currentStage = stages.find((s: any) => s.status === "IN_PROGRESS") || stages[0];
 
   return (
     <div className="space-y-6">
@@ -255,9 +295,15 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
 
         <div className="space-y-6">
           <StageManager
-            stage={currentStage}
+            stages={stages}
             onUpdate={(stageId, status, notes) => {
               updateStageMutation.mutate({ stageId, status, notes });
+            }}
+            onAdd={(stageType, status, notes) => {
+              createStageMutation.mutate({ stageType, status, notes });
+            }}
+            onDelete={(stageId) => {
+              deleteStageMutation.mutate(stageId);
             }}
           />
 

@@ -12,6 +12,13 @@ The system integrates with external e-commerce platforms via webhooks and provid
 **Current Status:** ✅ **Production Ready** - All features implemented, tested, and verified working with real database and API integration.
 
 **Recent Updates (Nov 2025):**
+- ✅ **Enhanced StageManager Component** - Full CRUD operations for order stages
+  - View all stages in expandable accordion with status badges and icons
+  - Add Stage: Dialog with dropdown of all 13 stage types, supports duplicate stages for complex workflows
+  - Edit Stage: Inline form with status selector and notes, immediate UI updates via refetchQueries
+  - Delete Stage: Confirmation dialog, restricted to PENDING stages only for data safety
+  - Form remounting via dynamic keys ensures fresh data display after mutations
+  - All operations tested end-to-end with Playwright verification
 - ✅ **Order Page Enhancements** - Short order IDs, Quick Actions dialogs, enhanced order management
   - Short Order ID Display: Converts long IDs (IV-1763076259627-UX0QEH) to readable format (IV-9627UH)
   - Quick Actions: Send Email Updates, Add Media (photos/docs), Cancel Order with confirmation
