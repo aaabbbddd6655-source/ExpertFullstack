@@ -11,7 +11,19 @@ The system integrates with external e-commerce platforms via webhooks and provid
 
 **Current Status:** ✅ **Production Ready** - All features implemented, tested, and verified working with real database and API integration.
 
-**Recent Updates (Nov 2025):**
+**Recent Updates (Nov 14, 2025):**
+- ✅ **Media Files Display & Upload System** - Complete file upload and display functionality
+  - Integrated Replit Object Storage for secure file storage
+  - Uppy v5 drag-and-drop file uploader with dashboard UI
+  - Media Files card on Admin Order Details page displays uploaded photos/documents
+  - Security-hardened URL sanitization (path traversal protection)
+  - Secure proxy endpoint for file access with cache headers
+  - Support for external media URLs (CDNs, other sources)
+  - Icons differentiate images vs documents, shows stage association
+  - "View file" links open media in new tab
+  - Shows "Invalid file URL" for malformed/unsafe URLs
+
+**Previous Updates (Nov 2025):**
 - ✅ **Year-Based Order Numbering System** - Clean, sequential order numbers
   - Format: IV-2025-0001 (year-based 4-digit sequence)
   - Transaction-safe generation with SELECT...FOR UPDATE to prevent duplicates
@@ -113,6 +125,13 @@ Preferred communication style: Simple, everyday language.
 - Drizzle ORM for type-safe database queries and schema management
 - Connection pooling via @neondatabase/serverless with WebSocket support
 
+**Object Storage:**
+- Replit Object Storage (Google Cloud Storage backend) for media files
+- Files uploaded to `.private/uploads/` directory with UUID filenames
+- Served via secure proxy endpoint `/objects/:objectPath` with signed URLs
+- ACL-based access control (public visibility for approved media)
+- Cache headers for optimal performance (1 hour TTL)
+
 **Schema Design:**
 - **Customers** - Core customer information (name, phone in international format, email)
 - **Users** - Admin/staff users with role-based access (ADMIN, OPERATIONS, PRODUCTION, QUALITY, INSTALLATION, SUPPORT)
@@ -122,7 +141,7 @@ Preferred communication style: Simple, everyday language.
   - Status tracking, linked to customers
 - **OrderStages** - 13-stage workflow tracking (ORDER_RECEIVED through RATING)
 - **OrderEvents** - Audit trail of all order changes
-- **MediaFiles** - Photos and documents associated with orders/stages
+- **MediaFiles** - Photos and documents with object storage URLs, type (IMAGE/DOCUMENT), stage association
 - **InstallationAppointments** - Scheduling data for installation phase
 - **CustomerRatings** - Post-installation feedback (5-star rating + comments)
 
@@ -152,6 +171,7 @@ Preferred communication style: Simple, everyday language.
 
 **Third-Party Services:**
 - **Neon Database** - Serverless PostgreSQL hosting
+- **Replit Object Storage** - Google Cloud Storage for media files (photos, documents)
 - **Email Service** (interface ready) - Currently console-logged, designed for SendGrid/AWS SES integration
 - **E-commerce Platform** - Incoming webhook endpoint `/api/webhooks/order-received` accepts order data from external systems
 
