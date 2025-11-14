@@ -8,6 +8,7 @@ import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { insertCustomerSchema, insertOrderSchema } from "@shared/schema";
 import { normalizePhoneNumber, generateOrderNumber, getCurrentYear } from "./utils";
+import { ObjectStorageService, ObjectNotFoundError } from "./objectStorage";
 
 const JWT_SECRET = process.env.SESSION_SECRET || "evia-secret-key-change-in-production";
 
@@ -853,6 +854,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Appointment error:", error);
       res.status(500).json({ error: "Failed to save appointment" });
+    }
+  });
+
+  // ===== OBJECT STORAGE ENDPOINTS =====
+  // Referenced from blueprint:javascript_object_storage
+
+  // Get presigned upload URL
+  app.post("/api/admin/media/upload", authenticateToken, async (req, res) => {
+    try {
+      const objectStorageService = new ObjectStorageService();
+      const uploadURL = await objectStorageService.getObjectEntityUploadURL();
+      res.json({ uploadURL });
+    } catch (error) {
+      console.error("Upload URL generation error:", error);
+      res.status(500).json({ error: "Failed to generate upload URL" });
+    }
+  });
+
+  // Add media to order after upload
+  app.post("/api/admin/orders/:orderId/media", authenticateToken, async (req, res) => {
+    try {
+      const { orderId } = req.params;
+      const { mediaUrl, type, stageId } = req.body;
+
+      if (!mediaUrl || !type) {
+        return res.status(400).json({ error: "mediaUrl and type are required" });
+      }
+
+      const objectStorageService = new ObjectStorageService();
+      const normalizedPath = await objectStorageService.trySetObjectEntityAclPolicy(
+        mediaUrl,
+        {
+          owner: (req as any).user.userId,
+          visibility: "public",
+        }
+      );
+
+      const media = await storage.addMedia({
+        orderId,
+        url: normalizedPath,
+        type,
+        stageId: stageId || null
+      });
+
+      await storage.createEvent({
+        orderId,
+        stageId: stageId || null,
+        eventType: "NOTE_ADDED",
+        description: `Media file added: ${type}`,
+        createdByUserId: (req as any).user.userId
+      });
+
+      res.json(media);
+    } catch (error) {
+      console.error("Media add error:", error);
+      res.status(500).json({ error: "Failed to add media" });
+    }
+  });
+
+  // Serve uploaded files (public read access via ACL)
+  app.get("/objects/:objectPath(*)", async (req, res) => {
+    const objectStorageService = new ObjectStorageService();
+    try {
+      const objectFile = await objectStorageService.getObjectEntityFile(req.path);
+      objectStorageService.downloadObject(objectFile, res);
+    } catch (error) {
+      console.error("Object download error:", error);
+      if (error instanceof ObjectNotFoundError) {
+        return res.sendStatus(404);
+      }
+      return res.sendStatus(500);
     }
   });
 
