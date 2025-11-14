@@ -12,6 +12,20 @@ The system integrates with external e-commerce platforms via webhooks and provid
 **Current Status:** ✅ **Production Ready** - All features implemented, tested, and verified working with real database and API integration.
 
 **Recent Updates (Nov 2025):**
+- ✅ **Year-Based Order Numbering System** - Clean, sequential order numbers
+  - Format: IV-2025-0001 (year-based 4-digit sequence)
+  - Transaction-safe generation with SELECT...FOR UPDATE to prevent duplicates
+  - Year filter uses orderNumber pattern matching (not createdAt timestamp)
+  - Maintains externalOrderId for webhook integration compatibility
+  - All 8 existing orders backfilled with new format
+  - Frontend displays orderNumber (not externalOrderId) everywhere
+- ✅ **Enhanced Phone Normalization** - International and Saudi format support
+  - International format (+country): Preserved as-is (e.g. +15551234567, +966501234567)
+  - Saudi local with 0: 0501234567 → +966501234567
+  - Saudi local without 0: 501234567 → +966501234567
+  - Country code without +: 966501234567 → +966501234567
+  - Order lookup validates phone AND order_number together for security
+  - Single JOIN query with normalized phone matching
 - ✅ **Bilingual System (Arabic/English)** - Full internationalization support
   - Language switcher in all page headers (customer & admin)
   - RTL (Right-to-Left) support for Arabic, LTR (Left-to-Right) for English
@@ -27,8 +41,8 @@ The system integrates with external e-commerce platforms via webhooks and provid
   - Delete Stage: Confirmation dialog, restricted to PENDING stages only for data safety
   - Form remounting via dynamic keys ensures fresh data display after mutations
   - All operations tested end-to-end with Playwright verification
-- ✅ **Order Page Enhancements** - Short order IDs, Quick Actions dialogs, enhanced order management
-  - Short Order ID Display: Converts long IDs (IV-1763076259627-UX0QEH) to readable format (IV-9627UH)
+- ✅ **Order Page Enhancements** - Quick Actions dialogs, enhanced order management
+  - Order Number Display: Shows customer-friendly IV-2025-0001 format
   - Quick Actions: Send Email Updates, Add Media (photos/docs), Cancel Order with confirmation
   - Backend APIs: Stage CRUD operations, custom email notifications, order cancellation
   - All dialogs use proper async state management and validation
@@ -100,9 +114,12 @@ Preferred communication style: Simple, everyday language.
 - Connection pooling via @neondatabase/serverless with WebSocket support
 
 **Schema Design:**
-- **Customers** - Core customer information (name, phone, email)
+- **Customers** - Core customer information (name, phone in international format, email)
 - **Users** - Admin/staff users with role-based access (ADMIN, OPERATIONS, PRODUCTION, QUALITY, INSTALLATION, SUPPORT)
-- **Orders** - Order records with status tracking, linked to external e-commerce order IDs
+- **Orders** - Order records with two ID types:
+  - `orderNumber`: Customer-facing format IV-2025-0001 (year-based sequence, unique, NOT NULL)
+  - `externalOrderId`: Webhook integration ID (e.g. EV-2024-0123, kept for compatibility)
+  - Status tracking, linked to customers
 - **OrderStages** - 13-stage workflow tracking (ORDER_RECEIVED through RATING)
 - **OrderEvents** - Audit trail of all order changes
 - **MediaFiles** - Photos and documents associated with orders/stages
@@ -119,8 +136,11 @@ Preferred communication style: Simple, everyday language.
 
 **Customer Authentication:**
 - Phone number + order number verification (no persistent sessions)
+- Phone normalization supports international and Saudi local formats
+- Order lookup validates BOTH fields together (phone AND orderNumber must match)
 - Direct lookup without requiring account creation
 - Single-use access pattern (re-enter credentials for each lookup)
+- Format: Phone (+966501234567 or 0501234567) + Order Number (IV-2025-0001)
 
 **Admin Authentication:**
 - JWT tokens stored in localStorage
