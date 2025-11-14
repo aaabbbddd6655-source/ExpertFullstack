@@ -26,6 +26,60 @@ interface AdminOrderDetailsPageProps {
   onBack: () => void;
 }
 
+// Sanitize media URL to prevent path traversal and validate format
+function sanitizeMediaUrl(url: string): string | null {
+  if (!url || typeof url !== 'string') return null;
+  
+  // Security: Reject path traversal attempts in the URL
+  if (url.includes('..')) {
+    console.error("Invalid media URL (path traversal attempt):", url);
+    return null;
+  }
+  
+  // If already a proxy path, validate and return
+  if (url.startsWith('/objects/')) {
+    // Security: Check for double slashes in path component (not protocol)
+    const pathPart = url.substring(9); // Skip '/objects/'
+    if (pathPart.includes('//')) {
+      console.error("Invalid media URL (double slash in path):", url);
+      return null;
+    }
+    // Remove leading slashes beyond /objects/
+    return url.replace(/^\/objects\/+/, '/objects/');
+  }
+  
+  // Transform Google Cloud Storage URLs to proxy format
+  if (url.startsWith('https://storage.googleapis.com/')) {
+    // Extract the bucket and path
+    const pathMatch = url.match(/^https:\/\/storage\.googleapis\.com\/([^?]+)/);
+    if (pathMatch && pathMatch[1]) {
+      const objectPath = pathMatch[1].replace(/^\/+/, '');
+      // Additional security checks
+      if (objectPath.includes('..') || objectPath.includes('//')) {
+        console.error("Invalid object path in GCS URL:", objectPath);
+        return null;
+      }
+      return `/objects/${objectPath}`;
+    }
+  }
+  
+  // Allow other HTTPS URLs (external media, CDN URLs, etc.)
+  if (url.startsWith('https://') || url.startsWith('http://')) {
+    // Basic validation - ensure it's a valid URL
+    try {
+      new URL(url);
+      return url;
+    } catch {
+      console.error("Invalid URL format:", url);
+      return null;
+    }
+  }
+  
+  // Unknown format - reject for safety
+  console.error("Unrecognized media URL format:", url);
+  return null;
+}
+
 // Schemas for dialogs
 const emailSchema = z.object({
   subject: z.string().min(1, "Subject is required"),
@@ -300,43 +354,56 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
             <CardContent>
               {media && media.length > 0 ? (
                 <div className="space-y-3" data-testid="media-list">
-                  {media.map((item: any) => (
-                    <div 
-                      key={item.id} 
-                      className="flex items-start gap-3 p-3 rounded-lg border"
-                      data-testid={`media-item-${item.id}`}
-                    >
-                      <div className="flex-shrink-0">
-                        {item.type === "IMAGE" ? (
-                          <ImageIcon className="w-5 h-5 text-primary" />
-                        ) : (
-                          <FileText className="w-5 h-5 text-primary" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">
-                            {item.type === "IMAGE" ? "Image" : "Document"}
-                          </span>
-                          {item.stage && (
-                            <span className="text-xs text-muted-foreground">
-                              ({item.stage.stageType.replace(/_/g, " ")})
+                  {media.map((item: any) => {
+                    // Sanitize URL for safe display
+                    const safeUrl = sanitizeMediaUrl(item.url);
+                    // Create safe test ID
+                    const safeId = String(item.id).replace(/[^a-zA-Z0-9-]/g, '');
+                    
+                    return (
+                      <div 
+                        key={item.id} 
+                        className="flex items-start gap-3 p-3 rounded-lg border"
+                        data-testid={`media-item-${safeId}`}
+                      >
+                        <div className="flex-shrink-0">
+                          {item.type === "IMAGE" ? (
+                            <ImageIcon className="w-5 h-5 text-primary" />
+                          ) : (
+                            <FileText className="w-5 h-5 text-primary" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">
+                              {item.type === "IMAGE" ? "Image" : "Document"}
+                            </span>
+                            {item.stage && (
+                              <span className="text-xs text-muted-foreground">
+                                ({item.stage.stageType.replace(/_/g, " ")})
+                              </span>
+                            )}
+                          </div>
+                          {safeUrl ? (
+                            <a 
+                              href={safeUrl}
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-xs text-primary hover:underline flex items-center gap-1 mt-1"
+                              data-testid={`media-link-${safeId}`}
+                            >
+                              View file
+                              <ExternalLink className="w-3 h-3" />
+                            </a>
+                          ) : (
+                            <span className="text-xs text-destructive">
+                              Invalid file URL
                             </span>
                           )}
                         </div>
-                        <a 
-                          href={item.url.startsWith('/objects/') ? item.url : `/objects/${item.url.replace(/^https?:\/\/[^/]+\//, '')}`} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-xs text-primary hover:underline flex items-center gap-1 mt-1"
-                          data-testid={`media-link-${item.id}`}
-                        >
-                          View file
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground" data-testid="no-media-message">

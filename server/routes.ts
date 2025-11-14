@@ -917,16 +917,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/objects/:objectPath(*)", async (req, res) => {
     const objectStorageService = new ObjectStorageService();
     try {
-      // Strip /objects/ prefix from the path
-      const objectPath = req.params.objectPath;
+      // Get and validate the object path
+      let objectPath = req.params.objectPath;
+      
+      // Security: Reject path traversal attempts
+      if (objectPath.includes('..') || objectPath.includes('//')) {
+        console.error("Invalid object path (traversal attempt):", objectPath);
+        return res.status(400).json({ error: "Invalid path" });
+      }
+      
+      // Normalize: Remove leading slashes
+      objectPath = objectPath.replace(/^\/+/, '');
+      
+      // Note: Bucket access control is handled by ObjectStorageService ACL system
+      // We don't enforce bucket whitelist here to allow flexibility for different storage configurations
+      
       const objectFile = await objectStorageService.getObjectEntityFile(objectPath);
+      
+      // Set cache headers for successful responses
+      res.setHeader('Cache-Control', 'public, max-age=3600');
+      
       objectStorageService.downloadObject(objectFile, res);
     } catch (error) {
-      console.error("Object download error:", error);
+      console.error("Object download error:", {
+        path: req.params.objectPath,
+        error: error instanceof Error ? error.message : error,
+      });
+      
       if (error instanceof ObjectNotFoundError) {
-        return res.sendStatus(404);
+        return res.status(404).json({ error: "File not found" });
       }
-      return res.sendStatus(500);
+      return res.status(500).json({ error: "Internal server error" });
     }
   });
 

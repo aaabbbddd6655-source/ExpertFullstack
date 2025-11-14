@@ -40,7 +40,14 @@ export function ObjectUploader({
         shouldUseMultipart: false,
         getUploadParameters: onGetUploadParameters,
       })
+      .on("upload", () => {
+        console.log("Uppy upload started");
+      })
+      .on("upload-error", (file, error) => {
+        console.error("Uppy upload error:", file?.name, error);
+      })
       .on("complete", (result) => {
+        console.log("Uppy upload complete:", result);
         if (result.successful && result.successful.length > 0) {
           const uploadUrl = result.successful[0].uploadURL;
           if (uploadUrl) {
