@@ -59,9 +59,9 @@
   },
   "admin": {
     "dashboard": "لوحة التحكم",
-    "orders": "الطلبات",
-    "customers": "العملاء",
-    "settings": "الإعدادات",
+    "ordersNav": "الطلبات",
+    "customersNav": "العملاء",
+    "settingsNav": "الإعدادات",
     "logout": "تسجيل الخروج",
     "login": "تسجيل الدخول",
     "welcome": "مرحباً بك في لوحة تحكم إيفيا",

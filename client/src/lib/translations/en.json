@@ -59,9 +59,9 @@
   },
   "admin": {
     "dashboard": "Dashboard",
-    "orders": "Orders",
-    "customers": "Customers",
-    "settings": "Settings",
+    "ordersNav": "Orders",
+    "customersNav": "Customers",
+    "settingsNav": "Settings",
     "logout": "Logout",
     "login": "Login",
     "welcome": "Welcome to Ivea Admin",

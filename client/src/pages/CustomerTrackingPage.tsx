@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import OrderSummary from "@/components/OrderSummary";
 import OrderTimeline from "@/components/OrderTimeline";
@@ -15,6 +16,7 @@ interface CustomerTrackingPageProps {
 }
 
 export default function CustomerTrackingPage({ orderData, onBack }: CustomerTrackingPageProps) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [hasRating, setHasRating] = useState(!!orderData.rating);
   const { order, customer, stages, media } = orderData;
@@ -26,12 +28,12 @@ export default function CustomerTrackingPage({ orderData, onBack }: CustomerTrac
       await api.submitRating(order.id, rating, comment);
       setHasRating(true);
       toast({
-        title: "Thank you for your feedback!",
-        description: "Your rating has been submitted successfully"
+        title: t('customer.thankYou'),
+        description: t('customer.ratingSubmitted')
       });
     } catch (error: any) {
       toast({
-        title: "Failed to submit rating",
+        title: t('errors.general'),
         description: error.message,
         variant: "destructive"
       });
@@ -57,7 +59,7 @@ export default function CustomerTrackingPage({ orderData, onBack }: CustomerTrac
             data-testid="button-back"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Lookup
+            {t('common.back')}
           </Button>
           <LanguageSwitcher />
         </div>
@@ -75,7 +77,7 @@ export default function CustomerTrackingPage({ orderData, onBack }: CustomerTrac
         />
         
         <div>
-          <h2 className="text-2xl font-serif font-semibold mb-6">Order Timeline</h2>
+          <h2 className="text-2xl font-serif font-semibold mb-6">{t('customer.progress')}</h2>
           <OrderTimeline stages={stagesWithMedia} />
         </div>
 

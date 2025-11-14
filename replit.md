@@ -12,6 +12,14 @@ The system integrates with external e-commerce platforms via webhooks and provid
 **Current Status:** ✅ **Production Ready** - All features implemented, tested, and verified working with real database and API integration.
 
 **Recent Updates (Nov 2025):**
+- ✅ **Bilingual System (Arabic/English)** - Full internationalization support
+  - Language switcher in all page headers (customer & admin)
+  - RTL (Right-to-Left) support for Arabic, LTR (Left-to-Right) for English
+  - Translation files: en.json and ar.json with comprehensive UI text coverage
+  - localStorage persistence of language preference
+  - Automatic HTML dir attribute switching
+  - Translated components: OrderLookup, CustomerTrackingPage, AdminLogin, AdminSidebar, toast messages
+  - All user-facing text dynamically changes based on selected language
 - ✅ **Enhanced StageManager Component** - Full CRUD operations for order stages
   - View all stages in expandable accordion with status badges and icons
   - Add Stage: Dialog with dropdown of all 13 stage types, supports duplicate stages for complex workflows

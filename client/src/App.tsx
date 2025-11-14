@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useToast } from "@/hooks/use-toast";
-import { LanguageProvider } from "@/lib/i18n";
+import { LanguageProvider, useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import NotFound from "@/pages/not-found";
 import OrderLookup from "@/components/OrderLookup";
@@ -22,6 +22,7 @@ import * as api from "@/lib/api";
 import * as auth from "@/lib/auth";
 
 function CustomerRouter() {
+  const { t } = useTranslation();
   const [orderData, setOrderData] = useState<api.OrderLookupResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -33,8 +34,8 @@ function CustomerRouter() {
       setOrderData(data);
     } catch (error: any) {
       toast({
-        title: "Order not found",
-        description: error.message || "Please check your phone number and order number",
+        title: t('errors.notFound'),
+        description: error.message || t('errors.general'),
         variant: "destructive"
       });
     } finally {
@@ -55,6 +56,7 @@ function CustomerRouter() {
 }
 
 function AdminRouter() {
+  const { t } = useTranslation();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [activePage, setActivePage] = useState("dashboard");
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
@@ -70,13 +72,13 @@ function AdminRouter() {
       auth.saveAuth(response.token, response.user);
       setIsLoggedIn(true);
       toast({
-        title: "Welcome back!",
-        description: `Logged in as ${response.user.name}`
+        title: t('admin.loginSuccess'),
+        description: `${response.user.name}`
       });
     } catch (error: any) {
       toast({
-        title: "Login failed",
-        description: error.message || "Invalid credentials",
+        title: t('admin.loginError'),
+        description: error.message || t('admin.loginError'),
         variant: "destructive"
       });
     }
@@ -88,8 +90,8 @@ function AdminRouter() {
     setActivePage("dashboard");
     setSelectedOrderId(null);
     toast({
-      title: "Signed out",
-      description: "You have been successfully logged out"
+      title: t('admin.logout'),
+      description: t('admin.loginSuccess')
     });
   };
 
@@ -118,7 +120,7 @@ function AdminRouter() {
           <header className="flex items-center justify-between p-4 border-b bg-card">
             <SidebarTrigger data-testid="button-sidebar-toggle" />
             <div className="flex items-center gap-4">
-              <span className="text-sm text-muted-foreground">Admin Portal</span>
+              <span className="text-sm text-muted-foreground">Ivea</span>
               <LanguageSwitcher />
             </div>
           </header>

@@ -24,9 +24,9 @@ export default function AdminSidebar({ activeItem, onNavigate, onLogout }: Admin
   
   const menuItems = [
     { id: "dashboard", label: t('admin.dashboard'), icon: Home, path: "/admin" },
-    { id: "orders", label: t('admin.orders'), icon: Package, path: "/admin/orders" },
-    { id: "customers", label: t('admin.customers'), icon: Users, path: "/admin/customers" },
-    { id: "settings", label: t('admin.settings'), icon: Settings, path: "/admin/settings" },
+    { id: "orders", label: t('admin.ordersNav'), icon: Package, path: "/admin/orders" },
+    { id: "customers", label: t('admin.customersNav'), icon: Users, path: "/admin/customers" },
+    { id: "settings", label: t('admin.settingsNav'), icon: Settings, path: "/admin/settings" },
   ];
 
   return (

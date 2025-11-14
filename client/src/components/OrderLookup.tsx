@@ -106,7 +106,7 @@ export default function OrderLookup({ onLookup, isLoading = false }: OrderLookup
 
         <div className="text-center mt-6 space-y-2">
           <p className="text-white/60 text-sm">
-            {t('errors.general')}
+            Ivea
           </p>
           <Link href="/admin">
             <button 
