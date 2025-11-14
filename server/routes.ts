@@ -891,7 +891,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       );
 
-      const media = await storage.addMedia({
+      const media = await storage.createMedia({
         orderId,
         url: normalizedPath,
         type,

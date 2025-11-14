@@ -1,4 +1,4 @@
-import { ArrowLeft, ImagePlus, Mail, XCircle } from "lucide-react";
+import { ArrowLeft, ImagePlus, Mail, XCircle, Upload } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -15,10 +15,11 @@ import OrderSummary from "@/components/OrderSummary";
 import OrderTimeline from "@/components/OrderTimeline";
 import StageManager from "@/components/StageManager";
 import AppointmentForm from "@/components/AppointmentForm";
-import { getOrderDetails, updateStage, createAppointment, sendEmailUpdate, cancelOrder, addMedia, createStage, deleteStage } from "@/lib/api";
+import { getOrderDetails, updateStage, createAppointment, sendEmailUpdate, cancelOrder, addMedia, createStage, deleteStage, getMediaUploadUrl } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
+import { ObjectUploader } from "@/components/ObjectUploader";
 
 interface AdminOrderDetailsPageProps {
   orderId: string;
@@ -32,7 +33,7 @@ const emailSchema = z.object({
 });
 
 const mediaSchema = z.object({
-  mediaUrl: z.string().url("Must be a valid URL"),
+  mediaUrl: z.string().optional(),
   type: z.enum(["IMAGE", "DOCUMENT"]),
   stageId: z.string().min(1, "Stage is required"),
   notes: z.string().optional()
@@ -497,13 +498,42 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
     }
   });
 
+  const { toast } = useToast();
+  const token = getToken();
+
   // Provide reset function to parent
   useState(() => {
     onResetRef(() => form.reset);
   });
 
+  const handleFileUploadComplete = (uploadedUrl: string) => {
+    form.setValue("mediaUrl", uploadedUrl);
+    toast({
+      title: "File uploaded",
+      description: "File has been uploaded successfully. Complete the form to attach it to the order.",
+    });
+  };
+
+  const handleGetUploadUrl = async () => {
+    if (!token) {
+      throw new Error("Not authenticated");
+    }
+    return {
+      method: "PUT" as const,
+      url: await getMediaUploadUrl(token),
+    };
+  };
+
   const handleSubmit = (data: z.infer<typeof mediaSchema>) => {
-    onSubmit(data);
+    if (!data.mediaUrl) {
+      toast({
+        title: "Error",
+        description: "Please enter a URL or upload a file",
+        variant: "destructive"
+      });
+      return;
+    }
+    onSubmit(data as any);
   };
 
   return (
@@ -512,28 +542,41 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
         <DialogHeader>
           <DialogTitle>Add Media</DialogTitle>
           <DialogDescription>
-            Add a photo or document URL to a specific stage of this order.
+            Upload a file or provide a URL for a photo or document.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="mediaUrl"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Media URL</FormLabel>
-                  <FormControl>
-                    <Input 
-                      placeholder="https://example.com/photo.jpg"
-                      {...field}
-                      data-testid="input-media-url"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="flex gap-2">
+              <FormField
+                control={form.control}
+                name="mediaUrl"
+                render={({ field }) => (
+                  <FormItem className="flex-1">
+                    <FormLabel>Media URL</FormLabel>
+                    <FormControl>
+                      <Input 
+                        placeholder="https://example.com/photo.jpg or upload below"
+                        {...field}
+                        data-testid="input-media-url"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <div className="flex justify-center py-2">
+              <ObjectUploader
+                maxNumberOfFiles={1}
+                maxFileSize={10485760}
+                onGetUploadParameters={handleGetUploadUrl}
+                onComplete={handleFileUploadComplete}
+              >
+                <Upload className="mr-2 h-4 w-4" />
+                Upload File
+              </ObjectUploader>
+            </div>
             <FormField
               control={form.control}
               name="type"

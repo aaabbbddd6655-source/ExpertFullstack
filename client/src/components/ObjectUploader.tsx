@@ -4,8 +4,8 @@ import type { ReactNode } from "react";
 import Uppy from "@uppy/core";
 import Dashboard from "@uppy/dashboard";
 import AwsS3 from "@uppy/aws-s3";
-import "@uppy/core/dist/style.min.css";
-import "@uppy/dashboard/dist/style.min.css";
+import "@uppy/core/dist/style.css";
+import "@uppy/dashboard/dist/style.css";
 import { Button } from "@/components/ui/button";
 
 interface ObjectUploaderProps {
@@ -63,14 +63,14 @@ export function ObjectUploader({
     }
 
     return () => {
-      uppy.close();
+      uppy.cancelAll();
     };
   }, [uppy]);
 
   const handleOpen = () => {
-    const dashboard = uppy.getPlugin('Dashboard') as Dashboard | undefined;
-    if (dashboard) {
-      dashboard.openModal();
+    const dashboard = uppy.getPlugin('Dashboard');
+    if (dashboard && 'openModal' in dashboard) {
+      (dashboard as any).openModal();
     }
   };
 

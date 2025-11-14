@@ -198,8 +198,24 @@ export async function createAppointment(token: string, orderId: string, data: {
   return response.json();
 }
 
+export async function getMediaUploadUrl(token: string) {
+  const response = await fetch("/api/admin/media/upload", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+    }
+  });
+  
+  if (!response.ok) {
+    throw new Error("Failed to get upload URL");
+  }
+  
+  const data = await response.json();
+  return data.uploadURL;
+}
+
 export async function addMedia(token: string, orderId: string, data: {
-  url: string;
+  mediaUrl: string;
   type: "IMAGE" | "DOCUMENT";
   stageId: string;
 }) {
