@@ -15,7 +15,7 @@ import OrderSummary from "@/components/OrderSummary";
 import OrderTimeline from "@/components/OrderTimeline";
 import StageManager from "@/components/StageManager";
 import AppointmentForm from "@/components/AppointmentForm";
-import { getOrderDetails, updateStage, createAppointment, sendEmailUpdate, cancelOrder } from "@/lib/api";
+import { getOrderDetails, updateStage, createAppointment, sendEmailUpdate, cancelOrder, addMedia } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -33,6 +33,7 @@ const emailSchema = z.object({
 
 const mediaSchema = z.object({
   mediaUrl: z.string().url("Must be a valid URL"),
+  type: z.enum(["IMAGE", "DOCUMENT"]),
   stageId: z.string().min(1, "Stage is required"),
   notes: z.string().optional()
 });
@@ -137,12 +138,12 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
   });
 
   const addMediaMutation = useMutation({
-    mutationFn: async (mediaData: { mediaUrl: string; stageId: string; notes?: string }) => {
+    mutationFn: async (mediaData: { mediaUrl: string; type: "IMAGE" | "DOCUMENT"; stageId: string; notes?: string }) => {
       if (!token) throw new Error("Not authenticated");
-      return apiRequest("POST", `/api/admin/orders/${orderId}/media`, { 
-        url: mediaData.mediaUrl, 
-        stageId: mediaData.stageId,
-        notes: mediaData.notes 
+      return addMedia(token, orderId, {
+        url: mediaData.mediaUrl,
+        type: mediaData.type,
+        stageId: mediaData.stageId
       });
     },
     onSuccess: () => {
@@ -436,7 +437,7 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
   open: boolean;
   onOpenChange: (open: boolean) => void;
   stages: any[];
-  onSubmit: (data: { mediaUrl: string; stageId: string; notes?: string }) => void;
+  onSubmit: (data: { mediaUrl: string; type: "IMAGE" | "DOCUMENT"; stageId: string; notes?: string }) => void;
   onResetRef: (reset: () => void) => void;
   isPending: boolean;
 }) {
@@ -444,6 +445,7 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
     resolver: zodResolver(mediaSchema),
     defaultValues: {
       mediaUrl: "",
+      type: "IMAGE",
       stageId: "",
       notes: ""
     }
@@ -482,6 +484,27 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
                       data-testid="input-media-url"
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Type</FormLabel>
+                  <Select onValueChange={field.onChange} value={field.value}>
+                    <FormControl>
+                      <SelectTrigger data-testid="select-media-type">
+                        <SelectValue placeholder="Select type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="IMAGE">Image</SelectItem>
+                      <SelectItem value="DOCUMENT">Document</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

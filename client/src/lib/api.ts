@@ -200,7 +200,7 @@ export async function createAppointment(token: string, orderId: string, data: {
 export async function addMedia(token: string, orderId: string, data: {
   url: string;
   type: "IMAGE" | "DOCUMENT";
-  stageId?: string;
+  stageId: string;
 }) {
   const response = await fetch(`/api/admin/orders/${orderId}/media`, {
     method: "POST",
@@ -212,7 +212,8 @@ export async function addMedia(token: string, orderId: string, data: {
   });
   
   if (!response.ok) {
-    throw new Error("Failed to add media");
+    const error = await response.json();
+    throw new Error(error.error || "Failed to add media");
   }
   
   return response.json();
