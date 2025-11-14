@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { getOrders } from "@/lib/api";
 import { getToken } from "@/lib/auth";
+import { generateShortOrderId } from "@/lib/utils";
 
 export default function AdminDashboardPage() {
   const token = getToken();
@@ -64,11 +65,11 @@ export default function AdminDashboardPage() {
     o.status === "PENDING_MEASUREMENT" || o.status === "DESIGN_APPROVAL"
   ).length;
 
-  // Sample Delayed Orders Data
+  // Sample Delayed Orders Data (using realistic full order IDs)
   const delayedOrdersData = [
-    { id: "IV-1234567", customer: "Ahmed Hassan", stage: "Quality Check", days: 5 },
-    { id: "IV-2345678", customer: "Sara Mohamed", stage: "Delivery", days: 3 },
-    { id: "IV-3456789", customer: "Omar Khalil", stage: "Installation", days: 7 }
+    { id: "IV-1763076251234-AB12CD", customer: "Ahmed Hassan", stage: "Quality Check", days: 5 },
+    { id: "IV-1763076252345-EF34GH", customer: "Sara Mohamed", stage: "Delivery", days: 3 },
+    { id: "IV-1763076253456-IJ56KL", customer: "Omar Khalil", stage: "Installation", days: 7 }
   ];
 
   // Sample Notifications
@@ -225,7 +226,7 @@ export default function AdminDashboardPage() {
                 <tbody>
                   {delayedOrdersData.map((order, idx) => (
                     <tr key={idx} className="border-b last:border-0" data-testid={`row-delayed-order-${idx}`}>
-                      <td className="py-3 text-sm font-medium">{order.id}</td>
+                      <td className="py-3 text-sm font-medium">{generateShortOrderId(order.id)}</td>
                       <td className="py-3 text-sm">{order.customer}</td>
                       <td className="py-3 text-sm">{order.stage}</td>
                       <td className="py-3 text-sm">
