@@ -917,7 +917,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/objects/:objectPath(*)", async (req, res) => {
     const objectStorageService = new ObjectStorageService();
     try {
-      const objectFile = await objectStorageService.getObjectEntityFile(req.path);
+      // Strip /objects/ prefix from the path
+      const objectPath = req.params.objectPath;
+      const objectFile = await objectStorageService.getObjectEntityFile(objectPath);
       objectStorageService.downloadObject(objectFile, res);
     } catch (error) {
       console.error("Object download error:", error);

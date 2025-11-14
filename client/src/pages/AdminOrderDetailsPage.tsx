@@ -1,4 +1,4 @@
-import { ArrowLeft, ImagePlus, Mail, XCircle, Upload } from "lucide-react";
+import { ArrowLeft, ImagePlus, Mail, XCircle, Upload, FileText, Image as ImageIcon, ExternalLink } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -257,7 +257,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
     );
   }
 
-  const { order, customer, stages, appointment } = data;
+  const { order, customer, stages, appointment, media } = data;
 
   return (
     <div className="space-y-6">
@@ -290,6 +290,59 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
             </CardHeader>
             <CardContent>
               <OrderTimeline stages={stages} />
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Media Files</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {media && media.length > 0 ? (
+                <div className="space-y-3" data-testid="media-list">
+                  {media.map((item: any) => (
+                    <div 
+                      key={item.id} 
+                      className="flex items-start gap-3 p-3 rounded-lg border"
+                      data-testid={`media-item-${item.id}`}
+                    >
+                      <div className="flex-shrink-0">
+                        {item.type === "IMAGE" ? (
+                          <ImageIcon className="w-5 h-5 text-primary" />
+                        ) : (
+                          <FileText className="w-5 h-5 text-primary" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">
+                            {item.type === "IMAGE" ? "Image" : "Document"}
+                          </span>
+                          {item.stage && (
+                            <span className="text-xs text-muted-foreground">
+                              ({item.stage.stageType.replace(/_/g, " ")})
+                            </span>
+                          )}
+                        </div>
+                        <a 
+                          href={item.url.startsWith('/objects/') ? item.url : `/objects/${item.url.replace(/^https?:\/\/[^/]+\//, '')}`} 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="text-xs text-primary hover:underline flex items-center gap-1 mt-1"
+                          data-testid={`media-link-${item.id}`}
+                        >
+                          View file
+                          <ExternalLink className="w-3 h-3" />
+                        </a>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground" data-testid="no-media-message">
+                  No media files uploaded yet.
+                </p>
+              )}
             </CardContent>
           </Card>
         </div>
