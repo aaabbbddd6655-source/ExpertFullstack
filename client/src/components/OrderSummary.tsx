@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Package, User, Phone, Calendar, DollarSign } from "lucide-react";
+import { generateShortOrderId } from "@/lib/utils";
 
 interface OrderSummaryProps {
   orderNumber: string;
@@ -42,6 +43,8 @@ export default function OrderSummary({
     ).join(" ");
   };
 
+  const shortOrderId = generateShortOrderId(orderNumber);
+
   return (
     <div className="space-y-6">
       <Card>
@@ -49,8 +52,11 @@ export default function OrderSummary({
           <div className="flex items-start justify-between gap-4">
             <div>
               <CardTitle className="text-3xl font-serif mb-2" data-testid="text-order-number">
-                Order {orderNumber}
+                Order {shortOrderId}
               </CardTitle>
+              <p className="text-sm text-muted-foreground mb-2" data-testid="text-full-order-number">
+                Full ID: {orderNumber}
+              </p>
               <Badge className={getStatusColor(status)} data-testid="badge-order-status">
                 {formatStatus(status)}
               </Badge>

@@ -39,7 +39,9 @@ export const eventTypeEnum = pgEnum("event_type", [
   "STATUS_CHANGE",
   "NOTE_ADDED",
   "MEDIA_ADDED",
-  "APPOINTMENT_SET"
+  "APPOINTMENT_SET",
+  "EMAIL_SENT",
+  "ORDER_CANCELLED"
 ]);
 
 export const mediaTypeEnum = pgEnum("media_type", ["IMAGE", "DOCUMENT"]);

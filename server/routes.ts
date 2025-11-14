@@ -434,7 +434,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const order = await storage.createOrder({
         externalOrderId: orderNumber,
         customerId: customerRecord.id,
-        totalAmount: totalAmount,
+        totalAmount: totalAmount.toString(),
         status: "PENDING_MEASUREMENT",
         progressPercent: 5,
         currentStageId: null
@@ -610,6 +610,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Create new stage
+  app.post("/api/admin/orders/:id/stages", authenticateToken, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { stageType, status, notes } = req.body;
+
+      if (!stageType) {
+        return res.status(400).json({ error: "Stage type is required" });
+      }
+
+      // Verify order exists
+      const order = await storage.getOrderById(id);
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      const stage = await storage.createStage({
+        orderId: id,
+        stageType,
+        status: status || "PENDING",
+        startedAt: status === "IN_PROGRESS" ? new Date() : null,
+        completedAt: status === "DONE" ? new Date() : null,
+        notes: notes || null
+      });
+
+      await storage.createEvent({
+        orderId: id,
+        stageId: stage.id,
+        eventType: "STATUS_CHANGE",
+        description: `New stage added: ${stageType}`,
+        createdByUserId: (req as any).user.userId
+      });
+
+      res.json(stage);
+    } catch (error) {
+      console.error("Create stage error:", error);
+      res.status(500).json({ error: "Failed to create stage" });
+    }
+  });
+
+  // Delete stage
+  app.delete("/api/admin/orders/:id/stages/:stageId", authenticateToken, async (req, res) => {
+    try {
+      const { id, stageId } = req.params;
+
+      // Verify order exists
+      const order = await storage.getOrderById(id);
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      const stage = await storage.getStageById(stageId);
+      if (!stage || stage.orderId !== id) {
+        return res.status(404).json({ error: "Stage not found" });
+      }
+
+      // Prevent deletion of in-progress or completed stages
+      if (stage.status === "IN_PROGRESS" || stage.status === "DONE") {
+        return res.status(400).json({ 
+          error: "Cannot delete stages that are in progress or completed" 
+        });
+      }
+
+      await storage.deleteStage(stageId);
+
+      await storage.createEvent({
+        orderId: id,
+        stageId: null,
+        eventType: "STATUS_CHANGE",
+        description: `Stage deleted: ${stage.stageType}`,
+        createdByUserId: (req as any).user.userId
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Delete stage error:", error);
+      res.status(500).json({ error: "Failed to delete stage" });
+    }
+  });
+
   // Add media to order
   app.post("/api/admin/orders/:id/media", authenticateToken, async (req, res) => {
     try {
@@ -640,6 +720,78 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Add media error:", error);
       res.status(500).json({ error: "Failed to add media" });
+    }
+  });
+
+  // Send email update
+  app.post("/api/admin/orders/:id/email", authenticateToken, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { subject, message } = req.body;
+
+      if (!subject || !message) {
+        return res.status(400).json({ error: "Subject and message are required" });
+      }
+
+      const order = await storage.getOrderById(id);
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      const customer = await storage.getCustomerById(order.customerId);
+      if (!customer) {
+        return res.status(404).json({ error: "Customer not found" });
+      }
+
+      await emailService.sendCustomEmail(customer, order, subject, message);
+
+      await storage.createEvent({
+        orderId: id,
+        stageId: null,
+        eventType: "EMAIL_SENT",
+        description: `Email sent: ${subject}`,
+        createdByUserId: (req as any).user.userId
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Send email error:", error);
+      res.status(500).json({ error: "Failed to send email" });
+    }
+  });
+
+  // Cancel order
+  app.post("/api/admin/orders/:id/cancel", authenticateToken, async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { reason } = req.body;
+
+      const order = await storage.getOrderById(id);
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+
+      // Update order status to CANCELLED
+      await storage.updateOrder(id, { status: "CANCELLED" });
+
+      // Cancel associated appointment if exists
+      const appointment = await storage.getAppointmentByOrderId(id);
+      if (appointment) {
+        await storage.deleteAppointment(appointment.id);
+      }
+
+      await storage.createEvent({
+        orderId: id,
+        stageId: null,
+        eventType: "ORDER_CANCELLED",
+        description: reason || "Order cancelled by admin",
+        createdByUserId: (req as any).user.userId
+      });
+
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Cancel order error:", error);
+      res.status(500).json({ error: "Failed to cancel order" });
     }
   });
 

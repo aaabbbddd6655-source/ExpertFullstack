@@ -57,6 +57,7 @@ export interface IStorage {
   getStageById(id: string): Promise<OrderStage | undefined>;
   createStage(stage: InsertOrderStage): Promise<OrderStage>;
   updateStage(id: string, updates: Partial<InsertOrderStage>): Promise<OrderStage | undefined>;
+  deleteStage(id: string): Promise<void>;
   
   // Order event operations
   getEventsByOrderId(orderId: string): Promise<OrderEvent[]>;
@@ -76,6 +77,7 @@ export interface IStorage {
   getAppointmentByOrderId(orderId: string): Promise<InstallationAppointment | undefined>;
   createAppointment(appointment: InsertInstallationAppointment): Promise<InstallationAppointment>;
   updateAppointment(orderId: string, updates: Partial<InsertInstallationAppointment>): Promise<InstallationAppointment | undefined>;
+  deleteAppointment(id: string): Promise<void>;
   
   // Customer rating operations
   getRatingByOrderId(orderId: string): Promise<CustomerRating | undefined>;
@@ -190,6 +192,10 @@ export class DatabaseStorage implements IStorage {
     return results[0];
   }
 
+  async deleteStage(id: string): Promise<void> {
+    await db.delete(schema.orderStages).where(eq(schema.orderStages.id, id));
+  }
+
   // Order event operations
   async getEventsByOrderId(orderId: string): Promise<OrderEvent[]> {
     return await db.select()
@@ -256,6 +262,10 @@ export class DatabaseStorage implements IStorage {
       .where(eq(schema.installationAppointments.orderId, orderId))
       .returning();
     return results[0];
+  }
+
+  async deleteAppointment(id: string): Promise<void> {
+    await db.delete(schema.installationAppointments).where(eq(schema.installationAppointments.id, id));
   }
 
   // Customer rating operations

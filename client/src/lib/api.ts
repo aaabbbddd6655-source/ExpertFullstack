@@ -241,3 +241,80 @@ export async function createOrder(token: string, data: {
   
   return response.json();
 }
+
+export async function createStage(token: string, orderId: string, data: {
+  stageType: string;
+  status?: string;
+  notes?: string;
+}) {
+  const response = await fetch(`/api/admin/orders/${orderId}/stages`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to create stage");
+  }
+  
+  return response.json();
+}
+
+export async function deleteStage(token: string, orderId: string, stageId: string) {
+  const response = await fetch(`/api/admin/orders/${orderId}/stages/${stageId}`, {
+    method: "DELETE",
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to delete stage");
+  }
+  
+  return response.json();
+}
+
+export async function sendEmailUpdate(token: string, orderId: string, data: {
+  subject: string;
+  message: string;
+}) {
+  const response = await fetch(`/api/admin/orders/${orderId}/email`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to send email");
+  }
+  
+  return response.json();
+}
+
+export async function cancelOrder(token: string, orderId: string, reason?: string) {
+  const response = await fetch(`/api/admin/orders/${orderId}/cancel`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ reason })
+  });
+  
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.error || "Failed to cancel order");
+  }
+  
+  return response.json();
+}

@@ -5,6 +5,7 @@ export interface EmailService {
   sendStageChangedEmail(customer: Customer, order: Order, stage: OrderStage): Promise<void>;
   sendInstallationScheduledEmail(customer: Customer, appointment: InstallationAppointment): Promise<void>;
   sendRatingRequestEmail(customer: Customer, order: Order): Promise<void>;
+  sendCustomEmail(customer: Customer, order: Order, subject: string, message: string): Promise<void>;
 }
 
 export class ConsoleEmailService implements EmailService {
@@ -79,6 +80,17 @@ export class ConsoleEmailService implements EmailService {
     console.log(`\nWe hope you're enjoying your new custom interior!`);
     console.log(`\nYour feedback is important to us. Please take a moment to rate your experience.`);
     console.log(`\nThank you for choosing Evia!`);
+    console.log(`\nBest regards,\nThe Ivea Team`);
+    console.log("=====================================\n");
+  }
+
+  async sendCustomEmail(customer: Customer, order: Order, subject: string, message: string): Promise<void> {
+    console.log("\n📧 ====== EMAIL: CUSTOM MESSAGE ======");
+    console.log(`To: ${customer.email || customer.phone}`);
+    console.log(`Subject: ${subject}`);
+    console.log(`\nDear ${customer.fullName},`);
+    console.log(`\n${message}`);
+    console.log(`\nOrder Number: ${order.externalOrderId}`);
     console.log(`\nBest regards,\nThe Ivea Team`);
     console.log("=====================================\n");
   }
