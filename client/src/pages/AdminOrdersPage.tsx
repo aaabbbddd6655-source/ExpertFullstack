@@ -51,7 +51,7 @@ export default function AdminOrdersPage({ onViewOrder }: AdminOrdersPageProps) {
 
   const formattedOrders = orders.map((order: any) => ({
     id: order.id,
-    orderNumber: order.externalOrderId,
+    orderNumber: order.orderNumber,
     customerName: order.customerName,
     phone: order.phone,
     status: order.status,

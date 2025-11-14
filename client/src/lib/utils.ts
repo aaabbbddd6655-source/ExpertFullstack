@@ -7,11 +7,17 @@ export function cn(...inputs: ClassValue[]) {
 
 /**
  * Generates a short order ID from the full order number
- * Example: "IV-1763076259627-UX0QEH" => "IV-9627UH"
+ * New format: "IV-2025-0001" (already short, returned as-is)
+ * Old format: "IV-1763076259627-UX0QEH" => "IV-9627UH"
  */
 export function generateShortOrderId(fullOrderId: string): string {
   try {
-    // Pattern: IV-{timestamp}-{random}
+    // New format: IV-2025-0001 (already short and user-friendly)
+    if (fullOrderId.match(/^IV-\d{4}-\d{4}$/)) {
+      return fullOrderId;
+    }
+    
+    // Old format: IV-{timestamp}-{random}
     const parts = fullOrderId.split('-');
     if (parts.length === 3 && parts[0] === 'IV') {
       const timestamp = parts[1];

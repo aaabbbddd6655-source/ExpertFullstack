@@ -142,21 +142,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Generate order number
+      // Create order with transaction-safe sequence generation
       const currentYear = getCurrentYear();
-      const sequence = await storage.getNextOrderSequence(currentYear);
-      const orderNumber = generateOrderNumber(currentYear, sequence);
-
-      // Create order
-      const order = await storage.createOrder({
-        orderNumber,
+      const order = await storage.createOrderWithSequence({
         externalOrderId,
         customerId: customerRecord.id,
         totalAmount,
         status: "PENDING_MEASUREMENT",
         progressPercent: 5,
         currentStageId: null
-      });
+      }, currentYear);
 
       // Create default stages
       const stageTypes = [
@@ -439,24 +434,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Generate order number
-      const currentYear = getCurrentYear();
-      const sequence = await storage.getNextOrderSequence(currentYear);
-      const orderNumber = generateOrderNumber(currentYear, sequence);
-      
       // Use provided externalOrderId or generate one
       const finalExternalOrderId = externalOrderId || `EXT-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
-      // Create order
-      const order = await storage.createOrder({
-        orderNumber,
+      // Create order with transaction-safe sequence generation
+      const currentYear = getCurrentYear();
+      const order = await storage.createOrderWithSequence({
         externalOrderId: finalExternalOrderId,
         customerId: customerRecord.id,
         totalAmount: totalAmount.toString(),
         status: "PENDING_MEASUREMENT",
         progressPercent: 5,
         currentStageId: null
-      });
+      }, currentYear);
 
       // Create default stages
       const stageTypes = [

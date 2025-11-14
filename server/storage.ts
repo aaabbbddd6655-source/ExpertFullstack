@@ -42,6 +42,7 @@ export interface IStorage {
   getAllOrders(limit?: number): Promise<Order[]>;
   getNextOrderSequence(year: number): Promise<number>;
   createOrder(order: InsertOrder): Promise<Order>;
+  createOrderWithSequence(orderData: Omit<InsertOrder, 'orderNumber'>, year: number): Promise<Order>;
   updateOrder(id: string, updates: Partial<InsertOrder>): Promise<Order | undefined>;
   
   // Order lookup for customers
@@ -120,10 +121,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getNextOrderSequence(year: number): Promise<number> {
+    const yearPrefix = `IV-${year}-%`;
     const results = await db.select()
       .from(schema.orders)
-      .where(sql`EXTRACT(YEAR FROM ${schema.orders.createdAt}) = ${year}`)
-      .orderBy(desc(schema.orders.orderNumber));
+      .where(sql`${schema.orders.orderNumber} LIKE ${yearPrefix}`)
+      .orderBy(desc(schema.orders.orderNumber))
+      .limit(1);
     
     if (results.length === 0) {
       return 1;
@@ -169,6 +172,34 @@ export class DatabaseStorage implements IStorage {
   async createOrder(order: InsertOrder): Promise<Order> {
     const results = await db.insert(schema.orders).values(order).returning();
     return results[0];
+  }
+
+  async createOrderWithSequence(orderData: Omit<InsertOrder, 'orderNumber'>, year: number): Promise<Order> {
+    return await db.transaction(async (tx) => {
+      const yearPrefix = `IV-${year}-%`;
+      const results = await tx.select()
+        .from(schema.orders)
+        .where(sql`${schema.orders.orderNumber} LIKE ${yearPrefix}`)
+        .orderBy(desc(schema.orders.orderNumber))
+        .limit(1)
+        .for('update');
+      
+      let sequence = 1;
+      if (results.length > 0) {
+        const latestOrderNumber = results[0].orderNumber;
+        const match = latestOrderNumber.match(/^IV-\d{4}-(\d{4})$/);
+        if (match) {
+          sequence = parseInt(match[1], 10) + 1;
+        }
+      }
+      
+      const paddedSequence = sequence.toString().padStart(4, '0');
+      const orderNumber = `IV-${year}-${paddedSequence}`;
+      
+      const orderToInsert = { ...orderData, orderNumber };
+      const insertResults = await tx.insert(schema.orders).values(orderToInsert).returning();
+      return insertResults[0];
+    });
   }
 
   async updateOrder(id: string, updates: Partial<InsertOrder>): Promise<Order | undefined> {
