@@ -54,7 +54,7 @@ function CustomerRouter() {
 
 function AdminRouter() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [activePage, setActivePage] = useState("orders");
+  const [activePage, setActivePage] = useState("dashboard");
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const { toast } = useToast();
 
@@ -83,7 +83,7 @@ function AdminRouter() {
   const handleLogout = () => {
     auth.clearAuth();
     setIsLoggedIn(false);
-    setActivePage("orders");
+    setActivePage("dashboard");
     setSelectedOrderId(null);
     toast({
       title: "Signed out",
@@ -105,7 +105,8 @@ function AdminRouter() {
         <AdminSidebar
           activeItem={activePage}
           onNavigate={(path) => {
-            const page = path.split("/").pop() || "dashboard";
+            let page = path.split("/").pop() || "dashboard";
+            if (page === "admin") page = "dashboard";
             setActivePage(page);
             setSelectedOrderId(null);
           }}
