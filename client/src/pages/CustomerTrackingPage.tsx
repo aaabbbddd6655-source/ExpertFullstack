@@ -42,7 +42,9 @@ export default function CustomerTrackingPage({ orderData, onBack }: CustomerTrac
   const stagesWithMedia = stages.map(stage => ({
     ...stage,
     status: stage.status as "PENDING" | "IN_PROGRESS" | "DONE",
-    media: media.filter(m => m.stageId === stage.id)
+    media: media
+      .filter(m => m.stageId === stage.id)
+      .map(m => ({ url: m.url, type: m.type as "IMAGE" | "DOCUMENT" }))
   }));
 
   return (

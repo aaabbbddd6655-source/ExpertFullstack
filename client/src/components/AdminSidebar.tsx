@@ -1,4 +1,5 @@
 import { Home, Package, Users, Settings, LogOut } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 import { 
   Sidebar, 
   SidebarContent, 
@@ -19,22 +20,24 @@ interface AdminSidebarProps {
 }
 
 export default function AdminSidebar({ activeItem, onNavigate, onLogout }: AdminSidebarProps) {
+  const { t } = useTranslation();
+  
   const menuItems = [
-    { id: "dashboard", label: "Dashboard", icon: Home, path: "/admin" },
-    { id: "orders", label: "Orders", icon: Package, path: "/admin/orders" },
-    { id: "customers", label: "Customers", icon: Users, path: "/admin/customers" },
-    { id: "settings", label: "Settings", icon: Settings, path: "/admin/settings" },
+    { id: "dashboard", label: t('admin.dashboard'), icon: Home, path: "/admin" },
+    { id: "orders", label: t('admin.orders'), icon: Package, path: "/admin/orders" },
+    { id: "customers", label: t('admin.customers'), icon: Users, path: "/admin/customers" },
+    { id: "settings", label: t('admin.settings'), icon: Settings, path: "/admin/settings" },
   ];
 
   return (
     <Sidebar>
       <SidebarHeader className="p-6">
         <h2 className="text-2xl font-serif font-semibold">Ivea</h2>
-        <p className="text-sm text-muted-foreground">Operations Portal</p>
+        <p className="text-sm text-muted-foreground">{t('admin.welcome')}</p>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('admin.dashboard')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (
@@ -58,7 +61,7 @@ export default function AdminSidebar({ activeItem, onNavigate, onLogout }: Admin
           <SidebarMenuItem>
             <SidebarMenuButton onClick={onLogout} data-testid="button-logout">
               <LogOut className="w-4 h-4" />
-              <span>Sign Out</span>
+              <span>{t('admin.logout')}</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

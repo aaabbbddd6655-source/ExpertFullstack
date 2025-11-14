@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Package, Lock } from "lucide-react";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useTranslation } from "@/lib/i18n";
 import heroBackground from "@assets/generated_images/Premium_interior_hero_background_0b86cbc2.png";
 
 interface OrderLookupProps {
@@ -14,6 +15,7 @@ interface OrderLookupProps {
 }
 
 export default function OrderLookup({ onLookup, isLoading = false }: OrderLookupProps) {
+  const { t } = useTranslation();
   const [phone, setPhone] = useState("");
   const [orderNumber, setOrderNumber] = useState("");
 
@@ -42,30 +44,30 @@ export default function OrderLookup({ onLookup, isLoading = false }: OrderLookup
             <Package className="w-8 h-8 text-primary-foreground" />
           </div>
           <h1 className="text-4xl font-serif font-semibold text-white mb-3">
-            Track Your Order
+            {t('customer.title')}
           </h1>
           <p className="text-white/80 text-lg">
-            Enter your details to view your order status
+            {t('customer.subtitle')}
           </p>
         </div>
 
         <Card className="backdrop-blur-sm bg-card/95 shadow-2xl">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl">Order Lookup</CardTitle>
+            <CardTitle className="text-2xl">{t('customer.title')}</CardTitle>
             <CardDescription>
-              Enter your phone number and order number to track your custom interior order
+              {t('customer.subtitle')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-2">
                 <Label htmlFor="phone" className="text-sm font-medium">
-                  Phone Number
+                  {t('customer.phoneNumber')}
                 </Label>
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="+1 (555) 000-0000"
+                  placeholder={t('customer.phonePlaceholder')}
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   required
@@ -76,12 +78,12 @@ export default function OrderLookup({ onLookup, isLoading = false }: OrderLookup
 
               <div className="space-y-2">
                 <Label htmlFor="orderNumber" className="text-sm font-medium">
-                  Order Number
+                  {t('customer.orderNumber')}
                 </Label>
                 <Input
                   id="orderNumber"
                   type="text"
-                  placeholder="EV-2024-0001"
+                  placeholder={t('customer.orderPlaceholder')}
                   value={orderNumber}
                   onChange={(e) => setOrderNumber(e.target.value)}
                   required
@@ -96,7 +98,7 @@ export default function OrderLookup({ onLookup, isLoading = false }: OrderLookup
                 data-testid="button-lookup"
                 disabled={isLoading}
               >
-                {isLoading ? "Looking up..." : "Track My Order"}
+                {isLoading ? t('common.loading') : t('customer.trackOrder')}
               </Button>
             </form>
           </CardContent>
@@ -104,7 +106,7 @@ export default function OrderLookup({ onLookup, isLoading = false }: OrderLookup
 
         <div className="text-center mt-6 space-y-2">
           <p className="text-white/60 text-sm">
-            Having trouble? Contact our support team
+            {t('errors.general')}
           </p>
           <Link href="/admin">
             <button 
@@ -112,7 +114,7 @@ export default function OrderLookup({ onLookup, isLoading = false }: OrderLookup
               data-testid="link-admin"
             >
               <Lock className="w-3 h-3" />
-              Staff Login
+              {t('admin.login')}
             </button>
           </Link>
         </div>
