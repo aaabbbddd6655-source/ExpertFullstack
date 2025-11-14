@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import OrderSummary from "@/components/OrderSummary";
 import OrderTimeline from "@/components/OrderTimeline";
 import RatingForm from "@/components/RatingForm";
@@ -40,13 +41,14 @@ export default function CustomerTrackingPage({ orderData, onBack }: CustomerTrac
   // Map stages to include media
   const stagesWithMedia = stages.map(stage => ({
     ...stage,
+    status: stage.status as "PENDING" | "IN_PROGRESS" | "DONE",
     media: media.filter(m => m.stageId === stage.id)
   }));
 
   return (
     <div className="min-h-screen bg-background">
       <div className="border-b bg-card">
-        <div className="max-w-4xl mx-auto px-4 py-4">
+        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
           <Button 
             variant="ghost" 
             onClick={onBack}
@@ -55,6 +57,7 @@ export default function CustomerTrackingPage({ orderData, onBack }: CustomerTrac
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Lookup
           </Button>
+          <LanguageSwitcher />
         </div>
       </div>
 

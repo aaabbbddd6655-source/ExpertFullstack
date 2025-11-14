@@ -6,6 +6,8 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useToast } from "@/hooks/use-toast";
+import { LanguageProvider } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import NotFound from "@/pages/not-found";
 import OrderLookup from "@/components/OrderLookup";
 import CustomerTrackingPage from "@/pages/CustomerTrackingPage";
@@ -117,6 +119,7 @@ function AdminRouter() {
             <SidebarTrigger data-testid="button-sidebar-toggle" />
             <div className="flex items-center gap-4">
               <span className="text-sm text-muted-foreground">Admin Portal</span>
+              <LanguageSwitcher />
             </div>
           </header>
           <main className="flex-1 overflow-auto p-8">
@@ -162,10 +165,12 @@ function Router() {
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <LanguageProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

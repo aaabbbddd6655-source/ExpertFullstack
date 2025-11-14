@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Package, Lock } from "lucide-react";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import heroBackground from "@assets/generated_images/Premium_interior_hero_background_0b86cbc2.png";
 
 interface OrderLookupProps {
@@ -28,6 +29,11 @@ export default function OrderLookup({ onLookup, isLoading = false }: OrderLookup
         style={{ backgroundImage: `url(${heroBackground})` }}
       >
         <div className="absolute inset-0 bg-gradient-to-br from-black/60 via-black/50 to-black/70"></div>
+      </div>
+
+      {/* Language Switcher - Top Right */}
+      <div className="absolute top-4 right-4 z-20">
+        <LanguageSwitcher />
       </div>
 
       <div className="relative z-10 w-full max-w-md px-4">
