@@ -36,9 +36,11 @@ export interface IStorage {
   // Order operations
   getOrderById(id: string): Promise<Order | undefined>;
   getOrderByExternalId(externalOrderId: string): Promise<Order | undefined>;
+  getOrderByOrderNumber(orderNumber: string): Promise<Order | undefined>;
   getOrdersByStatus(status: string, limit?: number): Promise<Order[]>;
   getOrdersByDateRange(fromDate: Date, toDate: Date): Promise<Order[]>;
   getAllOrders(limit?: number): Promise<Order[]>;
+  getNextOrderSequence(year: number): Promise<number>;
   createOrder(order: InsertOrder): Promise<Order>;
   updateOrder(id: string, updates: Partial<InsertOrder>): Promise<Order | undefined>;
   
@@ -112,6 +114,31 @@ export class DatabaseStorage implements IStorage {
     return results[0];
   }
 
+  async getOrderByOrderNumber(orderNumber: string): Promise<Order | undefined> {
+    const results = await db.select().from(schema.orders).where(eq(schema.orders.orderNumber, orderNumber));
+    return results[0];
+  }
+
+  async getNextOrderSequence(year: number): Promise<number> {
+    const results = await db.select()
+      .from(schema.orders)
+      .where(sql`EXTRACT(YEAR FROM ${schema.orders.createdAt}) = ${year}`)
+      .orderBy(desc(schema.orders.orderNumber));
+    
+    if (results.length === 0) {
+      return 1;
+    }
+    
+    const latestOrderNumber = results[0].orderNumber;
+    const match = latestOrderNumber.match(/^IV-\d{4}-(\d{4})$/);
+    
+    if (match) {
+      return parseInt(match[1], 10) + 1;
+    }
+    
+    return 1;
+  }
+
   async getOrdersByStatus(status: string, limit = 100): Promise<Order[]> {
     return await db.select()
       .from(schema.orders)
@@ -153,11 +180,20 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getOrderWithDetails(phone: string, orderNumber: string) {
-    const customer = await this.getCustomerByPhone(phone);
-    if (!customer) return undefined;
+    const results = await db.select()
+      .from(schema.orders)
+      .innerJoin(schema.customers, eq(schema.orders.customerId, schema.customers.id))
+      .where(
+        and(
+          eq(schema.customers.phone, phone),
+          eq(schema.orders.orderNumber, orderNumber)
+        )
+      );
 
-    const order = await this.getOrderByExternalId(orderNumber);
-    if (!order || order.customerId !== customer.id) return undefined;
+    if (!results[0]) return undefined;
+
+    const order = results[0].orders;
+    const customer = results[0].customers;
 
     const stages = await this.getStagesByOrderId(order.id);
     const media = await this.getMediaByOrderId(order.id);

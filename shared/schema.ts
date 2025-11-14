@@ -65,6 +65,7 @@ export const customers = pgTable("customers", {
 
 export const orders = pgTable("orders", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  orderNumber: text("order_number").notNull().unique(),
   externalOrderId: text("external_order_id").notNull().unique(),
   customerId: varchar("customer_id").notNull().references(() => customers.id),
   totalAmount: numeric("total_amount", { precision: 10, scale: 2 }).notNull(),

@@ -7,6 +7,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
 import { insertCustomerSchema, insertOrderSchema } from "@shared/schema";
+import { normalizePhoneNumber, generateOrderNumber, getCurrentYear } from "./utils";
 
 const JWT_SECRET = process.env.SESSION_SECRET || "evia-secret-key-change-in-production";
 
@@ -42,10 +43,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Phone and order number are required" });
       }
 
-      const orderDetails = await storage.getOrderWithDetails(phone, orderNumber);
+      const normalizedPhone = normalizePhoneNumber(phone);
+      const orderDetails = await storage.getOrderWithDetails(normalizedPhone, orderNumber);
 
       if (!orderDetails) {
-        return res.status(404).json({ error: "Order not found" });
+        return res.status(404).json({ error: "Order not found. Please check your phone number and order number." });
       }
 
       res.json(orderDetails);
@@ -128,18 +130,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Missing required fields" });
       }
 
+      const normalizedPhone = normalizePhoneNumber(phone);
+
       // Create or get customer
-      let customerRecord = await storage.getCustomerByPhone(phone);
+      let customerRecord = await storage.getCustomerByPhone(normalizedPhone);
       if (!customerRecord) {
         customerRecord = await storage.createCustomer({
           fullName: customer.name || customer.fullName,
-          phone,
+          phone: normalizedPhone,
           email: customer.email || null
         });
       }
 
+      // Generate order number
+      const currentYear = getCurrentYear();
+      const sequence = await storage.getNextOrderSequence(currentYear);
+      const orderNumber = generateOrderNumber(currentYear, sequence);
+
       // Create order
       const order = await storage.createOrder({
+        orderNumber,
         externalOrderId,
         customerId: customerRecord.id,
         totalAmount,
@@ -417,22 +427,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const validatedData = createOrderSchema.parse(req.body);
       const { customerName, phone, email, totalAmount, externalOrderId } = validatedData;
 
+      const normalizedPhone = normalizePhoneNumber(phone);
+
       // Create or get customer
-      let customerRecord = await storage.getCustomerByPhone(phone);
+      let customerRecord = await storage.getCustomerByPhone(normalizedPhone);
       if (!customerRecord) {
         customerRecord = await storage.createCustomer({
           fullName: customerName,
-          phone,
+          phone: normalizedPhone,
           email: email || null
         });
       }
 
-      // Generate unique order ID if not provided
-      const orderNumber = externalOrderId || `IV-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      // Generate order number
+      const currentYear = getCurrentYear();
+      const sequence = await storage.getNextOrderSequence(currentYear);
+      const orderNumber = generateOrderNumber(currentYear, sequence);
+      
+      // Use provided externalOrderId or generate one
+      const finalExternalOrderId = externalOrderId || `EXT-${Date.now()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
 
       // Create order
       const order = await storage.createOrder({
-        externalOrderId: orderNumber,
+        orderNumber,
+        externalOrderId: finalExternalOrderId,
         customerId: customerRecord.id,
         totalAmount: totalAmount.toString(),
         status: "PENDING_MEASUREMENT",
