@@ -14,6 +14,7 @@ import {
   Home,
   Star
 } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 type StageStatus = "PENDING" | "IN_PROGRESS" | "DONE";
@@ -100,11 +101,11 @@ const stageConfig: Record<string, { icon: any; label: string; description: strin
   },
 };
 
-const getStatusBadge = (status: StageStatus) => {
+const getStatusBadge = (status: StageStatus, t: any) => {
   const variants = {
-    DONE: { variant: "default" as const, label: "Completed", className: "bg-green-600 hover:bg-green-600" },
-    IN_PROGRESS: { variant: "default" as const, label: "In Progress", className: "bg-blue-600 hover:bg-blue-600" },
-    PENDING: { variant: "secondary" as const, label: "Pending", className: "" },
+    DONE: { variant: "default" as const, label: t('admin.stages.done'), className: "bg-green-600 hover:bg-green-600" },
+    IN_PROGRESS: { variant: "default" as const, label: t('admin.stages.inProgress'), className: "bg-blue-600 hover:bg-blue-600" },
+    PENDING: { variant: "secondary" as const, label: t('admin.stages.pending'), className: "" },
   };
   
   const config = variants[status];
@@ -128,10 +129,22 @@ const getStageIcon = (stageType: string, status: StageStatus) => {
 };
 
 export default function OrderTimeline({ stages }: OrderTimelineProps) {
+  const { t } = useTranslation();
+  
+  const getStageLabel = (stageType: string) => {
+    return t(`admin.stages.types.${stageType}` as any) || stageType;
+  };
+  
+  const getStageDescription = (stageType: string) => {
+    return t(`admin.stages.descriptions.${stageType}` as any) || "";
+  };
+  
   return (
     <div className="space-y-4">
       {stages.map((stage, index) => {
-        const config = stageConfig[stage.stageType] || { label: stage.stageType, description: "" };
+        const config = stageConfig[stage.stageType] || stageConfig.ORDER_RECEIVED;
+        const label = getStageLabel(stage.stageType);
+        const description = getStageDescription(stage.stageType);
         const isLast = index === stages.length - 1;
         
         return (
@@ -160,16 +173,16 @@ export default function OrderTimeline({ stages }: OrderTimelineProps) {
                     <div className="flex items-start justify-between gap-4 mb-2">
                       <div>
                         <h3 className="text-lg font-semibold" data-testid={`text-stage-name-${stage.id}`}>
-                          {config.label}
+                          {label}
                         </h3>
-                        <p className="text-sm text-muted-foreground">{config.description}</p>
+                        <p className="text-sm text-muted-foreground">{description}</p>
                       </div>
-                      {getStatusBadge(stage.status)}
+                      {getStatusBadge(stage.status, t)}
                     </div>
 
                     {stage.completedAt && (
                       <p className="text-sm text-muted-foreground mb-2" data-testid={`text-completed-date-${stage.id}`}>
-                        Completed: {new Date(stage.completedAt).toLocaleDateString("en-US", { 
+                        {t('customer.completed')} {new Date(stage.completedAt).toLocaleDateString("en-US", { 
                           month: "long", 
                           day: "numeric", 
                           year: "numeric" 
@@ -179,7 +192,7 @@ export default function OrderTimeline({ stages }: OrderTimelineProps) {
 
                     {stage.startedAt && stage.status === "IN_PROGRESS" && (
                       <p className="text-sm text-muted-foreground mb-2">
-                        Started: {new Date(stage.startedAt).toLocaleDateString("en-US", { 
+                        {t('customer.started')} {new Date(stage.startedAt).toLocaleDateString("en-US", { 
                           month: "long", 
                           day: "numeric" 
                         })}

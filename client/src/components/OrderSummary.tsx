@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Package, User, Phone, Calendar, DollarSign } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 import { generateShortOrderId } from "@/lib/utils";
 
 interface OrderSummaryProps {
@@ -23,6 +24,8 @@ export default function OrderSummary({
   status,
   progressPercent
 }: OrderSummaryProps) {
+  const { t } = useTranslation();
+  
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
       PENDING_MEASUREMENT: "bg-yellow-600",
@@ -37,10 +40,8 @@ export default function OrderSummary({
     return colors[status] || "bg-gray-600";
   };
 
-  const formatStatus = (status: string) => {
-    return status.split("_").map(word => 
-      word.charAt(0) + word.slice(1).toLowerCase()
-    ).join(" ");
+  const getStatusLabel = (status: string) => {
+    return t(`statuses.${status}` as any) || status;
   };
 
   const shortOrderId = generateShortOrderId(orderNumber);
@@ -52,17 +53,17 @@ export default function OrderSummary({
           <div className="flex items-start justify-between gap-4">
             <div>
               <CardTitle className="text-3xl font-serif mb-2" data-testid="text-order-number">
-                Order {shortOrderId}
+                {t('customer.order')} {shortOrderId}
               </CardTitle>
               <p className="text-sm text-muted-foreground mb-2" data-testid="text-full-order-number">
-                Full ID: {orderNumber}
+                {t('customer.fullId')} {orderNumber}
               </p>
               <Badge className={getStatusColor(status)} data-testid="badge-order-status">
-                {formatStatus(status)}
+                {getStatusLabel(status)}
               </Badge>
             </div>
             <div className="text-right">
-              <p className="text-sm text-muted-foreground">Order Date</p>
+              <p className="text-sm text-muted-foreground">{t('customer.orderDate')}</p>
               <p className="font-medium" data-testid="text-order-date">
                 {new Date(createdAt).toLocaleDateString("en-US", {
                   month: "long",
@@ -76,7 +77,7 @@ export default function OrderSummary({
         <CardContent className="space-y-6">
           <div>
             <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium">Overall Progress</span>
+              <span className="text-sm font-medium">{t('customer.overallProgress')}</span>
               <span className="text-sm font-semibold" data-testid="text-progress-percent">
                 {progressPercent}%
               </span>
@@ -90,7 +91,7 @@ export default function OrderSummary({
                 <User className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Customer</p>
+                <p className="text-sm text-muted-foreground">{t('customer.customerLabel')}</p>
                 <p className="font-medium" data-testid="text-customer-name">{customerName}</p>
               </div>
             </div>
@@ -100,7 +101,7 @@ export default function OrderSummary({
                 <Phone className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Phone</p>
+                <p className="text-sm text-muted-foreground">{t('customer.phoneLabel')}</p>
                 <p className="font-medium" data-testid="text-customer-phone">{phone}</p>
               </div>
             </div>
@@ -110,7 +111,7 @@ export default function OrderSummary({
                 <DollarSign className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Total Amount</p>
+                <p className="text-sm text-muted-foreground">{t('customer.totalAmount')}</p>
                 <p className="font-medium" data-testid="text-total-amount">
                   ${totalAmount.toLocaleString()}
                 </p>
@@ -122,8 +123,8 @@ export default function OrderSummary({
                 <Package className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-sm text-muted-foreground">Order Type</p>
-                <p className="font-medium">Custom Curtains</p>
+                <p className="text-sm text-muted-foreground">{t('customer.orderType')}</p>
+                <p className="font-medium">{t('customer.customCurtains')}</p>
               </div>
             </div>
           </div>

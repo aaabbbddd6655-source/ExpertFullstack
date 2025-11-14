@@ -55,7 +55,25 @@
     "submitRating": "إرسال التقييم",
     "comments": "تعليقات (اختياري)",
     "thankYou": "شكراً لك على ملاحظاتك!",
-    "ratingSubmitted": "تم إرسال تقييمك بنجاح."
+    "ratingSubmitted": "تم إرسال تقييمك بنجاح.",
+    "order": "الطلب",
+    "fullId": "الرقم الكامل:",
+    "overallProgress": "التقدم الإجمالي",
+    "customerLabel": "العميل",
+    "phoneLabel": "الهاتف",
+    "orderType": "نوع الطلب",
+    "customCurtains": "ستائر مخصصة",
+    "completed": "اكتمل:",
+    "started": "بدأ:",
+    "rateExperience": "قيّم تجربتك",
+    "rateDescription": "نود أن نسمع عن تجربتك مع إيفيا",
+    "ratingExcellent": "ممتاز! نحن سعداء بسماع ذلك!",
+    "ratingGreat": "رائع! شكراً على ملاحظاتك!",
+    "ratingGood": "جيد! نقدر مدخلاتك!",
+    "ratingFair": "سنعمل على تحسين تجربتك.",
+    "ratingPoor": "نأسف لسماع ذلك. يرجى مشاركة المزيد من التفاصيل.",
+    "additionalComments": "تعليقات إضافية (اختياري)",
+    "commentPlaceholder": "أخبرنا المزيد عن تجربتك..."
   },
   "admin": {
     "dashboard": "لوحة التحكم",
@@ -146,6 +164,21 @@
         "DELIVERY_SCHEDULING": "جدولة التسليم",
         "INSTALLATION": "التركيب",
         "RATING": "التقييم"
+      },
+      "descriptions": {
+        "ORDER_RECEIVED": "تم تأكيد طلبك",
+        "SITE_MEASUREMENT": "سيقوم فريقنا بقياس المساحة الخاصة بك",
+        "DESIGN_APPROVAL": "راجع ووافق على تصميمك المخصص",
+        "MATERIALS_PROCUREMENT": "الحصول على مواد ممتازة",
+        "PRODUCTION_CUTTING": "القطع الدقيق للمواد",
+        "PRODUCTION_STITCHING": "الخياطة والتجميع الخبير",
+        "PRODUCTION_ASSEMBLY": "التجميع النهائي للمكونات",
+        "FINISHING": "لمسات نهائية عالية الجودة",
+        "QUALITY_CHECK": "فحص جودة صارم",
+        "PACKAGING": "تغليف دقيق للتسليم",
+        "DELIVERY_SCHEDULING": "تنسيق وقت التسليم",
+        "INSTALLATION": "تركيب احترافي في موقعك",
+        "RATING": "شارك ملاحظاتك"
       }
     },
     "newOrder": {

@@ -55,7 +55,25 @@
     "submitRating": "Submit Rating",
     "comments": "Comments (optional)",
     "thankYou": "Thank you for your feedback!",
-    "ratingSubmitted": "Your rating has been submitted successfully."
+    "ratingSubmitted": "Your rating has been submitted successfully.",
+    "order": "Order",
+    "fullId": "Full ID:",
+    "overallProgress": "Overall Progress",
+    "customerLabel": "Customer",
+    "phoneLabel": "Phone",
+    "orderType": "Order Type",
+    "customCurtains": "Custom Curtains",
+    "completed": "Completed:",
+    "started": "Started:",
+    "rateExperience": "Rate Your Experience",
+    "rateDescription": "We'd love to hear about your experience with Ivea",
+    "ratingExcellent": "Excellent! We're thrilled to hear that!",
+    "ratingGreat": "Great! Thank you for your feedback!",
+    "ratingGood": "Good! We appreciate your input!",
+    "ratingFair": "We'll work on improving your experience.",
+    "ratingPoor": "We're sorry to hear that. Please share more details.",
+    "additionalComments": "Additional Comments (Optional)",
+    "commentPlaceholder": "Tell us more about your experience..."
   },
   "admin": {
     "dashboard": "Dashboard",
@@ -146,6 +164,21 @@
         "DELIVERY_SCHEDULING": "Delivery Scheduling",
         "INSTALLATION": "Installation",
         "RATING": "Rating"
+      },
+      "descriptions": {
+        "ORDER_RECEIVED": "Your order has been confirmed",
+        "SITE_MEASUREMENT": "Our team will measure your space",
+        "DESIGN_APPROVAL": "Review and approve your custom design",
+        "MATERIALS_PROCUREMENT": "Sourcing premium materials",
+        "PRODUCTION_CUTTING": "Precision cutting of materials",
+        "PRODUCTION_STITCHING": "Expert stitching and assembly",
+        "PRODUCTION_ASSEMBLY": "Final assembly of components",
+        "FINISHING": "Quality finishing touches",
+        "QUALITY_CHECK": "Rigorous quality inspection",
+        "PACKAGING": "Careful packaging for delivery",
+        "DELIVERY_SCHEDULING": "Coordinating delivery time",
+        "INSTALLATION": "Professional installation at your location",
+        "RATING": "Share your feedback"
       }
     },
     "newOrder": {

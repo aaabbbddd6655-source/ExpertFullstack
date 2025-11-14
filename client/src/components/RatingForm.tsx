@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Star } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 
 interface RatingFormProps {
@@ -11,9 +12,19 @@ interface RatingFormProps {
 }
 
 export default function RatingForm({ orderId, onSubmit }: RatingFormProps) {
+  const { t } = useTranslation();
   const [rating, setRating] = useState(0);
   const [hoveredRating, setHoveredRating] = useState(0);
   const [comment, setComment] = useState("");
+
+  const getRatingMessage = (rating: number) => {
+    if (rating === 5) return t('customer.ratingExcellent');
+    if (rating === 4) return t('customer.ratingGreat');
+    if (rating === 3) return t('customer.ratingGood');
+    if (rating === 2) return t('customer.ratingFair');
+    if (rating === 1) return t('customer.ratingPoor');
+    return "";
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,15 +36,15 @@ export default function RatingForm({ orderId, onSubmit }: RatingFormProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl font-serif">Rate Your Experience</CardTitle>
+        <CardTitle className="text-2xl font-serif">{t('customer.rateExperience')}</CardTitle>
         <CardDescription>
-          We'd love to hear about your experience with Ivea
+          {t('customer.rateDescription')}
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-3">
-            <label className="text-sm font-medium">How would you rate your experience?</label>
+            <label className="text-sm font-medium">{t('customer.ratingPrompt')}</label>
             <div className="flex gap-2 justify-center py-4">
               {[1, 2, 3, 4, 5].map((value) => (
                 <button
@@ -58,22 +69,18 @@ export default function RatingForm({ orderId, onSubmit }: RatingFormProps) {
             </div>
             {rating > 0 && (
               <p className="text-center text-sm text-muted-foreground">
-                {rating === 5 && "Excellent! We're thrilled to hear that!"}
-                {rating === 4 && "Great! Thank you for your feedback!"}
-                {rating === 3 && "Good! We appreciate your input!"}
-                {rating === 2 && "We'll work on improving your experience."}
-                {rating === 1 && "We're sorry to hear that. Please share more details."}
+                {getRatingMessage(rating)}
               </p>
             )}
           </div>
 
           <div className="space-y-2">
             <label htmlFor="comment" className="text-sm font-medium">
-              Additional Comments (Optional)
+              {t('customer.additionalComments')}
             </label>
             <Textarea
               id="comment"
-              placeholder="Tell us more about your experience..."
+              placeholder={t('customer.commentPlaceholder')}
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               className="min-h-32 resize-none"
@@ -87,7 +94,7 @@ export default function RatingForm({ orderId, onSubmit }: RatingFormProps) {
             disabled={rating === 0}
             data-testid="button-submit-rating"
           >
-            Submit Rating
+            {t('customer.submitRating')}
           </Button>
         </form>
       </CardContent>
