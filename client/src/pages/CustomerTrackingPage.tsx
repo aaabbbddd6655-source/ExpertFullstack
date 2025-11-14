@@ -67,7 +67,7 @@ export default function CustomerTrackingPage({ orderData, onBack }: CustomerTrac
 
       <div className="max-w-4xl mx-auto px-4 py-8 space-y-8">
         <OrderSummary 
-          orderNumber={order.externalOrderId}
+          orderNumber={order.orderNumber}
           customerName={customer.fullName}
           phone={customer.phone}
           createdAt={order.createdAt}

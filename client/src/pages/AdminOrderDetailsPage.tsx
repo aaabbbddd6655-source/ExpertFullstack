@@ -374,7 +374,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
       <CancelDialog 
         open={cancelDialogOpen}
         onOpenChange={setCancelDialogOpen}
-        orderNumber={order.externalOrderId}
+        orderNumber={order.orderNumber}
         onConfirm={(data) => cancelOrderMutation.mutate(data)}
         onResetRef={setCancelFormReset}
         isPending={cancelOrderMutation.isPending}

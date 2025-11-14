@@ -3,6 +3,7 @@
 export interface OrderLookupResponse {
   order: {
     id: string;
+    orderNumber: string;
     externalOrderId: string;
     customerId: string;
     totalAmount: number;

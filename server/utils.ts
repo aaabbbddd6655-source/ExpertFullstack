@@ -1,37 +1,39 @@
 /**
- * Normalize Saudi phone numbers to a canonical format: +9665xxxxxxxx
+ * Normalize phone numbers to canonical format
+ * - If already in international format (+countrycode), returns as-is
+ * - For Saudi local formats (0501234567 or 501234567), converts to +9665xxxxxxxx
  * Accepts formats:
- * - +966501234567
- * - 966501234567
- * - 0501234567
- * - 501234567
+ * - +966501234567 (any country code)
+ * - +15551234567 (international format)
+ * - 0501234567 (Saudi local with leading 0)
+ * - 501234567 (Saudi local without leading 0)
  */
 export function normalizePhoneNumber(phone: string): string {
   // Remove all spaces, dashes, and parentheses
   let cleaned = phone.replace(/[\s\-\(\)]/g, '');
   
-  // Remove leading + if present
+  // If already in international format (starts with +), return as-is
   if (cleaned.startsWith('+')) {
-    cleaned = cleaned.substring(1);
+    return cleaned;
   }
   
-  // If starts with 966, ensure it's formatted correctly
+  // If starts with 966 (Saudi country code without +), add +
   if (cleaned.startsWith('966')) {
     return `+${cleaned}`;
   }
   
-  // If starts with 0, remove it and add +966
+  // If starts with 0 (local Saudi number with leading 0), convert to international
   if (cleaned.startsWith('0')) {
     return `+966${cleaned.substring(1)}`;
   }
   
-  // If it's just the number (5xxxxxxxx), add +966
+  // If it's just the number (5xxxxxxxx or similar), assume Saudi and add +966
   if (cleaned.length === 9 && cleaned.startsWith('5')) {
     return `+966${cleaned}`;
   }
   
-  // Default: assume it needs +966 prefix
-  return `+966${cleaned}`;
+  // If none of the above patterns match, return with + prefix (assume already has country code)
+  return `+${cleaned}`;
 }
 
 /**
