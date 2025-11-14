@@ -1,6 +1,6 @@
 import { ArrowLeft, ImagePlus, Mail, XCircle, Upload } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -401,9 +401,9 @@ function EmailDialog({ open, onOpenChange, onSubmit, onResetRef, isPending }: {
   });
 
   // Provide reset function to parent
-  useState(() => {
+  useEffect(() => {
     onResetRef(() => form.reset);
-  });
+  }, [onResetRef, form.reset]);
 
   const handleSubmit = (data: z.infer<typeof emailSchema>) => {
     onSubmit(data);
@@ -502,9 +502,9 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
   const token = getToken();
 
   // Provide reset function to parent
-  useState(() => {
+  useEffect(() => {
     onResetRef(() => form.reset);
-  });
+  }, [onResetRef, form.reset]);
 
   const handleFileUploadComplete = (uploadedUrl: string) => {
     form.setValue("mediaUrl", uploadedUrl);
@@ -680,9 +680,9 @@ function CancelDialog({ open, onOpenChange, orderNumber, onConfirm, onResetRef, 
   });
 
   // Provide reset function to parent
-  useState(() => {
+  useEffect(() => {
     onResetRef(() => form.reset);
-  });
+  }, [onResetRef, form.reset]);
 
   const handleSubmit = (data: z.infer<typeof cancelSchema>) => {
     onConfirm(data);
