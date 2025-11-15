@@ -9,9 +9,22 @@ The Ivea Order Tracking Platform is a production-ready, fully functional web app
 
 The system integrates with external e-commerce platforms via webhooks and provides automated email notifications at key order milestones.
 
-**Current Status:** ✅ **Production Ready** - All features implemented, tested, and verified working with real database and API integration.
+**Current Status:** ✅ **Production Ready** - Fully bilingual (Arabic/English) with complete RTL support. All features implemented, tested, and verified working with real database and API integration.
 
 **Recent Updates (Nov 15, 2025):**
+- ✅ **Complete RTL Layout Support** - Full Right-to-Left layout implementation
+  - Converted all directional CSS utilities to logical properties (ms-/me-/ps-/pe-/start-/end-)
+  - Fixed 17 UI components for RTL compatibility (dropdown, select, sidebar, sheet, dialog, etc.)
+  - All spacing uses gap instead of space-x- for RTL-safe layouts
+  - Fixed positioning in AdminLogin, OrderLookup, StageManager, ScrollIndicator
+  - Calendar navigation buttons now use logical positioning
+  - Sidebar badges and action buttons use logical end- positioning
+- ✅ **Translation Completeness** - Added 40+ missing translation keys
+  - Stage Type Settings: stageTypeSettings, active/inactive, displayName, sortOrder, createError, etc.
+  - Customers Page: description, totalOrders, activeOrders, addCustomerDescription, etc.
+  - All admin.stages.* keys now complete in both languages
+  - All admin.customers.* keys now complete in both languages
+  - No translation keys show as raw text - everything displays properly in both languages
 - ✅ **Stage Icon Customization System** - Complete icon management for order stages
   - Added icon column to stage_type_settings (text field, NOT NULL, default "Circle")
   - Seeded default icons for all 13 predefined stages (Package, Ruler, CheckCircle, ShoppingCart, Scissors, Sparkles, Box, Star, Package2, Truck, Wrench, MessageSquare)
