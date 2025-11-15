@@ -35,7 +35,10 @@
     "required": "مطلوب",
     "optional": "اختياري",
     "yes": "نعم",
-    "no": "لا"
+    "no": "لا",
+    "days": "أيام",
+    "orders": "طلبات",
+    "installation": "التركيب"
   },
   "header": {
     "switchToArabic": "العربية",
@@ -132,6 +135,9 @@
       "inProgress": "قيد التنفيذ",
       "delayed": "متأخر",
       "receivedToday": "استلمت اليوم",
+      "receivedThisWeek": "استلمت هذا الأسبوع",
+      "receivedThisMonth": "استلمت هذا الشهر",
+      "inSelectedRange": "في النطاق المحدد",
       "currentlyActive": "نشط حالياً",
       "successfullyDelivered": "تم التسليم بنجاح",
       "needsAttention": "يحتاج إلى انتباه"
@@ -157,7 +163,9 @@
       "currentStage": "المرحلة الحالية",
       "customerName": "اسم العميل",
       "orderId": "رقم الطلب",
-      "noDelayedOrders": "لا توجد طلبات متأخرة في الفترة المحددة"
+      "noDelayedOrders": "لا توجد طلبات متأخرة في الفترة المحددة",
+      "notifications": "الإشعارات",
+      "noActivity": "لا يوجد نشاط في الفترة المحددة"
     },
     "orders": {
       "title": "الطلبات",
@@ -385,7 +393,40 @@
         "SUPPORT": "عرض الطلبات والرد على استفسارات العملاء والتحديثات الأساسية"
       },
       "stageTypeSettings": "إعدادات نوع المرحلة",
-      "contactAdmin": "اتصل بمسؤول النظام لتغيير تعيينات الأدوار"
+      "contactAdmin": "اتصل بمسؤول النظام لتغيير تعيينات الأدوار",
+      "profileUpdated": "تم تحديث إعدادات ملفك الشخصي",
+      "profileInfo": "معلومات الملف الشخصي",
+      "profileDescription": "عرض وتحديث تفاصيل حسابك",
+      "fullName": "الاسم الكامل",
+      "yourName": "اسمك",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "your.email@example.com",
+      "role": "الدور",
+      "contactAdminRole": "اتصل بالمسؤول لتغيير دورك",
+      "saveChanges": "حفظ التغييرات",
+      "security": "الأمان",
+      "securityDescription": "إدارة كلمة المرور وإعدادات الأمان",
+      "currentPassword": "كلمة المرور الحالية",
+      "currentPasswordPlaceholder": "أدخل كلمة المرور الحالية",
+      "newPassword": "كلمة المرور الجديدة",
+      "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
+      "confirmPassword": "تأكيد كلمة المرور",
+      "confirmPasswordPlaceholder": "أكد كلمة المرور الجديدة",
+      "changePassword": "تغيير كلمة المرور",
+      "passwordChangeTitle": "تغيير كلمة المرور",
+      "passwordChangeComingSoon": "ستتوفر وظيفة تغيير كلمة المرور قريباً",
+      "languagePreferences": "تفضيلات اللغة",
+      "languageDescription": "اختر لغتك المفضلة للواجهة",
+      "interfaceLanguage": "لغة الواجهة",
+      "languageChangeNote": "سيتم تطبيق التغييرات فوراً على التطبيق بالكامل",
+      "rolesPermissions": "الأدوار والصلاحيات",
+      "rolesDescription": "أدوار المستخدمين ومستويات الوصول في النظام",
+      "appInfo": "معلومات التطبيق",
+      "appInfoDescription": "تفاصيل النظام والإصدار",
+      "platform": "المنصة",
+      "platformName": "نظام تتبع طلبات إيفيا",
+      "environment": "البيئة",
+      "environmentProduction": "الإنتاج"
     },
     "timeline": {
       "orderProgress": "تقدم الطلب",
@@ -399,7 +440,25 @@
       "PRODUCTION": "إنتاج",
       "QUALITY": "جودة",
       "INSTALLATION": "تركيب",
-      "SUPPORT": "دعم"
+      "SUPPORT": "دعم",
+      "admin": "مشرف",
+      "adminDescription": "وصول كامل للنظام، يمكنه إدارة المستخدمين والطلبات وجميع الإعدادات",
+      "allAccess": "وصول كامل",
+      "operations": "عمليات",
+      "operationsDescription": "إدارة الطلبات، عرض العملاء، جدولة المواعيد",
+      "highAccess": "وصول عالي",
+      "production": "إنتاج",
+      "productionDescription": "تحديث مراحل الإنتاج، فحوصات الجودة، التعبئة",
+      "productionOnly": "الإنتاج فقط",
+      "quality": "جودة",
+      "qualityDescription": "إجراء فحوصات الجودة، الموافقة على المنتجات النهائية",
+      "qcAccess": "وصول الجودة",
+      "installation": "تركيب",
+      "installationDescription": "عرض جداول التركيب، تحديث حالة المواعيد",
+      "installationOnly": "التركيب فقط",
+      "support": "دعم",
+      "supportDescription": "عرض الطلبات، الرد على استفسارات العملاء، التحديثات الأساسية",
+      "limitedAccess": "وصول محدود"
     }
   },
   "statuses": {

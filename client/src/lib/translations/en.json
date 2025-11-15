@@ -35,7 +35,10 @@
     "required": "Required",
     "optional": "Optional",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "days": "days",
+    "orders": "Orders",
+    "installation": "Installation"
   },
   "header": {
     "switchToArabic": "العربية",
@@ -132,6 +135,9 @@
       "inProgress": "In Progress",
       "delayed": "Delayed",
       "receivedToday": "Received today",
+      "receivedThisWeek": "Received this week",
+      "receivedThisMonth": "Received this month",
+      "inSelectedRange": "In selected range",
       "currentlyActive": "Currently active",
       "successfullyDelivered": "Successfully delivered",
       "needsAttention": "Needs attention"
@@ -157,7 +163,9 @@
       "currentStage": "Current Stage",
       "customerName": "Customer Name",
       "orderId": "Order ID",
-      "noDelayedOrders": "No delayed orders in selected period"
+      "noDelayedOrders": "No delayed orders in selected period",
+      "notifications": "Notifications",
+      "noActivity": "No activity in selected period"
     },
     "orders": {
       "title": "Orders",
@@ -385,7 +393,40 @@
         "SUPPORT": "View orders, respond to customer inquiries, basic updates"
       },
       "stageTypeSettings": "Stage Type Settings",
-      "contactAdmin": "Contact a system administrator to change role assignments"
+      "contactAdmin": "Contact a system administrator to change role assignments",
+      "profileUpdated": "Your profile settings have been updated",
+      "profileInfo": "Profile Information",
+      "profileDescription": "View and update your account details",
+      "fullName": "Full Name",
+      "yourName": "Your name",
+      "email": "Email",
+      "emailPlaceholder": "your.email@example.com",
+      "role": "Role",
+      "contactAdminRole": "Contact an administrator to change your role",
+      "saveChanges": "Save Changes",
+      "security": "Security",
+      "securityDescription": "Manage your password and security settings",
+      "currentPassword": "Current Password",
+      "currentPasswordPlaceholder": "Enter current password",
+      "newPassword": "New Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "changePassword": "Change Password",
+      "passwordChangeTitle": "Password change",
+      "passwordChangeComingSoon": "Password change functionality coming soon",
+      "languagePreferences": "Language Preferences",
+      "languageDescription": "Choose your preferred language for the interface",
+      "interfaceLanguage": "Interface Language",
+      "languageChangeNote": "Changes will be applied immediately across the entire application",
+      "rolesPermissions": "Roles & Permissions",
+      "rolesDescription": "User roles and their access levels in the system",
+      "appInfo": "Application Information",
+      "appInfoDescription": "System and version details",
+      "platform": "Platform",
+      "platformName": "Ivea Order Tracking",
+      "environment": "Environment",
+      "environmentProduction": "Production"
     },
     "timeline": {
       "orderProgress": "Order Progress",
@@ -399,7 +440,25 @@
       "PRODUCTION": "Production",
       "QUALITY": "Quality",
       "INSTALLATION": "Installation",
-      "SUPPORT": "Support"
+      "SUPPORT": "Support",
+      "admin": "Admin",
+      "adminDescription": "Full system access, can manage users, orders, and all settings",
+      "allAccess": "All Access",
+      "operations": "Operations",
+      "operationsDescription": "Manage orders, view customers, schedule appointments",
+      "highAccess": "High Access",
+      "production": "Production",
+      "productionDescription": "Update production stages, quality checks, packaging",
+      "productionOnly": "Production Only",
+      "quality": "Quality",
+      "qualityDescription": "Perform quality inspections, approve finished products",
+      "qcAccess": "QC Access",
+      "installation": "Installation",
+      "installationDescription": "View installation schedules, update appointment status",
+      "installationOnly": "Installation Only",
+      "support": "Support",
+      "supportDescription": "View orders, respond to customer inquiries, basic updates",
+      "limitedAccess": "Limited Access"
     }
   },
   "statuses": {
