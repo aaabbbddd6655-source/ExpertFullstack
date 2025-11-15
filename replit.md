@@ -22,9 +22,12 @@ The system integrates with external e-commerce platforms via webhooks and provid
 - ✅ **Translation Completeness** - Added 40+ missing translation keys
   - Stage Type Settings: stageTypeSettings, active/inactive, displayName, sortOrder, createError, etc.
   - Customers Page: description, totalOrders, activeOrders, addCustomerDescription, etc.
+  - Dashboard Stats: admin.stats.completed now translates to "منجز" (Arabic) / "Completed" (English)
   - All admin.stages.* keys now complete in both languages
   - All admin.customers.* keys now complete in both languages
+  - All admin.stats.* keys now complete in both languages
   - No translation keys show as raw text - everything displays properly in both languages
+  - **End-to-end testing verified:** All pages (Dashboard, Settings, Customers) display correct translations in both languages
 - ✅ **Stage Icon Customization System** - Complete icon management for order stages
   - Added icon column to stage_type_settings (text field, NOT NULL, default "Circle")
   - Seeded default icons for all 13 predefined stages (Package, Ruler, CheckCircle, ShoppingCart, Scissors, Sparkles, Box, Star, Package2, Truck, Wrench, MessageSquare)
