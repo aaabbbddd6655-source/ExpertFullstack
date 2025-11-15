@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Edit2, Save, X, Plus } from "lucide-react";
-import { queryClient, apiRequest } from "@/lib/queryClient";
+import { queryClient } from "@/lib/queryClient";
 import { getToken } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import IconPicker, { AVAILABLE_ICONS } from "@/components/IconPicker";
@@ -52,7 +52,22 @@ export default function StageTypeSettings() {
 
   const updateMutation = useMutation({
     mutationFn: async ({ stageType, updates }: { stageType: string; updates: Partial<StageTypeSetting> }) => {
-      return apiRequest(`/api/admin/stage-types/${stageType}`, "PATCH", updates);
+      if (!token) throw new Error("Not authenticated");
+      const response = await fetch(`/api/admin/stage-types/${stageType}`, {
+        method: "PATCH",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(updates)
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to update stage type");
+      }
+      
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/stage-types"] });
@@ -74,7 +89,22 @@ export default function StageTypeSettings() {
 
   const createMutation = useMutation({
     mutationFn: async (data: typeof newStageData) => {
-      return apiRequest("/api/admin/stage-types", "POST", data);
+      if (!token) throw new Error("Not authenticated");
+      const response = await fetch("/api/admin/stage-types", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+      });
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || "Failed to create stage type");
+      }
+      
+      return response.json();
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/stage-types"] });

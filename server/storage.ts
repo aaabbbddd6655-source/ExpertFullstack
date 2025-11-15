@@ -252,6 +252,7 @@ export class DatabaseStorage implements IStorage {
   // Order stage operations
   async getStagesByOrderId(orderId: string): Promise<OrderStage[]> {
     // Join with stageTypeSettings to maintain consistent ordering by sortOrder
+    // Cast enum to text for JOIN compatibility
     const results = await db.select({
       id: schema.orderStages.id,
       orderId: schema.orderStages.orderId,
@@ -265,7 +266,7 @@ export class DatabaseStorage implements IStorage {
       .from(schema.orderStages)
       .leftJoin(
         schema.stageTypeSettings,
-        eq(schema.orderStages.stageType, schema.stageTypeSettings.stageType)
+        sql`${schema.orderStages.stageType}::text = ${schema.stageTypeSettings.stageType}`
       )
       .where(eq(schema.orderStages.orderId, orderId))
       .orderBy(schema.stageTypeSettings.sortOrder);

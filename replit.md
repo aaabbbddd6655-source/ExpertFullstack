@@ -11,7 +11,26 @@ The system integrates with external e-commerce platforms via webhooks and provid
 
 **Current Status:** ✅ **Production Ready** - All features implemented, tested, and verified working with real database and API integration.
 
-**Recent Updates (Nov 14, 2025):**
+**Recent Updates (Nov 15, 2025):**
+- ✅ **Stage Icon Customization System** - Complete icon management for order stages
+  - Added icon column to stage_type_settings (text field, NOT NULL, default "Circle")
+  - Seeded default icons for all 13 predefined stages (Package, Ruler, CheckCircle, ShoppingCart, Scissors, Sparkles, Box, Star, Package2, Truck, Wrench, MessageSquare)
+  - Created IconPicker component with 17 curated lucide-react icons
+  - Built "Add New Stage Type" dialog for creating custom workflow stages
+  - Custom stage types support: any uppercase+underscore identifier (e.g., CUSTOM_INSPECTION)
+  - Icons displayed dynamically in OrderTimeline and StageManager components
+  - Database schema updated: stageType in settings changed from enum to text for extensibility
+- ✅ **Fixed Stage Ordering** - Stable position regardless of status changes
+  - getStagesByOrderId uses LEFT JOIN with stage_type_settings
+  - Stages ordered by sortOrder from settings (with NULLS LAST)
+  - Type casting (::text) ensures enum-to-text JOIN compatibility
+  - Stage position maintained when transitioning PENDING → IN_PROGRESS → DONE
+- ✅ **Custom Hook Architecture** - Shared data fetching pattern
+  - Created useStageTypeSettings hook for admin components
+  - createStageTypeMap utility for efficient icon/display name lookups
+  - Used across OrderTimeline, StageManager, and StageTypeSettings
+
+**Previous Updates (Nov 14, 2025):**
 - ✅ **Media Files Display & Upload System** - Complete file upload and display functionality
   - Integrated Replit Object Storage for secure file storage
   - Uppy v5 drag-and-drop file uploader with dashboard UI

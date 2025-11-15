@@ -131,7 +131,7 @@ export const customerRatings = pgTable("customer_ratings", {
 
 export const stageTypeSettings = pgTable("stage_type_settings", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  stageType: stageTypeEnum("stage_type").notNull().unique(),
+  stageType: text("stage_type").notNull().unique(),
   displayName: text("display_name").notNull(),
   icon: text("icon").notNull().default("Circle"),
   isActive: integer("is_active").notNull().default(1),
@@ -169,7 +169,11 @@ export const insertStageTypeSettingSchema = createInsertSchema(stageTypeSettings
   updatedAt: true
 });
 export const updateStageTypeSettingSchema = insertStageTypeSettingSchema.partial().omit({ stageType: true });
-export const createStageTypeSettingSchema = insertStageTypeSettingSchema;
+
+// Allow custom stage types when creating new ones
+export const createStageTypeSettingSchema = insertStageTypeSettingSchema.extend({
+  stageType: z.string().regex(/^[A-Z_]+$/, "Stage type must contain only uppercase letters and underscores")
+});
 
 // Types
 export type Customer = typeof customers.$inferSelect;
