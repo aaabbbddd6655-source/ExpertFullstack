@@ -6,6 +6,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
+import { useTranslation } from "@/lib/i18n";
 
 interface OrderFiltersProps {
   selectedStatus: string;
@@ -30,48 +31,49 @@ export default function OrderFilters({
   onDateToChange,
   onReset
 }: OrderFiltersProps) {
+  const { t } = useTranslation();
   return (
     <div className="flex flex-wrap gap-4 items-end">
       <div className="flex-1 min-w-48 space-y-2">
-        <Label htmlFor="status-filter">Order Status</Label>
+        <Label htmlFor="status-filter">{t('admin.orders.orderStatus')}</Label>
         <Select value={selectedStatus} onValueChange={onStatusChange}>
           <SelectTrigger id="status-filter" data-testid="select-status-filter">
-            <SelectValue placeholder="All statuses" />
+            <SelectValue placeholder={t('admin.orders.allStatuses')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Statuses</SelectItem>
-            <SelectItem value="PENDING_MEASUREMENT">Pending Measurement</SelectItem>
-            <SelectItem value="DESIGN_APPROVAL">Design Approval</SelectItem>
-            <SelectItem value="IN_PRODUCTION">In Production</SelectItem>
-            <SelectItem value="QUALITY_CHECK">Quality Check</SelectItem>
-            <SelectItem value="READY_FOR_INSTALL">Ready for Install</SelectItem>
-            <SelectItem value="INSTALLED">Installed</SelectItem>
-            <SelectItem value="COMPLETED">Completed</SelectItem>
+            <SelectItem value="all">{t('admin.orders.allStatuses')}</SelectItem>
+            <SelectItem value="PENDING_MEASUREMENT">{t('admin.orders.pendingMeasurement')}</SelectItem>
+            <SelectItem value="DESIGN_APPROVAL">{t('admin.orders.designApproval')}</SelectItem>
+            <SelectItem value="IN_PRODUCTION">{t('admin.orders.inProduction')}</SelectItem>
+            <SelectItem value="QUALITY_CHECK">{t('admin.orders.qualityCheck')}</SelectItem>
+            <SelectItem value="READY_FOR_INSTALL">{t('admin.orders.readyForInstall')}</SelectItem>
+            <SelectItem value="INSTALLED">{t('admin.orders.installed')}</SelectItem>
+            <SelectItem value="COMPLETED">{t('admin.orders.completed')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="flex-1 min-w-48 space-y-2">
-        <Label htmlFor="stage-filter">Current Stage</Label>
+        <Label htmlFor="stage-filter">{t('admin.orders.currentStage')}</Label>
         <Select value={selectedStage} onValueChange={onStageChange}>
           <SelectTrigger id="stage-filter" data-testid="select-stage-filter">
-            <SelectValue placeholder="All stages" />
+            <SelectValue placeholder={t('admin.orders.allStages')} />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Stages</SelectItem>
-            <SelectItem value="ORDER_RECEIVED">Order Received</SelectItem>
-            <SelectItem value="SITE_MEASUREMENT">Site Measurement</SelectItem>
-            <SelectItem value="DESIGN_APPROVAL">Design Approval</SelectItem>
-            <SelectItem value="MATERIALS_PROCUREMENT">Materials Procurement</SelectItem>
-            <SelectItem value="PRODUCTION_CUTTING">Production - Cutting</SelectItem>
-            <SelectItem value="QUALITY_CHECK">Quality Check</SelectItem>
-            <SelectItem value="INSTALLATION">Installation</SelectItem>
+            <SelectItem value="all">{t('admin.orders.allStages')}</SelectItem>
+            <SelectItem value="ORDER_RECEIVED">{t('admin.stages.orderReceived')}</SelectItem>
+            <SelectItem value="SITE_MEASUREMENT">{t('admin.stages.siteMeasurement')}</SelectItem>
+            <SelectItem value="DESIGN_APPROVAL">{t('admin.stages.designApproval')}</SelectItem>
+            <SelectItem value="MATERIALS_PROCUREMENT">{t('admin.stages.materialsProcurement')}</SelectItem>
+            <SelectItem value="PRODUCTION_CUTTING">{t('admin.stages.productionCutting')}</SelectItem>
+            <SelectItem value="QUALITY_CHECK">{t('admin.stages.qualityCheck')}</SelectItem>
+            <SelectItem value="INSTALLATION">{t('admin.stages.installation')}</SelectItem>
           </SelectContent>
         </Select>
       </div>
 
       <div className="flex-1 min-w-48 space-y-2">
-        <Label>Date From</Label>
+        <Label>{t('common.from')}</Label>
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -83,7 +85,7 @@ export default function OrderFilters({
               data-testid="button-date-from"
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateFrom ? format(dateFrom, "PPP") : "Pick a date"}
+              {dateFrom ? format(dateFrom, "PPP") : t('common.pickDate')}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
@@ -98,7 +100,7 @@ export default function OrderFilters({
       </div>
 
       <div className="flex-1 min-w-48 space-y-2">
-        <Label>Date To</Label>
+        <Label>{t('common.to')}</Label>
         <Popover>
           <PopoverTrigger asChild>
             <Button
@@ -110,7 +112,7 @@ export default function OrderFilters({
               data-testid="button-date-to"
             >
               <CalendarIcon className="mr-2 h-4 w-4" />
-              {dateTo ? format(dateTo, "PPP") : "Pick a date"}
+              {dateTo ? format(dateTo, "PPP") : t('common.pickDate')}
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-0">
@@ -130,7 +132,7 @@ export default function OrderFilters({
         data-testid="button-reset-filters"
       >
         <X className="w-4 h-4 mr-1" />
-        Reset
+        {t('admin.orders.resetFilters')}
       </Button>
     </div>
   );

@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
 
 interface Appointment {
   scheduledAt?: string;
@@ -18,6 +19,7 @@ interface AppointmentFormProps {
 }
 
 export default function AppointmentForm({ appointment, onSubmit }: AppointmentFormProps) {
+  const { t } = useTranslation();
   const [scheduledAt, setScheduledAt] = useState(
     appointment?.scheduledAt ? new Date(appointment.scheduledAt).toISOString().slice(0, 16) : ""
   );
@@ -38,13 +40,13 @@ export default function AppointmentForm({ appointment, onSubmit }: AppointmentFo
       <CardHeader className="pb-4">
         <div className="flex items-center gap-2">
           <Calendar className="w-5 h-5 text-primary" />
-          <CardTitle>Installation Appointment</CardTitle>
+          <CardTitle>{t('admin.appointment.title')}</CardTitle>
         </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="scheduledAt">Scheduled Date & Time</Label>
+            <Label htmlFor="scheduledAt">{t('admin.appointment.scheduledDateTime')}</Label>
             <Input
               id="scheduledAt"
               type="datetime-local"
@@ -56,10 +58,10 @@ export default function AppointmentForm({ appointment, onSubmit }: AppointmentFo
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="locationAddress">Location Address</Label>
+            <Label htmlFor="locationAddress">{t('admin.appointment.locationAddress')}</Label>
             <Textarea
               id="locationAddress"
-              placeholder="123 Main St, City, State ZIP"
+              placeholder={t('admin.appointment.addressPlaceholder')}
               value={locationAddress}
               onChange={(e) => setLocationAddress(e.target.value)}
               required
@@ -69,10 +71,10 @@ export default function AppointmentForm({ appointment, onSubmit }: AppointmentFo
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="appointmentNotes">Notes (Optional)</Label>
+            <Label htmlFor="appointmentNotes">{t('admin.appointment.notes')} ({t('common.optional')})</Label>
             <Textarea
               id="appointmentNotes"
-              placeholder="Special instructions or notes..."
+              placeholder={t('admin.appointment.notesPlaceholder')}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="min-h-20 resize-none"
@@ -85,7 +87,7 @@ export default function AppointmentForm({ appointment, onSubmit }: AppointmentFo
             className="w-full"
             data-testid="button-save-appointment"
           >
-            {appointment?.scheduledAt ? "Update" : "Schedule"} Appointment
+            {appointment?.scheduledAt ? t('admin.appointment.update') : t('admin.appointment.schedule')} {t('admin.appointment.appointmentLabel')}
           </Button>
         </form>
       </CardContent>

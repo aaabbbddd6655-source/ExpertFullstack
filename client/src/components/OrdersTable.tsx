@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Eye } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { useTranslation } from "@/lib/i18n";
 
 interface Order {
   id: string;
@@ -21,6 +22,7 @@ interface OrdersTableProps {
 }
 
 export default function OrdersTable({ orders, onViewOrder }: OrdersTableProps) {
+  const { t } = useTranslation();
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
       PENDING_MEASUREMENT: "bg-yellow-600",
@@ -52,14 +54,14 @@ export default function OrdersTable({ orders, onViewOrder }: OrdersTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="font-semibold">Order #</TableHead>
-            <TableHead className="font-semibold">Customer</TableHead>
-            <TableHead className="font-semibold">Phone</TableHead>
-            <TableHead className="font-semibold">Status</TableHead>
-            <TableHead className="font-semibold">Current Stage</TableHead>
-            <TableHead className="font-semibold">Progress</TableHead>
-            <TableHead className="font-semibold">Created</TableHead>
-            <TableHead className="text-right font-semibold">Actions</TableHead>
+            <TableHead className="font-semibold">{t('admin.orders.orderNumber')}</TableHead>
+            <TableHead className="font-semibold">{t('admin.orders.customer')}</TableHead>
+            <TableHead className="font-semibold">{t('admin.orders.phone')}</TableHead>
+            <TableHead className="font-semibold">{t('admin.orders.status')}</TableHead>
+            <TableHead className="font-semibold">{t('admin.orders.currentStage')}</TableHead>
+            <TableHead className="font-semibold">{t('admin.orders.progress')}</TableHead>
+            <TableHead className="font-semibold">{t('admin.orders.created')}</TableHead>
+            <TableHead className="text-right font-semibold">{t('admin.orders.actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -99,7 +101,7 @@ export default function OrdersTable({ orders, onViewOrder }: OrdersTableProps) {
                   data-testid={`button-view-${order.id}`}
                 >
                   <Eye className="w-4 h-4 mr-1" />
-                  View
+                  {t('common.viewDetails')}
                 </Button>
               </TableCell>
             </TableRow>

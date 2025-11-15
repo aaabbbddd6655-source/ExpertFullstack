@@ -35,6 +35,7 @@ import { z } from "zod";
 import { queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { insertCustomerSchema } from "@shared/schema";
+import { useTranslation } from "@/lib/i18n";
 
 // Extend the insert schema with phone validation
 const createCustomerFormSchema = insertCustomerSchema.extend({
@@ -49,6 +50,7 @@ export default function AdminCustomersPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const token = getToken();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const { data: customers = [], isLoading } = useQuery({
     queryKey: ["/api/admin/customers"],
@@ -98,14 +100,14 @@ export default function AdminCustomersPage() {
       setDialogOpen(false);
       form.reset();
       toast({
-        title: "Success",
-        description: "Customer created successfully"
+        title: t('common.success'),
+        description: t('admin.customers.customerCreated')
       });
     },
     onError: (error: any) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to create customer",
+        title: t('common.error'),
+        description: error.message || t('admin.customers.createError'),
         variant: "destructive"
       });
     }
@@ -126,9 +128,9 @@ export default function AdminCustomersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-serif font-semibold">Customers</h1>
+          <h1 className="text-3xl font-serif font-semibold">{t('admin.customers.title')}</h1>
           <p className="text-muted-foreground mt-1">
-            Manage and view all customer information
+            {t('admin.customers.description')}
           </p>
         </div>
         
@@ -136,14 +138,14 @@ export default function AdminCustomersPage() {
           <DialogTrigger asChild>
             <Button data-testid="button-add-customer">
               <UserPlus className="w-4 h-4 mr-2" />
-              Add Customer
+              {t('admin.customers.addCustomer')}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Customer</DialogTitle>
+              <DialogTitle>{t('admin.customers.addNewCustomer')}</DialogTitle>
               <DialogDescription>
-                Create a new customer record in the system
+                {t('admin.customers.addCustomerDescription')}
               </DialogDescription>
             </DialogHeader>
             
@@ -154,7 +156,7 @@ export default function AdminCustomersPage() {
                   name="fullName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Full Name</FormLabel>
+                      <FormLabel>{t('admin.customers.fullName')}</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="Ahmed Mohammed"
@@ -172,7 +174,7 @@ export default function AdminCustomersPage() {
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Phone Number</FormLabel>
+                      <FormLabel>{t('admin.customers.phoneNumber')}</FormLabel>
                       <FormControl>
                         <Input
                           placeholder="+966500000000 or 0500000000"
@@ -190,7 +192,7 @@ export default function AdminCustomersPage() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email (Optional)</FormLabel>
+                      <FormLabel>{t('admin.customers.email')} ({t('common.optional')})</FormLabel>
                       <FormControl>
                         <Input
                           type="email"
@@ -211,14 +213,14 @@ export default function AdminCustomersPage() {
                     onClick={() => setDialogOpen(false)}
                     data-testid="button-cancel-customer"
                   >
-                    Cancel
+                    {t('common.cancel')}
                   </Button>
                   <Button
                     type="submit"
                     disabled={createCustomerMutation.isPending}
                     data-testid="button-submit-customer"
                   >
-                    {createCustomerMutation.isPending ? "Creating..." : "Create Customer"}
+                    {createCustomerMutation.isPending ? t('admin.customers.creating') : t('admin.customers.createCustomer')}
                   </Button>
                 </div>
               </form>
@@ -229,14 +231,14 @@ export default function AdminCustomersPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle>Customer List</CardTitle>
+          <CardTitle>{t('admin.customers.customerList')}</CardTitle>
           <CardDescription>
-            Total: {customers.length} customers
+            {t('admin.customers.total')}: {customers.length} {t('admin.customers.customers')}
           </CardDescription>
           <div className="relative pt-2">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search by name, phone, or email..."
+              placeholder={t('admin.customers.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-9"
@@ -247,23 +249,23 @@ export default function AdminCustomersPage() {
         <CardContent>
           {isLoading ? (
             <div className="flex items-center justify-center py-12">
-              <p className="text-muted-foreground">Loading customers...</p>
+              <p className="text-muted-foreground">{t('common.loading')}</p>
             </div>
           ) : filteredCustomers.length === 0 ? (
             <div className="flex items-center justify-center py-12">
               <p className="text-muted-foreground">
-                {searchTerm ? "No customers found matching your search" : "No customers yet"}
+                {searchTerm ? t('admin.customers.noCustomersFound') : t('admin.customers.noCustomers')}
               </p>
             </div>
           ) : (
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Phone</TableHead>
-                  <TableHead>Email</TableHead>
-                  <TableHead className="text-right">Total Orders</TableHead>
-                  <TableHead className="text-right">Active Orders</TableHead>
+                  <TableHead>{t('admin.customers.name')}</TableHead>
+                  <TableHead>{t('admin.customers.phone')}</TableHead>
+                  <TableHead>{t('admin.customers.email')}</TableHead>
+                  <TableHead className="text-right">{t('admin.customers.totalOrders')}</TableHead>
+                  <TableHead className="text-right">{t('admin.customers.activeOrders')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>

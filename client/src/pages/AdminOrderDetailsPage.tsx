@@ -20,6 +20,7 @@ import { getToken } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { ObjectUploader } from "@/components/ObjectUploader";
+import { useTranslation } from "@/lib/i18n";
 
 interface AdminOrderDetailsPageProps {
   orderId: string;
@@ -99,6 +100,7 @@ const cancelSchema = z.object({
 
 export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDetailsPageProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const token = getToken();
   
   // Dialog state
@@ -127,14 +129,14 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
     onSuccess: async () => {
       await queryClient.refetchQueries({ queryKey: ["/api/admin/orders", orderId] });
       toast({
-        title: "Success",
-        description: "Stage updated successfully"
+        title: t('common.success'),
+        description: t('admin.stages.stageUpdated')
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to update stage",
+        title: t('common.error'),
+        description: error.message || t('admin.stages.updateError'),
         variant: "destructive"
       });
     }
@@ -150,14 +152,14 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders", orderId] });
       toast({
-        title: "Success",
-        description: "Appointment saved successfully"
+        title: t('common.success'),
+        description: t('admin.appointment.saved')
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to save appointment",
+        title: t('common.error'),
+        description: error.message || t('admin.appointment.saveError'),
         variant: "destructive"
       });
     }
@@ -178,14 +180,14 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
       setEmailDialogOpen(false);
       if (emailFormReset) emailFormReset();
       toast({
-        title: "Success",
-        description: "Email sent successfully"
+        title: t('common.success'),
+        description: t('admin.orders.emailSent')
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to send email",
+        title: t('common.error'),
+        description: error.message || t('admin.orders.emailError'),
         variant: "destructive"
       });
     }
@@ -205,14 +207,14 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
       setMediaDialogOpen(false);
       if (mediaFormReset) mediaFormReset();
       toast({
-        title: "Success",
-        description: "Media added successfully"
+        title: t('common.success'),
+        description: t('admin.orders.mediaAdded')
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to add media",
+        title: t('common.error'),
+        description: error.message || t('admin.orders.mediaError'),
         variant: "destructive"
       });
     }
@@ -230,16 +232,16 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
       setCancelDialogOpen(false);
       if (cancelFormReset) cancelFormReset();
       toast({
-        title: "Success",
-        description: "Order cancelled successfully"
+        title: t('common.success'),
+        description: t('admin.orders.orderCancelled')
       });
       // Navigate back after successful cancellation
       setTimeout(() => onBack(), 500);
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to cancel order",
+        title: t('common.error'),
+        description: error.message || t('admin.orders.cancelError'),
         variant: "destructive"
       });
     }
@@ -253,14 +255,14 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders", orderId] });
       toast({
-        title: "Success",
-        description: "Stage added successfully"
+        title: t('common.success'),
+        description: t('admin.stages.stageAdded')
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to add stage",
+        title: t('common.error'),
+        description: error.message || t('admin.stages.addError'),
         variant: "destructive"
       });
     }
@@ -274,14 +276,14 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/orders", orderId] });
       toast({
-        title: "Success",
-        description: "Stage deleted successfully"
+        title: t('common.success'),
+        description: t('admin.stages.stageDeleted')
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to delete stage",
+        title: t('common.error'),
+        description: error.message || t('admin.stages.deleteError'),
         variant: "destructive"
       });
     }
@@ -289,8 +291,8 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
 
   if (error) {
     toast({
-      title: "Error",
-      description: "Failed to fetch order details",
+      title: t('common.error'),
+      description: t('admin.orders.fetchError'),
       variant: "destructive"
     });
   }
@@ -298,7 +300,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Loading order details...</p>
+        <p className="text-muted-foreground">{t('common.loading')}</p>
       </div>
     );
   }
@@ -306,7 +308,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
   if (!data) {
     return (
       <div className="flex items-center justify-center py-12">
-        <p className="text-muted-foreground">Order not found</p>
+        <p className="text-muted-foreground">{t('admin.orders.orderNotFound')}</p>
       </div>
     );
   }
@@ -322,7 +324,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
           data-testid="button-back-to-orders"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Orders
+          {t('admin.orders.backToOrders')}
         </Button>
       </div>
 
@@ -340,7 +342,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
           
           <Card>
             <CardHeader>
-              <CardTitle className="text-2xl font-serif">Order Timeline</CardTitle>
+              <CardTitle className="text-2xl font-serif">{t('admin.orders.orderTimeline')}</CardTitle>
             </CardHeader>
             <CardContent>
               <OrderTimeline stages={stages} />
@@ -349,7 +351,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
 
           <Card>
             <CardHeader>
-              <CardTitle>Media Files</CardTitle>
+              <CardTitle>{t('admin.orders.mediaFiles')}</CardTitle>
             </CardHeader>
             <CardContent>
               {media && media.length > 0 ? (
@@ -376,7 +378,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             <span className="text-sm font-medium">
-                              {item.type === "IMAGE" ? "Image" : "Document"}
+                              {item.type === "IMAGE" ? t('admin.orders.image') : t('admin.orders.document')}
                             </span>
                             {item.stage && (
                               <span className="text-xs text-muted-foreground">
@@ -392,12 +394,12 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
                               className="text-xs text-primary hover:underline flex items-center gap-1 mt-1"
                               data-testid={`media-link-${safeId}`}
                             >
-                              View file
+                              {t('admin.orders.viewFile')}
                               <ExternalLink className="w-3 h-3" />
                             </a>
                           ) : (
                             <span className="text-xs text-destructive">
-                              Invalid file URL
+                              {t('admin.orders.invalidFileUrl')}
                             </span>
                           )}
                         </div>
@@ -407,7 +409,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
                 </div>
               ) : (
                 <p className="text-sm text-muted-foreground" data-testid="no-media-message">
-                  No media files uploaded yet.
+                  {t('admin.orders.noMedia')}
                 </p>
               )}
             </CardContent>
@@ -439,7 +441,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
 
             <Card>
               <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
+                <CardTitle>{t('admin.orders.quickActions')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-2">
                 <Button 
@@ -449,7 +451,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
                   data-testid="button-add-media"
                 >
                   <ImagePlus className="w-4 h-4 mr-2" />
-                  Add Media
+                  {t('admin.orders.addMedia')}
                 </Button>
                 <Button 
                   variant="outline" 
@@ -458,7 +460,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
                   data-testid="button-send-email"
                 >
                   <Mail className="w-4 h-4 mr-2" />
-                  Send Email Update
+                  {t('admin.orders.sendEmailUpdate')}
                 </Button>
                 <Button 
                   variant="outline" 
@@ -467,7 +469,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
                   data-testid="button-cancel-order"
                 >
                   <XCircle className="w-4 h-4 mr-2" />
-                  Cancel Order
+                  {t('admin.orders.cancelOrder')}
                 </Button>
               </CardContent>
             </Card>
@@ -515,6 +517,7 @@ function EmailDialog({ open, onOpenChange, onSubmit, onResetRef, isPending }: {
   onResetRef: (reset: () => void) => void;
   isPending: boolean;
 }) {
+  const { t } = useTranslation();
   const form = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
     defaultValues: {
@@ -536,9 +539,9 @@ function EmailDialog({ open, onOpenChange, onSubmit, onResetRef, isPending }: {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg" data-testid="dialog-send-email">
         <DialogHeader>
-          <DialogTitle>Send Email Update</DialogTitle>
+          <DialogTitle>{t('admin.orders.sendEmailUpdate')}</DialogTitle>
           <DialogDescription>
-            Send a custom email notification to the customer about their order status.
+            {t('admin.orders.emailDescription')}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -548,10 +551,10 @@ function EmailDialog({ open, onOpenChange, onSubmit, onResetRef, isPending }: {
               name="subject"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Subject</FormLabel>
+                  <FormLabel>{t('admin.orders.subject')}</FormLabel>
                   <FormControl>
                     <Input 
-                      placeholder="Order Update: Your curtains are ready"
+                      placeholder={t('admin.orders.subjectPlaceholder')}
                       {...field}
                       data-testid="input-email-subject"
                     />
@@ -565,10 +568,10 @@ function EmailDialog({ open, onOpenChange, onSubmit, onResetRef, isPending }: {
               name="message"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Message</FormLabel>
+                  <FormLabel>{t('admin.orders.message')}</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Write your message here..."
+                      placeholder={t('admin.orders.messagePlaceholder')}
                       className="min-h-32"
                       {...field}
                       data-testid="textarea-email-message"
@@ -585,14 +588,14 @@ function EmailDialog({ open, onOpenChange, onSubmit, onResetRef, isPending }: {
                 onClick={() => onOpenChange(false)}
                 data-testid="button-email-cancel"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button 
                 type="submit" 
                 disabled={isPending}
                 data-testid="button-email-send"
               >
-                {isPending ? "Sending..." : "Send Email"}
+                {isPending ? t('admin.orders.sending') : t('admin.orders.sendEmail')}
               </Button>
             </DialogFooter>
           </form>
@@ -611,6 +614,7 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
   onResetRef: (reset: () => void) => void;
   isPending: boolean;
 }) {
+  const { t } = useTranslation();
   const form = useForm<z.infer<typeof mediaSchema>>({
     resolver: zodResolver(mediaSchema),
     defaultValues: {
@@ -632,8 +636,8 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
   const handleFileUploadComplete = (uploadedUrl: string) => {
     form.setValue("mediaUrl", uploadedUrl);
     toast({
-      title: "File uploaded",
-      description: "File has been uploaded successfully. Complete the form to attach it to the order.",
+      title: t('admin.orders.fileUploaded'),
+      description: t('admin.orders.fileUploadedDescription'),
     });
   };
 
@@ -650,8 +654,8 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
   const handleSubmit = (data: z.infer<typeof mediaSchema>) => {
     if (!data.mediaUrl) {
       toast({
-        title: "Error",
-        description: "Please enter a URL or upload a file",
+        title: t('common.error'),
+        description: t('admin.orders.mediaUrlRequired'),
         variant: "destructive"
       });
       return;
@@ -663,9 +667,9 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg" data-testid="dialog-add-media">
         <DialogHeader>
-          <DialogTitle>Add Media</DialogTitle>
+          <DialogTitle>{t('admin.orders.addMedia')}</DialogTitle>
           <DialogDescription>
-            Upload a file or provide a URL for a photo or document.
+            {t('admin.orders.addMediaDescription')}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -676,10 +680,10 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
                 name="mediaUrl"
                 render={({ field }) => (
                   <FormItem className="flex-1">
-                    <FormLabel>Media URL</FormLabel>
+                    <FormLabel>{t('admin.orders.mediaUrl')}</FormLabel>
                     <FormControl>
                       <Input 
-                        placeholder="https://example.com/photo.jpg or upload below"
+                        placeholder={t('admin.orders.mediaUrlPlaceholder')}
                         {...field}
                         data-testid="input-media-url"
                       />
@@ -697,7 +701,7 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
                 onComplete={handleFileUploadComplete}
               >
                 <Upload className="mr-2 h-4 w-4" />
-                Upload File
+                {t('admin.orders.uploadFile')}
               </ObjectUploader>
             </div>
             <FormField
@@ -705,16 +709,16 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
               name="type"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Type</FormLabel>
+                  <FormLabel>{t('admin.orders.type')}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger data-testid="select-media-type">
-                        <SelectValue placeholder="Select type" />
+                        <SelectValue placeholder={t('admin.orders.selectType')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="IMAGE">Image</SelectItem>
-                      <SelectItem value="DOCUMENT">Document</SelectItem>
+                      <SelectItem value="IMAGE">{t('admin.orders.image')}</SelectItem>
+                      <SelectItem value="DOCUMENT">{t('admin.orders.document')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -726,11 +730,11 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
               name="stageId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Stage</FormLabel>
+                  <FormLabel>{t('admin.stages.stage')}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger data-testid="select-stage">
-                        <SelectValue placeholder="Select a stage" />
+                        <SelectValue placeholder={t('admin.stages.selectStage')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -750,10 +754,10 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes (Optional)</FormLabel>
+                  <FormLabel>{t('admin.stages.notes')} ({t('common.optional')})</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Add any notes about this media..."
+                      placeholder={t('admin.orders.mediaNotesPlaceholder')}
                       {...field}
                       data-testid="textarea-media-notes"
                     />
@@ -769,14 +773,14 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
                 onClick={() => onOpenChange(false)}
                 data-testid="button-media-cancel"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button 
                 type="submit" 
                 disabled={isPending}
                 data-testid="button-media-add"
               >
-                {isPending ? "Adding..." : "Add Media"}
+                {isPending ? t('admin.orders.adding') : t('admin.orders.addMedia')}
               </Button>
             </DialogFooter>
           </form>
@@ -795,6 +799,7 @@ function CancelDialog({ open, onOpenChange, orderNumber, onConfirm, onResetRef, 
   onResetRef: (reset: () => void) => void;
   isPending: boolean;
 }) {
+  const { t } = useTranslation();
   const form = useForm<z.infer<typeof cancelSchema>>({
     resolver: zodResolver(cancelSchema),
     defaultValues: {
@@ -815,9 +820,9 @@ function CancelDialog({ open, onOpenChange, orderNumber, onConfirm, onResetRef, 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg" data-testid="dialog-cancel-order">
         <DialogHeader>
-          <DialogTitle className="text-destructive">Cancel Order</DialogTitle>
+          <DialogTitle className="text-destructive">{t('admin.orders.cancelOrder')}</DialogTitle>
           <DialogDescription>
-            This action cannot be undone. Order {orderNumber} will be permanently cancelled and any scheduled installation appointments will be deleted.
+            {t('admin.orders.cancelWarning').replace('{orderNumber}', orderNumber)}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -827,10 +832,10 @@ function CancelDialog({ open, onOpenChange, orderNumber, onConfirm, onResetRef, 
               name="reason"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Cancellation Reason</FormLabel>
+                  <FormLabel>{t('admin.orders.cancellationReason')}</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Please provide a reason for cancellation..."
+                      placeholder={t('admin.orders.reasonPlaceholder')}
                       className="min-h-24"
                       {...field}
                       data-testid="textarea-cancel-reason"
@@ -847,7 +852,7 @@ function CancelDialog({ open, onOpenChange, orderNumber, onConfirm, onResetRef, 
                 onClick={() => onOpenChange(false)}
                 data-testid="button-cancel-no"
               >
-                Keep Order
+                {t('admin.orders.keepOrder')}
               </Button>
               <Button 
                 type="submit" 
@@ -855,7 +860,7 @@ function CancelDialog({ open, onOpenChange, orderNumber, onConfirm, onResetRef, 
                 disabled={isPending}
                 data-testid="button-cancel-yes"
               >
-                {isPending ? "Cancelling..." : "Cancel Order"}
+                {isPending ? t('admin.orders.cancelling') : t('admin.orders.cancelOrder')}
               </Button>
             </DialogFooter>
           </form>

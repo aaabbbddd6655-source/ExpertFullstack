@@ -12,6 +12,7 @@ import { queryClient } from "@/lib/queryClient";
 import { getToken } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import IconPicker, { AVAILABLE_ICONS } from "@/components/IconPicker";
+import { useTranslation } from "@/lib/i18n";
 
 interface StageTypeSetting {
   id: string;
@@ -25,6 +26,7 @@ interface StageTypeSetting {
 
 export default function StageTypeSettings() {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const token = getToken();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<StageTypeSetting>>({});
@@ -74,14 +76,14 @@ export default function StageTypeSettings() {
       setEditingId(null);
       setEditData({});
       toast({
-        title: "Success",
-        description: "Stage type updated successfully"
+        title: t('common.success'),
+        description: t('admin.stages.stageTypeUpdated')
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to update stage type",
+        title: t('common.error'),
+        description: error.message || t('admin.stages.updateError'),
         variant: "destructive"
       });
     }
@@ -117,14 +119,14 @@ export default function StageTypeSettings() {
         sortOrder: 14
       });
       toast({
-        title: "Success",
-        description: "New stage type created successfully"
+        title: t('common.success'),
+        description: t('admin.stages.stageTypeCreated')
       });
     },
     onError: (error: Error) => {
       toast({
-        title: "Error",
-        description: error.message || "Failed to create stage type",
+        title: t('common.error'),
+        description: error.message || t('admin.stages.createError'),
         variant: "destructive"
       });
     }
@@ -169,9 +171,9 @@ export default function StageTypeSettings() {
     <Card data-testid="card-stage-type-settings">
       <CardHeader className="flex flex-row items-center justify-between gap-2 flex-wrap">
         <div>
-          <CardTitle>Stage Type Settings</CardTitle>
+          <CardTitle>{t('admin.stages.stageTypeSettings')}</CardTitle>
           <CardDescription>
-            Configure display names, visibility, and defaults for order stage types
+            {t('admin.stages.stageTypeSettingsDescription')}
           </CardDescription>
         </div>
         <Button 
@@ -179,15 +181,15 @@ export default function StageTypeSettings() {
           data-testid="button-add-stage-type"
         >
           <Plus className="w-4 h-4 mr-2" />
-          Add New Stage
+          {t('admin.stages.addNewStage')}
         </Button>
       </CardHeader>
       <CardContent>
         {isLoading && (
-          <p className="text-sm text-muted-foreground text-center py-4">Loading stage types...</p>
+          <p className="text-sm text-muted-foreground text-center py-4">{t('common.loading')}</p>
         )}
         {error && (
-          <p className="text-sm text-destructive text-center py-4">Failed to load stage types</p>
+          <p className="text-sm text-destructive text-center py-4">{t('admin.stages.loadError')}</p>
         )}
         {!isLoading && !error && (
           <div className="space-y-3">
@@ -204,7 +206,7 @@ export default function StageTypeSettings() {
                 {editingId === stage.id ? (
                   <>
                     <div className="space-y-2">
-                      <Label htmlFor={`name-${stage.id}`}>Display Name</Label>
+                      <Label htmlFor={`name-${stage.id}`}>{t('admin.stages.displayName')}</Label>
                       <Input
                         id={`name-${stage.id}`}
                         value={editData.displayName || ""}
@@ -213,12 +215,12 @@ export default function StageTypeSettings() {
                       />
                     </div>
                     <IconPicker
-                      label="Stage Icon"
+                      label={t('admin.stages.stageIcon')}
                       value={editData.icon || "Circle"}
                       onChange={(iconName) => setEditData({ ...editData, icon: iconName })}
                     />
                     <div className="space-y-2">
-                      <Label htmlFor={`order-${stage.id}`}>Sort Order</Label>
+                      <Label htmlFor={`order-${stage.id}`}>{t('admin.stages.sortOrder')}</Label>
                       <Input
                         id={`order-${stage.id}`}
                         type="number"
@@ -233,7 +235,7 @@ export default function StageTypeSettings() {
                         onCheckedChange={(checked) => setEditData({ ...editData, isActive: checked ? 1 : 0 })}
                         data-testid={`switch-active-${stage.stageType}`}
                       />
-                      <Label>Active (visible in Add Stage dropdown)</Label>
+                      <Label>{t('admin.stages.activeLabel')}</Label>
                     </div>
                   </>
                 ) : (
@@ -246,14 +248,14 @@ export default function StageTypeSettings() {
                         variant={stage.isActive ? "default" : "secondary"}
                         data-testid={`badge-status-${stage.stageType}`}
                       >
-                        {stage.isActive ? "Active" : "Inactive"}
+                        {stage.isActive ? t('admin.stages.active') : t('admin.stages.inactive')}
                       </Badge>
                       <span className="text-xs text-muted-foreground">
                         ({stage.stageType})
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Order: {stage.sortOrder}
+                      {t('admin.stages.orderLabel')}: {stage.sortOrder}
                     </p>
                   </>
                 )}
@@ -302,32 +304,32 @@ export default function StageTypeSettings() {
     <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
       <DialogContent data-testid="dialog-add-stage-type">
         <DialogHeader>
-          <DialogTitle>Add New Stage Type</DialogTitle>
+          <DialogTitle>{t('admin.stages.addNewStageType')}</DialogTitle>
           <DialogDescription>
-            Create a new custom stage type for your order workflow
+            {t('admin.stages.addStageTypeDescription')}
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="new-stage-type">Stage Type (Unique ID)</Label>
+            <Label htmlFor="new-stage-type">{t('admin.stages.stageTypeUniqueId')}</Label>
             <Input
               id="new-stage-type"
-              placeholder="e.g., CUSTOM_STAGE"
+              placeholder={t('admin.stages.stageTypePlaceholder')}
               value={newStageData.stageType}
               onChange={(e) => setNewStageData({ ...newStageData, stageType: e.target.value.toUpperCase().replace(/\s+/g, '_') })}
               data-testid="input-new-stage-type"
             />
             <p className="text-xs text-muted-foreground">
-              Use uppercase letters and underscores only (e.g., CUSTOM_STAGE)
+              {t('admin.stages.stageTypeHelp')}
             </p>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="new-display-name">Display Name</Label>
+            <Label htmlFor="new-display-name">{t('admin.stages.displayName')}</Label>
             <Input
               id="new-display-name"
-              placeholder="e.g., Custom Stage"
+              placeholder={t('admin.stages.displayNamePlaceholder')}
               value={newStageData.displayName}
               onChange={(e) => setNewStageData({ ...newStageData, displayName: e.target.value })}
               data-testid="input-new-display-name"
@@ -335,13 +337,13 @@ export default function StageTypeSettings() {
           </div>
 
           <IconPicker
-            label="Stage Icon"
+            label={t('admin.stages.stageIcon')}
             value={newStageData.icon}
             onChange={(iconName) => setNewStageData({ ...newStageData, icon: iconName })}
           />
 
           <div className="space-y-2">
-            <Label htmlFor="new-sort-order">Sort Order</Label>
+            <Label htmlFor="new-sort-order">{t('admin.stages.sortOrder')}</Label>
             <Input
               id="new-sort-order"
               type="number"
@@ -357,7 +359,7 @@ export default function StageTypeSettings() {
               onCheckedChange={(checked) => setNewStageData({ ...newStageData, isActive: checked ? 1 : 0 })}
               data-testid="switch-new-active"
             />
-            <Label>Active (visible in Add Stage dropdown)</Label>
+            <Label>{t('admin.stages.activeLabel')}</Label>
           </div>
         </div>
 
@@ -367,14 +369,14 @@ export default function StageTypeSettings() {
             onClick={() => setAddDialogOpen(false)}
             data-testid="button-cancel-add"
           >
-            Cancel
+            {t('common.cancel')}
           </Button>
           <Button 
             onClick={() => createMutation.mutate(newStageData)}
             disabled={createMutation.isPending || !newStageData.stageType || !newStageData.displayName}
             data-testid="button-create-stage"
           >
-            {createMutation.isPending ? "Creating..." : "Create Stage"}
+            {createMutation.isPending ? t('admin.stages.creating') : t('admin.stages.createStage')}
           </Button>
         </DialogFooter>
       </DialogContent>

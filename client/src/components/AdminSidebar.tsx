@@ -32,12 +32,12 @@ export default function AdminSidebar({ activeItem, onNavigate, onLogout }: Admin
   return (
     <Sidebar>
       <SidebarHeader className="p-6">
-        <h2 className="text-2xl font-serif font-semibold">Ivea</h2>
-        <p className="text-sm text-muted-foreground">{t('admin.welcome')}</p>
+        <h2 className="text-2xl font-serif font-semibold">{t('admin.sidebarTitle')}</h2>
+        <p className="text-sm text-muted-foreground">{t('admin.sidebarSubtitle')}</p>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>{t('admin.dashboard')}</SidebarGroupLabel>
+          <SidebarGroupLabel>{t('admin.navigation')}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {menuItems.map((item) => (

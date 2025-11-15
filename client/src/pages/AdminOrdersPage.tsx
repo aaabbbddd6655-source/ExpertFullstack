@@ -8,6 +8,7 @@ import { Plus } from "lucide-react";
 import { getOrders } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "@/lib/i18n";
 
 interface AdminOrdersPageProps {
   onViewOrder: (orderId: string) => void;
@@ -15,6 +16,7 @@ interface AdminOrdersPageProps {
 
 export default function AdminOrdersPage({ onViewOrder }: AdminOrdersPageProps) {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [status, setStatus] = useState("all");
   const [stage, setStage] = useState("all");
   const [dateFrom, setDateFrom] = useState<Date>();
@@ -43,8 +45,8 @@ export default function AdminOrdersPage({ onViewOrder }: AdminOrdersPageProps) {
 
   if (error) {
     toast({
-      title: "Error",
-      description: "Failed to fetch orders. Please try again.",
+      title: t('common.error'),
+      description: t('errors.general'),
       variant: "destructive"
     });
   }
@@ -64,14 +66,14 @@ export default function AdminOrdersPage({ onViewOrder }: AdminOrdersPageProps) {
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif font-semibold">Orders</h1>
+          <h1 className="text-3xl font-serif font-semibold">{t('admin.orders.title')}</h1>
           <p className="text-muted-foreground mt-1">
-            Manage and track all customer orders
+            {t('admin.orders.subtitle')}
           </p>
         </div>
         <Button onClick={() => setShowNewOrderDialog(true)} data-testid="button-new-order">
           <Plus className="w-4 h-4 mr-2" />
-          New Order
+          {t('admin.orders.newOrder')}
         </Button>
       </div>
 
@@ -94,7 +96,7 @@ export default function AdminOrdersPage({ onViewOrder }: AdminOrdersPageProps) {
 
       {isLoading ? (
         <div className="flex items-center justify-center py-12">
-          <p className="text-muted-foreground">Loading orders...</p>
+          <p className="text-muted-foreground">{t('common.loading')}</p>
         </div>
       ) : (
         <OrdersTable orders={formattedOrders} onViewOrder={onViewOrder} />

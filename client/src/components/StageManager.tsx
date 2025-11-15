@@ -20,6 +20,7 @@ import {
 import { MoreVertical } from "lucide-react";
 import { useStageTypeSettings, createStageTypeMap } from "@/hooks/useStageTypeSettings";
 import { AVAILABLE_ICONS } from "@/components/IconPicker";
+import { useTranslation } from "@/lib/i18n";
 
 interface Stage {
   id: string;
@@ -58,6 +59,7 @@ const STAGE_TYPES = [
 ];
 
 export default function StageManager({ stages, onUpdate, onAdd, onDelete }: StageManagerProps) {
+  const { t } = useTranslation();
   const [expandedStageId, setExpandedStageId] = useState<string | null>(
     stages.find(s => s.status === "IN_PROGRESS")?.id || stages[0]?.id || null
   );
@@ -153,7 +155,7 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
       <Card className="relative">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between gap-2">
-            <CardTitle>Stage Management</CardTitle>
+            <CardTitle>{t('admin.stages.title')}</CardTitle>
             {onAdd && (
               <Button 
                 size="sm"
@@ -162,7 +164,7 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
                 data-testid="button-add-stage"
               >
                 <Plus className="w-4 h-4 mr-2" />
-                Add Stage
+                {t('admin.stages.addStage')}
               </Button>
             )}
           </div>
@@ -189,7 +191,7 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
         >
           {stages.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
-              No stages yet. Click "Add Stage" to create one.
+              {t('admin.stages.noStages')}
             </p>
           ) : (
             stages.map((stage) => (
@@ -204,6 +206,7 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
                 getStatusIcon={getStatusIcon}
                 getStageIconName={getStageIconName}
                 getStatusBadge={getStatusBadge}
+                t={t}
               />
             ))
           )}
@@ -231,6 +234,7 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
             onAdd(data.stageType, data.status, data.notes);
             setAddDialogOpen(false);
           }}
+          t={t}
         />
       )}
 
@@ -239,9 +243,9 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
         <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <DialogContent className="max-w-md" data-testid="dialog-delete-stage">
             <DialogHeader>
-              <DialogTitle>Delete Stage</DialogTitle>
+              <DialogTitle>{t('admin.stages.deleteStage')}</DialogTitle>
               <DialogDescription>
-                Are you sure you want to delete the stage "{stageToDelete ? formatStageType(stageToDelete.stageType) : ''}"? This action cannot be undone.
+                {t('admin.stages.deleteConfirmation').replace('{stage}', stageToDelete ? formatStageType(stageToDelete.stageType) : '')}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -250,14 +254,14 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
                 onClick={() => setDeleteDialogOpen(false)}
                 data-testid="button-delete-cancel"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button
                 variant="destructive"
                 onClick={confirmDelete}
                 data-testid="button-delete-confirm"
               >
-                Delete Stage
+                {t('admin.stages.deleteStage')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -277,7 +281,8 @@ function StageCard({
   formatStageType,
   getStatusIcon,
   getStatusBadge,
-  getStageIconName
+  getStageIconName,
+  t
 }: {
   stage: Stage;
   isExpanded: boolean;
@@ -288,6 +293,7 @@ function StageCard({
   getStatusIcon: (status: string, iconName?: string) => React.ReactNode;
   getStatusBadge: (status: string) => React.ReactNode;
   getStageIconName: (stageType: string) => string | undefined;
+  t: (key: string) => string;
 }) {
   const [status, setStatus] = useState(stage.status);
   const [notes, setNotes] = useState(stage.notes || "");
@@ -340,7 +346,7 @@ function StageCard({
                   data-testid={`button-delete-stage-${stage.id}`}
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
-                  Delete Stage
+                  {t('admin.stages.deleteStage')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -351,7 +357,7 @@ function StageCard({
       {isExpanded && (
         <form key={`${stage.id}-${stage.status}-${stage.notes}`} onSubmit={handleSubmit} className="border-t p-3 space-y-4">
           <div className="space-y-2">
-            <Label htmlFor={`status-${stage.id}`}>Stage Status</Label>
+            <Label htmlFor={`status-${stage.id}`}>{t('admin.stages.stageStatus')}</Label>
             <Select value={status} onValueChange={(value: any) => setStatus(value)}>
               <SelectTrigger id={`status-${stage.id}`} data-testid={`select-stage-status-${stage.id}`}>
                 <SelectValue />
@@ -360,19 +366,19 @@ function StageCard({
                 <SelectItem value="PENDING">
                   <div className="flex items-center gap-2">
                     <Circle className="w-4 h-4" />
-                    Pending
+                    {t('admin.stages.pending')}
                   </div>
                 </SelectItem>
                 <SelectItem value="IN_PROGRESS">
                   <div className="flex items-center gap-2">
                     <Clock className="w-4 h-4 text-blue-600" />
-                    In Progress
+                    {t('admin.stages.inProgress')}
                   </div>
                 </SelectItem>
                 <SelectItem value="DONE">
                   <div className="flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-green-600" />
-                    Done
+                    {t('admin.stages.done')}
                   </div>
                 </SelectItem>
               </SelectContent>
@@ -380,10 +386,10 @@ function StageCard({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor={`notes-${stage.id}`}>Notes</Label>
+            <Label htmlFor={`notes-${stage.id}`}>{t('admin.stages.notes')}</Label>
             <Textarea
               id={`notes-${stage.id}`}
-              placeholder="Add notes about this stage..."
+              placeholder={t('admin.stages.notesPlaceholder')}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="min-h-24 resize-none"
@@ -396,7 +402,7 @@ function StageCard({
             className="w-full"
             data-testid={`button-update-stage-${stage.id}`}
           >
-            Update Stage
+            {t('admin.stages.updateStage')}
           </Button>
         </form>
       )}
@@ -408,11 +414,13 @@ function StageCard({
 function AddStageDialog({
   open,
   onOpenChange,
-  onSubmit
+  onSubmit,
+  t
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSubmit: (data: z.infer<typeof addStageSchema>) => void;
+  t: (key: string) => string;
 }) {
   const form = useForm<z.infer<typeof addStageSchema>>({
     resolver: zodResolver(addStageSchema),
@@ -432,9 +440,9 @@ function AddStageDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg" data-testid="dialog-add-stage">
         <DialogHeader>
-          <DialogTitle>Add New Stage</DialogTitle>
+          <DialogTitle>{t('admin.stages.addNewStage')}</DialogTitle>
           <DialogDescription>
-            Add a new stage to this order's workflow.
+            {t('admin.stages.addStageDescription')}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -444,11 +452,11 @@ function AddStageDialog({
               name="stageType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Stage Type</FormLabel>
+                  <FormLabel>{t('admin.stages.stageType')}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger data-testid="select-add-stage-type">
-                        <SelectValue placeholder="Select a stage type" />
+                        <SelectValue placeholder={t('admin.stages.selectStageType')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -470,7 +478,7 @@ function AddStageDialog({
               name="status"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Initial Status</FormLabel>
+                  <FormLabel>{t('admin.stages.initialStatus')}</FormLabel>
                   <Select onValueChange={field.onChange} value={field.value}>
                     <FormControl>
                       <SelectTrigger data-testid="select-add-stage-status">
@@ -478,9 +486,9 @@ function AddStageDialog({
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="PENDING">Pending</SelectItem>
-                      <SelectItem value="IN_PROGRESS">In Progress</SelectItem>
-                      <SelectItem value="DONE">Done</SelectItem>
+                      <SelectItem value="PENDING">{t('admin.stages.pending')}</SelectItem>
+                      <SelectItem value="IN_PROGRESS">{t('admin.stages.inProgress')}</SelectItem>
+                      <SelectItem value="DONE">{t('admin.stages.done')}</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -492,10 +500,10 @@ function AddStageDialog({
               name="notes"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Notes (Optional)</FormLabel>
+                  <FormLabel>{t('admin.stages.notes')} ({t('common.optional')})</FormLabel>
                   <FormControl>
                     <Textarea 
-                      placeholder="Add any notes..."
+                      placeholder={t('admin.stages.notesPlaceholder')}
                       {...field}
                       data-testid="textarea-add-stage-notes"
                     />
@@ -511,13 +519,13 @@ function AddStageDialog({
                 onClick={() => onOpenChange(false)}
                 data-testid="button-add-stage-cancel"
               >
-                Cancel
+                {t('common.cancel')}
               </Button>
               <Button 
                 type="submit"
                 data-testid="button-add-stage-submit"
               >
-                Add Stage
+                {t('admin.stages.addStage')}
               </Button>
             </DialogFooter>
           </form>
