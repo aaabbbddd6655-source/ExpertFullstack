@@ -5,6 +5,7 @@ import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
 import { useStageTypeSettings, createStageTypeMap } from "@/hooks/useStageTypeSettings";
 import { AVAILABLE_ICONS } from "@/components/IconPicker";
+import { STANDARD_STAGE_TYPES } from "@shared/constants";
 
 type StageStatus = "PENDING" | "IN_PROGRESS" | "DONE";
 
@@ -56,6 +57,11 @@ export default function OrderTimeline({ stages }: OrderTimelineProps) {
   const stageTypeMap = createStageTypeMap(stageTypeSettings);
   
   const getStageLabel = (stageType: string) => {
+    // For standard stage types, always use translations for bilingual support
+    if (STANDARD_STAGE_TYPES.includes(stageType as any)) {
+      return t(`admin.stages.types.${stageType}` as any);
+    }
+    // For custom stage types, use displayName or fallback to translation
     const setting = stageTypeMap.get(stageType);
     return setting?.displayName || t(`admin.stages.types.${stageType}` as any) || stageType;
   };

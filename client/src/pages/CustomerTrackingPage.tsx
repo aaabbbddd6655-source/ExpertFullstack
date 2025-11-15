@@ -57,8 +57,9 @@ export default function CustomerTrackingPage({ orderData, onBack }: CustomerTrac
             variant="ghost" 
             onClick={onBack}
             data-testid="button-back"
+            className="gap-2"
           >
-            <ArrowLeft className="w-4 h-4 mr-2" />
+            <ArrowLeft className="w-4 h-4" />
             {t('common.back')}
           </Button>
           <LanguageSwitcher />

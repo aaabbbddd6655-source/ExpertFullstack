@@ -79,12 +79,12 @@ export default function OrderFilters({
             <Button
               variant="outline"
               className={cn(
-                "w-full justify-start text-left font-normal",
+                "w-full justify-start text-start font-normal gap-2",
                 !dateFrom && "text-muted-foreground"
               )}
               data-testid="button-date-from"
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
+              <CalendarIcon className="h-4 w-4" />
               {dateFrom ? format(dateFrom, "PPP") : t('common.pickDate')}
             </Button>
           </PopoverTrigger>
@@ -106,12 +106,12 @@ export default function OrderFilters({
             <Button
               variant="outline"
               className={cn(
-                "w-full justify-start text-left font-normal",
+                "w-full justify-start text-start font-normal gap-2",
                 !dateTo && "text-muted-foreground"
               )}
               data-testid="button-date-to"
             >
-              <CalendarIcon className="mr-2 h-4 w-4" />
+              <CalendarIcon className="h-4 w-4" />
               {dateTo ? format(dateTo, "PPP") : t('common.pickDate')}
             </Button>
           </PopoverTrigger>
@@ -130,8 +130,9 @@ export default function OrderFilters({
         variant="outline" 
         onClick={onReset}
         data-testid="button-reset-filters"
+        className="gap-1"
       >
-        <X className="w-4 h-4 mr-1" />
+        <X className="w-4 h-4" />
         {t('admin.orders.resetFilters')}
       </Button>
     </div>

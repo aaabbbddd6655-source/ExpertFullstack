@@ -155,10 +155,8 @@ export default function StageTypeSettings() {
     setEditData({});
   };
 
-  const formatStageType = (type: string) => {
-    return type.split("_").map(word => 
-      word.charAt(0) + word.slice(1).toLowerCase()
-    ).join(" ");
+  const getStageTypeLabel = (type: string) => {
+    return t(`admin.stages.types.${type}`) || type;
   };
 
   const IconComponent = (iconName: string) => {
@@ -179,8 +177,9 @@ export default function StageTypeSettings() {
         <Button 
           onClick={() => setAddDialogOpen(true)}
           data-testid="button-add-stage-type"
+          className="gap-2"
         >
-          <Plus className="w-4 h-4 mr-2" />
+          <Plus className="w-4 h-4" />
           {t('admin.stages.addNewStage')}
         </Button>
       </CardHeader>

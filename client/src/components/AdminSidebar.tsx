@@ -23,7 +23,7 @@ export default function AdminSidebar({ activeItem, onNavigate, onLogout }: Admin
   const { t } = useTranslation();
   
   const menuItems = [
-    { id: "dashboard", label: t('admin.dashboard'), icon: Home, path: "/admin" },
+    { id: "dashboard", label: t('admin.dashboardNav'), icon: Home, path: "/admin" },
     { id: "orders", label: t('admin.ordersNav'), icon: Package, path: "/admin/orders" },
     { id: "customers", label: t('admin.customersNav'), icon: Users, path: "/admin/customers" },
     { id: "settings", label: t('admin.settingsNav'), icon: Settings, path: "/admin/settings" },

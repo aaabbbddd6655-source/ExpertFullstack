@@ -42,6 +42,18 @@
     "switchToEnglish": "English",
     "toggleTheme": "Toggle theme"
   },
+  "statuses": {
+    "PENDING_MEASUREMENT": "Pending Measurement",
+    "DESIGN_APPROVAL": "Design Approval",
+    "MATERIALS_PROCUREMENT": "Materials Procurement",
+    "IN_PRODUCTION": "In Production",
+    "QUALITY_CHECK": "Quality Check",
+    "PACKAGING": "Packaging",
+    "READY_FOR_INSTALL": "Ready for Installation",
+    "INSTALLED": "Installed",
+    "COMPLETED": "Completed",
+    "CANCELLED": "Cancelled"
+  },
   "customer": {
     "title": "Track Your Order",
     "subtitle": "Enter your details to track your custom interior decor order",
@@ -94,7 +106,7 @@
     "commentPlaceholder": "Tell us more about your experience..."
   },
   "admin": {
-    "dashboard": "Dashboard",
+    "dashboardNav": "Dashboard",
     "ordersNav": "Orders",
     "customersNav": "Customers",
     "settingsNav": "Settings",
@@ -153,6 +165,7 @@
       "newOrder": "New Order",
       "searchPlaceholder": "Search orders...",
       "filter": "Filter",
+      "resetFilters": "Reset Filters",
       "allStatuses": "All Statuses",
       "allStages": "All Stages",
       "currentStage": "Current Stage",
@@ -161,10 +174,12 @@
       "dateTo": "Date To",
       "progress": "Progress",
       "id": "# Order",
+      "orderNumber": "Order Number",
       "customer": "Customer",
       "status": "Status",
       "amount": "Amount",
       "date": "Date",
+      "created": "Created",
       "phone": "Phone",
       "actions": "Actions",
       "noOrders": "No orders found",

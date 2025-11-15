@@ -37,16 +37,12 @@ export default function OrdersTable({ orders, onViewOrder }: OrdersTableProps) {
     return colors[status] || "bg-gray-600";
   };
 
-  const formatStatus = (status: string) => {
-    return status.split("_").map(word => 
-      word.charAt(0) + word.slice(1).toLowerCase()
-    ).join(" ");
+  const getStatusLabel = (status: string) => {
+    return t(`statuses.${status}`) || status;
   };
 
-  const formatStage = (stage: string) => {
-    return stage.split("_").map(word => 
-      word.charAt(0) + word.slice(1).toLowerCase()
-    ).join(" ");
+  const getStageLabel = (stage: string) => {
+    return t(`admin.stages.types.${stage}`) || stage;
   };
 
   return (
@@ -61,7 +57,7 @@ export default function OrdersTable({ orders, onViewOrder }: OrdersTableProps) {
             <TableHead className="font-semibold">{t('admin.orders.currentStage')}</TableHead>
             <TableHead className="font-semibold">{t('admin.orders.progress')}</TableHead>
             <TableHead className="font-semibold">{t('admin.orders.created')}</TableHead>
-            <TableHead className="text-right font-semibold">{t('admin.orders.actions')}</TableHead>
+            <TableHead className="text-end font-semibold">{t('admin.orders.actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -76,11 +72,11 @@ export default function OrdersTable({ orders, onViewOrder }: OrdersTableProps) {
               <TableCell className="text-muted-foreground">{order.phone}</TableCell>
               <TableCell>
                 <Badge className={getStatusColor(order.status)}>
-                  {formatStatus(order.status)}
+                  {getStatusLabel(order.status)}
                 </Badge>
               </TableCell>
               <TableCell className="text-sm">
-                {formatStage(order.currentStage)}
+                {getStageLabel(order.currentStage)}
               </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
@@ -93,14 +89,15 @@ export default function OrdersTable({ orders, onViewOrder }: OrdersTableProps) {
               <TableCell className="text-sm text-muted-foreground">
                 {new Date(order.createdAt).toLocaleDateString()}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-end">
                 <Button 
                   variant="ghost" 
                   size="sm"
                   onClick={() => onViewOrder(order.id)}
                   data-testid={`button-view-${order.id}`}
+                  className="gap-1"
                 >
-                  <Eye className="w-4 h-4 mr-1" />
+                  <Eye className="w-4 h-4" />
                   {t('common.viewDetails')}
                 </Button>
               </TableCell>

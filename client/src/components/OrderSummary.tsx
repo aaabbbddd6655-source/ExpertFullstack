@@ -62,7 +62,7 @@ export default function OrderSummary({
                 {getStatusLabel(status)}
               </Badge>
             </div>
-            <div className="text-right">
+            <div className="text-end">
               <p className="text-sm text-muted-foreground">{t('customer.orderDate')}</p>
               <p className="font-medium" data-testid="text-order-date">
                 {new Date(createdAt).toLocaleDateString("en-US", {

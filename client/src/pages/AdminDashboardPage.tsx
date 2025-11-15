@@ -176,8 +176,8 @@ export default function AdminDashboardPage() {
             value={dateFilter}
             onValueChange={(value) => setDateFilter(value as DateFilter)}
           >
-            <SelectTrigger className="w-full sm:w-[180px]" data-testid="select-date-filter">
-              <Calendar className="w-4 h-4 mr-2" />
+            <SelectTrigger className="w-full sm:w-[180px] gap-2" data-testid="select-date-filter">
+              <Calendar className="w-4 h-4" />
               <SelectValue placeholder={t("common.dateRange")} />
             </SelectTrigger>
             <SelectContent>
@@ -350,10 +350,10 @@ export default function AdminDashboardPage() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-left text-xs font-medium text-muted-foreground pb-2">Order ID</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground pb-2">Customer Name</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground pb-2">Current Stage</th>
-                    <th className="text-left text-xs font-medium text-muted-foreground pb-2">Days Delayed</th>
+                    <th className="text-start text-xs font-medium text-muted-foreground pb-2">Order ID</th>
+                    <th className="text-start text-xs font-medium text-muted-foreground pb-2">Customer Name</th>
+                    <th className="text-start text-xs font-medium text-muted-foreground pb-2">Current Stage</th>
+                    <th className="text-start text-xs font-medium text-muted-foreground pb-2">Days Delayed</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -428,11 +428,11 @@ export default function AdminDashboardPage() {
               notifications.map((notif: { message: string; time: string }, idx: number) => (
                 <div 
                   key={idx} 
-                  className="flex items-start justify-between py-2 border-b last:border-0"
+                  className="flex items-start justify-between gap-4 py-2 border-b last:border-0"
                   data-testid={`notification-${idx}`}
                 >
                   <p className="text-sm">{notif.message}</p>
-                  <span className="text-xs text-muted-foreground whitespace-nowrap ml-4">
+                  <span className="text-xs text-muted-foreground whitespace-nowrap">
                     {notif.time}
                   </span>
                 </div>

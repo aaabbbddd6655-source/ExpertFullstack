@@ -21,6 +21,7 @@ import { MoreVertical } from "lucide-react";
 import { useStageTypeSettings, createStageTypeMap } from "@/hooks/useStageTypeSettings";
 import { AVAILABLE_ICONS } from "@/components/IconPicker";
 import { useTranslation } from "@/lib/i18n";
+import { STANDARD_STAGE_TYPES } from "@shared/constants";
 
 interface Stage {
   id: string;
@@ -42,22 +43,6 @@ const addStageSchema = z.object({
   notes: z.string().optional()
 });
 
-const STAGE_TYPES = [
-  "ORDER_RECEIVED",
-  "SITE_MEASUREMENT",
-  "DESIGN_APPROVAL",
-  "MATERIALS_PROCUREMENT",
-  "PRODUCTION_CUTTING",
-  "PRODUCTION_STITCHING",
-  "PRODUCTION_ASSEMBLY",
-  "FINISHING",
-  "QUALITY_CHECK",
-  "PACKAGING",
-  "DELIVERY_SCHEDULING",
-  "INSTALLATION",
-  "RATING"
-];
-
 export default function StageManager({ stages, onUpdate, onAdd, onDelete }: StageManagerProps) {
   const { t } = useTranslation();
   const [expandedStageId, setExpandedStageId] = useState<string | null>(
@@ -76,11 +61,14 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
   const [canScrollUp, setCanScrollUp] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(false);
 
-  const formatStageType = (type: string) => {
+  const getStageTypeLabel = (type: string) => {
+    // For standard stage types, always use translations for bilingual support
+    if (STANDARD_STAGE_TYPES.includes(type as any)) {
+      return t(`admin.stages.types.${type}`);
+    }
+    // For custom stage types, use displayName or fallback to translation
     const setting = stageTypeMap.get(type);
-    return setting?.displayName || type.split("_").map(word => 
-      word.charAt(0) + word.slice(1).toLowerCase()
-    ).join(" ");
+    return setting?.displayName || t(`admin.stages.types.${type}`) || type;
   };
   
   const getStageIconName = (stageType: string) => {
@@ -101,9 +89,14 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
       IN_PROGRESS: "bg-blue-100 text-blue-700",
       DONE: "bg-green-100 text-green-700"
     };
+    const labels: Record<string, string> = {
+      PENDING: t('admin.stages.pending'),
+      IN_PROGRESS: t('admin.stages.inProgress'),
+      DONE: t('admin.stages.done')
+    };
     return (
       <Badge className={variants[status]}>
-        {status.replace("_", " ")}
+        {labels[status] || status.replace("_", " ")}
       </Badge>
     );
   };
@@ -162,8 +155,9 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
                 variant="outline"
                 onClick={() => setAddDialogOpen(true)}
                 data-testid="button-add-stage"
+                className="gap-2"
               >
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-4 h-4" />
                 {t('admin.stages.addStage')}
               </Button>
             )}
@@ -202,7 +196,7 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
                 onToggle={() => setExpandedStageId(expandedStageId === stage.id ? null : stage.id)}
                 onUpdate={onUpdate}
                 onDelete={onDelete ? () => handleDeleteClick(stage) : undefined}
-                formatStageType={formatStageType}
+                formatStageType={getStageTypeLabel}
                 getStatusIcon={getStatusIcon}
                 getStageIconName={getStageIconName}
                 getStatusBadge={getStatusBadge}
@@ -245,7 +239,7 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
             <DialogHeader>
               <DialogTitle>{t('admin.stages.deleteStage')}</DialogTitle>
               <DialogDescription>
-                {t('admin.stages.deleteConfirmation').replace('{stage}', stageToDelete ? formatStageType(stageToDelete.stageType) : '')}
+                {t('admin.stages.deleteConfirmation').replace('{stage}', stageToDelete ? getStageTypeLabel(stageToDelete.stageType) : '')}
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -278,7 +272,7 @@ function StageCard({
   onToggle,
   onUpdate,
   onDelete,
-  formatStageType,
+  formatStageType: getStageTypeLabel,
   getStatusIcon,
   getStatusBadge,
   getStageIconName,
@@ -320,7 +314,7 @@ function StageCard({
       >
         <div className="flex items-center gap-3">
           {getStatusIcon(stage.status, getStageIconName(stage.stageType))}
-          <span className="font-medium text-sm">{formatStageType(stage.stageType)}</span>
+          <span className="font-medium text-sm">{getStageTypeLabel(stage.stageType)}</span>
         </div>
         <div className="flex items-center gap-2">
           {getStatusBadge(stage.status)}
@@ -342,10 +336,10 @@ function StageCard({
                     e.stopPropagation();
                     onDelete();
                   }}
-                  className="text-destructive"
+                  className="text-destructive gap-2"
                   data-testid={`button-delete-stage-${stage.id}`}
                 >
-                  <Trash2 className="w-4 h-4 mr-2" />
+                  <Trash2 className="w-4 h-4" />
                   {t('admin.stages.deleteStage')}
                 </DropdownMenuItem>
               </DropdownMenuContent>

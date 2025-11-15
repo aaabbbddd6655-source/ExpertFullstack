@@ -322,8 +322,9 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
           variant="ghost" 
           onClick={onBack}
           data-testid="button-back-to-orders"
+          className="gap-2"
         >
-          <ArrowLeft className="w-4 h-4 mr-2" />
+          <ArrowLeft className="w-4 h-4" />
           {t('admin.orders.backToOrders')}
         </Button>
       </div>
@@ -446,29 +447,29 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
               <CardContent className="space-y-2">
                 <Button 
                   variant="outline" 
-                  className="w-full" 
+                  className="w-full gap-2" 
                   onClick={() => setMediaDialogOpen(true)}
                   data-testid="button-add-media"
                 >
-                  <ImagePlus className="w-4 h-4 mr-2" />
+                  <ImagePlus className="w-4 h-4" />
                   {t('admin.orders.addMedia')}
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="w-full" 
+                  className="w-full gap-2" 
                   onClick={() => setEmailDialogOpen(true)}
                   data-testid="button-send-email"
                 >
-                  <Mail className="w-4 h-4 mr-2" />
+                  <Mail className="w-4 h-4" />
                   {t('admin.orders.sendEmailUpdate')}
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="w-full text-destructive" 
+                  className="w-full gap-2 text-destructive" 
                   onClick={() => setCancelDialogOpen(true)}
                   data-testid="button-cancel-order"
                 >
-                  <XCircle className="w-4 h-4 mr-2" />
+                  <XCircle className="w-4 h-4" />
                   {t('admin.orders.cancelOrder')}
                 </Button>
               </CardContent>
@@ -700,7 +701,7 @@ function MediaDialog({ open, onOpenChange, stages, onSubmit, onResetRef, isPendi
                 onGetUploadParameters={handleGetUploadUrl}
                 onComplete={handleFileUploadComplete}
               >
-                <Upload className="mr-2 h-4 w-4" />
+                <Upload className="me-2 h-4 w-4" />
                 {t('admin.orders.uploadFile')}
               </ObjectUploader>
             </div>

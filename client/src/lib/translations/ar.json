@@ -42,6 +42,18 @@
     "switchToEnglish": "English",
     "toggleTheme": "تبديل المظهر"
   },
+  "statuses": {
+    "PENDING_MEASUREMENT": "في انتظار القياس",
+    "DESIGN_APPROVAL": "موافقة التصميم",
+    "MATERIALS_PROCUREMENT": "شراء المواد",
+    "IN_PRODUCTION": "في الإنتاج",
+    "QUALITY_CHECK": "فحص الجودة",
+    "PACKAGING": "التعبئة",
+    "READY_FOR_INSTALL": "جاهز للتركيب",
+    "INSTALLED": "تم التركيب",
+    "COMPLETED": "مكتمل",
+    "CANCELLED": "ملغى"
+  },
   "customer": {
     "title": "تتبع طلبك",
     "subtitle": "أدخل بياناتك لتتبع طلب الديكور الداخلي المخصص",
@@ -94,7 +106,7 @@
     "commentPlaceholder": "أخبرنا المزيد عن تجربتك..."
   },
   "admin": {
-    "dashboard": "لوحة التحكم",
+    "dashboardNav": "لوحة التحكم",
     "ordersNav": "الطلبات",
     "customersNav": "العملاء",
     "settingsNav": "الإعدادات",
@@ -153,6 +165,7 @@
       "newOrder": "طلب جديد",
       "searchPlaceholder": "البحث في الطلبات...",
       "filter": "تصفية",
+      "resetFilters": "إعادة تعيين الفلاتر",
       "allStatuses": "جميع الحالات",
       "allStages": "جميع المراحل",
       "currentStage": "المرحلة الحالية",
@@ -161,10 +174,12 @@
       "dateTo": "التاريخ إلى",
       "progress": "التقدم",
       "id": "# الطلب",
+      "orderNumber": "رقم الطلب",
       "customer": "العميل",
       "status": "الحالة",
       "amount": "المبلغ",
       "date": "التاريخ",
+      "created": "تاريخ الإنشاء",
       "phone": "الهاتف",
       "actions": "إجراءات",
       "noOrders": "لم يتم العثور على طلبات",

@@ -136,8 +136,8 @@ export default function AdminCustomersPage() {
         
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button data-testid="button-add-customer">
-              <UserPlus className="w-4 h-4 mr-2" />
+            <Button data-testid="button-add-customer" className="gap-2">
+              <UserPlus className="w-4 h-4" />
               {t('admin.customers.addCustomer')}
             </Button>
           </DialogTrigger>
@@ -236,12 +236,12 @@ export default function AdminCustomersPage() {
             {t('admin.customers.total')}: {customers.length} {t('admin.customers.customers')}
           </CardDescription>
           <div className="relative pt-2">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Search className="absolute start-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder={t('admin.customers.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9"
+              className="ps-9"
               data-testid="input-search-customers"
             />
           </div>
@@ -264,8 +264,8 @@ export default function AdminCustomersPage() {
                   <TableHead>{t('admin.customers.name')}</TableHead>
                   <TableHead>{t('admin.customers.phone')}</TableHead>
                   <TableHead>{t('admin.customers.email')}</TableHead>
-                  <TableHead className="text-right">{t('admin.customers.totalOrders')}</TableHead>
-                  <TableHead className="text-right">{t('admin.customers.activeOrders')}</TableHead>
+                  <TableHead className="text-end">{t('admin.customers.totalOrders')}</TableHead>
+                  <TableHead className="text-end">{t('admin.customers.activeOrders')}</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -274,8 +274,8 @@ export default function AdminCustomersPage() {
                     <TableCell className="font-medium">{customer.fullName}</TableCell>
                     <TableCell>{customer.phone}</TableCell>
                     <TableCell>{customer.email || "-"}</TableCell>
-                    <TableCell className="text-right">{customer.totalOrders}</TableCell>
-                    <TableCell className="text-right">{customer.activeOrders}</TableCell>
+                    <TableCell className="text-end">{customer.totalOrders}</TableCell>
+                    <TableCell className="text-end">{customer.activeOrders}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>

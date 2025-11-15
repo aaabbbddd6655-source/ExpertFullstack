@@ -71,8 +71,8 @@ export default function AdminOrdersPage({ onViewOrder }: AdminOrdersPageProps) {
             {t('admin.orders.subtitle')}
           </p>
         </div>
-        <Button onClick={() => setShowNewOrderDialog(true)} data-testid="button-new-order">
-          <Plus className="w-4 h-4 mr-2" />
+        <Button onClick={() => setShowNewOrderDialog(true)} data-testid="button-new-order" className="gap-2">
+          <Plus className="w-4 h-4" />
           {t('admin.orders.newOrder')}
         </Button>
       </div>
