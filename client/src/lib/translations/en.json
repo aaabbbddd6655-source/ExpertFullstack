@@ -252,7 +252,10 @@
       "userRole": "Role",
       "version": "Version",
       "database": "Database Status",
-      "connected": "Connected"
+      "connected": "Connected",
+      "languageChanged": "Language changed to {language}",
+      "languageEnglish": "English",
+      "languageArabic": "العربية"
     }
   },
   "statuses": {

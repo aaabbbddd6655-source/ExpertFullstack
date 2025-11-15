@@ -252,7 +252,10 @@
       "userRole": "الدور",
       "version": "الإصدار",
       "database": "حالة قاعدة البيانات",
-      "connected": "متصل"
+      "connected": "متصل",
+      "languageChanged": "تم تغيير اللغة إلى {language}",
+      "languageEnglish": "English",
+      "languageArabic": "العربية"
     }
   },
   "statuses": {
