@@ -251,9 +251,27 @@ export class DatabaseStorage implements IStorage {
 
   // Order stage operations
   async getStagesByOrderId(orderId: string): Promise<OrderStage[]> {
-    return await db.select()
+    // Join with stageTypeSettings to maintain consistent ordering by sortOrder
+    const results = await db.select({
+      id: schema.orderStages.id,
+      orderId: schema.orderStages.orderId,
+      stageType: schema.orderStages.stageType,
+      status: schema.orderStages.status,
+      startedAt: schema.orderStages.startedAt,
+      completedAt: schema.orderStages.completedAt,
+      notes: schema.orderStages.notes,
+      sortOrder: schema.stageTypeSettings.sortOrder
+    })
       .from(schema.orderStages)
-      .where(eq(schema.orderStages.orderId, orderId));
+      .leftJoin(
+        schema.stageTypeSettings,
+        eq(schema.orderStages.stageType, schema.stageTypeSettings.stageType)
+      )
+      .where(eq(schema.orderStages.orderId, orderId))
+      .orderBy(schema.stageTypeSettings.sortOrder);
+    
+    // Remove sortOrder from the returned objects to match OrderStage type
+    return results.map(({ sortOrder, ...stage }) => stage) as OrderStage[];
   }
 
   async getStageById(id: string): Promise<OrderStage | undefined> {

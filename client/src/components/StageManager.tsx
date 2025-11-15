@@ -18,6 +18,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
+import { useStageTypeSettings, createStageTypeMap } from "@/hooks/useStageTypeSettings";
+import { AVAILABLE_ICONS } from "@/components/IconPicker";
 
 interface Stage {
   id: string;
@@ -63,21 +65,32 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [stageToDelete, setStageToDelete] = useState<Stage | null>(null);
   
+  // Fetch stage type settings for icons and display names
+  const { data: stageTypeSettings = [] } = useStageTypeSettings();
+  const stageTypeMap = createStageTypeMap(stageTypeSettings);
+  
   // Scroll indicators state
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [canScrollUp, setCanScrollUp] = useState(false);
   const [canScrollDown, setCanScrollDown] = useState(false);
 
   const formatStageType = (type: string) => {
-    return type.split("_").map(word => 
+    const setting = stageTypeMap.get(type);
+    return setting?.displayName || type.split("_").map(word => 
       word.charAt(0) + word.slice(1).toLowerCase()
     ).join(" ");
   };
+  
+  const getStageIconName = (stageType: string) => {
+    const setting = stageTypeMap.get(stageType);
+    return setting?.icon;
+  };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: string, iconName?: string) => {
     if (status === "DONE") return <CheckCircle2 className="w-5 h-5 text-green-600" />;
     if (status === "IN_PROGRESS") return <Clock className="w-5 h-5 text-blue-600" />;
-    return <Circle className="w-5 h-5 text-muted-foreground" />;
+    const IconComponent = iconName && AVAILABLE_ICONS[iconName] ? AVAILABLE_ICONS[iconName] : Circle;
+    return <IconComponent className="w-5 h-5 text-muted-foreground" />;
   };
 
   const getStatusBadge = (status: string) => {
@@ -189,6 +202,7 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
                 onDelete={onDelete ? () => handleDeleteClick(stage) : undefined}
                 formatStageType={formatStageType}
                 getStatusIcon={getStatusIcon}
+                getStageIconName={getStageIconName}
                 getStatusBadge={getStatusBadge}
               />
             ))
@@ -262,7 +276,8 @@ function StageCard({
   onDelete,
   formatStageType,
   getStatusIcon,
-  getStatusBadge
+  getStatusBadge,
+  getStageIconName
 }: {
   stage: Stage;
   isExpanded: boolean;
@@ -270,8 +285,9 @@ function StageCard({
   onUpdate: (stageId: string, status: string, notes: string) => void;
   onDelete?: () => void;
   formatStageType: (type: string) => string;
-  getStatusIcon: (status: string) => React.ReactNode;
+  getStatusIcon: (status: string, iconName?: string) => React.ReactNode;
   getStatusBadge: (status: string) => React.ReactNode;
+  getStageIconName: (stageType: string) => string | undefined;
 }) {
   const [status, setStatus] = useState(stage.status);
   const [notes, setNotes] = useState(stage.notes || "");
@@ -297,7 +313,7 @@ function StageCard({
         data-testid={`stage-header-${stage.id}`}
       >
         <div className="flex items-center gap-3">
-          {getStatusIcon(stage.status)}
+          {getStatusIcon(stage.status, getStageIconName(stage.stageType))}
           <span className="font-medium text-sm">{formatStageType(stage.stageType)}</span>
         </div>
         <div className="flex items-center gap-2">
