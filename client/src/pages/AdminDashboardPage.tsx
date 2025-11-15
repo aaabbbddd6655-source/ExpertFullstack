@@ -358,7 +358,7 @@ export default function AdminDashboardPage() {
                 </thead>
                 <tbody>
                   {delayedOrdersData.length > 0 ? (
-                    delayedOrdersData.map((order, idx) => (
+                    delayedOrdersData.map((order: { id: string; customer: string; stage: string; days: number }, idx: number) => (
                       <tr key={idx} className="border-b last:border-0" data-testid={`row-delayed-order-${idx}`}>
                         <td className="py-3 text-sm font-medium">{order.id}</td>
                         <td className="py-3 text-sm">{order.customer}</td>
@@ -425,7 +425,7 @@ export default function AdminDashboardPage() {
         <CardContent>
           <div className="space-y-3">
             {notifications.length > 0 ? (
-              notifications.map((notif, idx) => (
+              notifications.map((notif: { message: string; time: string }, idx: number) => (
                 <div 
                   key={idx} 
                   className="flex items-start justify-between py-2 border-b last:border-0"

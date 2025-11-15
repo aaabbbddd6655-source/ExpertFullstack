@@ -366,6 +366,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get all customers (admin only)
+  app.get("/api/admin/customers", authenticateToken, async (req, res) => {
+    try {
+      const customers = await storage.getAllCustomers();
+      
+      // Get order count for each customer
+      const allOrders = await storage.getAllOrders();
+      const customersWithOrders = customers.map(customer => {
+        const customerOrders = allOrders.filter(order => order.customerId === customer.id);
+        const activeOrders = customerOrders.filter(
+          order => order.status !== "COMPLETED" && order.status !== "CANCELLED"
+        );
+        
+        return {
+          ...customer,
+          totalOrders: customerOrders.length,
+          activeOrders: activeOrders.length
+        };
+      });
+
+      res.json(customersWithOrders);
+    } catch (error) {
+      console.error("Get customers error:", error);
+      res.status(500).json({ error: "Failed to fetch customers" });
+    }
+  });
+
+  // Create new customer (admin only)
+  app.post("/api/admin/customers", authenticateToken, async (req, res) => {
+    try {
+      const createCustomerSchema = z.object({
+        fullName: z.string().min(1, "Full name is required"),
+        phone: z.string().min(1, "Phone number is required"),
+        email: z.string().email().optional().or(z.literal("")).nullable()
+      });
+
+      const validatedData = createCustomerSchema.parse(req.body);
+      const { fullName, phone, email } = validatedData;
+
+      const normalizedPhone = normalizePhoneNumber(phone);
+
+      // Check if customer already exists
+      const existingCustomer = await storage.getCustomerByPhone(normalizedPhone);
+      if (existingCustomer) {
+        return res.status(409).json({ error: "Customer with this phone number already exists" });
+      }
+
+      const customer = await storage.createCustomer({
+        fullName,
+        phone: normalizedPhone,
+        email: email || null
+      });
+
+      res.status(201).json(customer);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
+      console.error("Create customer error:", error);
+      res.status(500).json({ error: "Failed to create customer" });
+    }
+  });
+
   // Get all orders with filters
   app.get("/api/admin/orders", authenticateToken, async (req, res) => {
     try {

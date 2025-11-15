@@ -31,6 +31,7 @@ export interface IStorage {
   // Customer operations
   getCustomerByPhone(phone: string): Promise<Customer | undefined>;
   getCustomerById(id: string): Promise<Customer | undefined>;
+  getAllCustomers(): Promise<Customer[]>;
   createCustomer(customer: InsertCustomer): Promise<Customer>;
   
   // Order operations
@@ -97,6 +98,11 @@ export class DatabaseStorage implements IStorage {
   async getCustomerById(id: string): Promise<Customer | undefined> {
     const results = await db.select().from(schema.customers).where(eq(schema.customers.id, id));
     return results[0];
+  }
+
+  async getAllCustomers(): Promise<Customer[]> {
+    const results = await db.select().from(schema.customers).orderBy(schema.customers.fullName);
+    return results;
   }
 
   async createCustomer(customer: InsertCustomer): Promise<Customer> {
