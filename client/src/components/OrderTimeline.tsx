@@ -1,21 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  CheckCircle2, 
-  Circle, 
-  Clock,
-  Ruler,
-  Palette,
-  ShoppingCart,
-  Scissors,
-  FileText,
-  Package as PackageIcon,
-  Truck,
-  Home,
-  Star
-} from "lucide-react";
+import { CheckCircle2, Circle, Clock, FileText } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { cn } from "@/lib/utils";
+import { useStageTypeSettings, createStageTypeMap } from "@/hooks/useStageTypeSettings";
+import { AVAILABLE_ICONS } from "@/components/IconPicker";
 
 type StageStatus = "PENDING" | "IN_PROGRESS" | "DONE";
 
@@ -33,74 +22,6 @@ interface OrderTimelineProps {
   stages: TimelineStage[];
 }
 
-const stageConfig: Record<string, { icon: any; label: string; description: string }> = {
-  ORDER_RECEIVED: { 
-    icon: CheckCircle2, 
-    label: "Order Received", 
-    description: "Your order has been confirmed" 
-  },
-  SITE_MEASUREMENT: { 
-    icon: Ruler, 
-    label: "Site Measurement", 
-    description: "Our team will measure your space" 
-  },
-  DESIGN_APPROVAL: { 
-    icon: Palette, 
-    label: "Design Approval", 
-    description: "Review and approve your custom design" 
-  },
-  MATERIALS_PROCUREMENT: { 
-    icon: ShoppingCart, 
-    label: "Materials Procurement", 
-    description: "Sourcing premium materials" 
-  },
-  PRODUCTION_CUTTING: { 
-    icon: Scissors, 
-    label: "Production - Cutting", 
-    description: "Precision cutting of materials" 
-  },
-  PRODUCTION_STITCHING: { 
-    icon: FileText, 
-    label: "Production - Stitching", 
-    description: "Expert stitching and assembly" 
-  },
-  PRODUCTION_ASSEMBLY: { 
-    icon: FileText, 
-    label: "Production - Assembly", 
-    description: "Final assembly of components" 
-  },
-  FINISHING: { 
-    icon: Star, 
-    label: "Finishing", 
-    description: "Quality finishing touches" 
-  },
-  QUALITY_CHECK: { 
-    icon: CheckCircle2, 
-    label: "Quality Check", 
-    description: "Rigorous quality inspection" 
-  },
-  PACKAGING: { 
-    icon: PackageIcon, 
-    label: "Packaging", 
-    description: "Careful packaging for delivery" 
-  },
-  DELIVERY_SCHEDULING: { 
-    icon: Truck, 
-    label: "Delivery Scheduling", 
-    description: "Coordinating delivery time" 
-  },
-  INSTALLATION: { 
-    icon: Home, 
-    label: "Installation", 
-    description: "Professional installation at your location" 
-  },
-  RATING: { 
-    icon: Star, 
-    label: "Rate Your Experience", 
-    description: "Share your feedback" 
-  },
-};
-
 const getStatusBadge = (status: StageStatus, t: any) => {
   const variants = {
     DONE: { variant: "default" as const, label: t('admin.stages.done'), className: "bg-green-600 hover:bg-green-600" },
@@ -116,35 +37,44 @@ const getStatusBadge = (status: StageStatus, t: any) => {
   );
 };
 
-const getStageIcon = (stageType: string, status: StageStatus) => {
-  const IconComponent = stageConfig[stageType]?.icon || Circle;
-  
+const getStageIcon = (stageType: string, status: StageStatus, iconName?: string) => {
+  // Use status-specific icons for DONE and IN_PROGRESS
   if (status === "DONE") {
     return <CheckCircle2 className="w-6 h-6 text-green-600" />;
   } else if (status === "IN_PROGRESS") {
     return <Clock className="w-6 h-6 text-blue-600" />;
   } else {
+    // For PENDING, use the stage type's custom icon
+    const IconComponent = iconName && AVAILABLE_ICONS[iconName] ? AVAILABLE_ICONS[iconName] : Circle;
     return <IconComponent className="w-6 h-6 text-muted-foreground" />;
   }
 };
 
 export default function OrderTimeline({ stages }: OrderTimelineProps) {
   const { t } = useTranslation();
+  const { data: stageTypeSettings = [] } = useStageTypeSettings();
+  const stageTypeMap = createStageTypeMap(stageTypeSettings);
   
   const getStageLabel = (stageType: string) => {
-    return t(`admin.stages.types.${stageType}` as any) || stageType;
+    const setting = stageTypeMap.get(stageType);
+    return setting?.displayName || t(`admin.stages.types.${stageType}` as any) || stageType;
   };
   
   const getStageDescription = (stageType: string) => {
     return t(`admin.stages.descriptions.${stageType}` as any) || "";
   };
   
+  const getStageIconName = (stageType: string) => {
+    const setting = stageTypeMap.get(stageType);
+    return setting?.icon;
+  };
+  
   return (
     <div className="space-y-4">
       {stages.map((stage, index) => {
-        const config = stageConfig[stage.stageType] || stageConfig.ORDER_RECEIVED;
         const label = getStageLabel(stage.stageType);
         const description = getStageDescription(stage.stageType);
+        const iconName = getStageIconName(stage.stageType);
         const isLast = index === stages.length - 1;
         
         return (
@@ -165,7 +95,7 @@ export default function OrderTimeline({ stages }: OrderTimelineProps) {
                       stage.status === "IN_PROGRESS" && "bg-blue-100 dark:bg-blue-950",
                       stage.status === "PENDING" && "bg-muted"
                     )}>
-                      {getStageIcon(stage.stageType, stage.status)}
+                      {getStageIcon(stage.stageType, stage.status, iconName)}
                     </div>
                   </div>
 

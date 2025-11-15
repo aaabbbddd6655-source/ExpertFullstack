@@ -1025,6 +1025,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/admin/stage-types", authenticateToken, async (req, res) => {
+    try {
+      const { createStageTypeSettingSchema } = await import("@shared/schema");
+      const newStage = createStageTypeSettingSchema.parse(req.body);
+
+      const setting = await storage.createStageTypeSetting(newStage);
+      res.status(201).json(setting);
+    } catch (error) {
+      console.error("Create stage type error:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to create stage type setting" });
+    }
+  });
+
   app.patch("/api/admin/stage-types/:stageType", authenticateToken, async (req, res) => {
     try {
       const { stageType } = req.params;

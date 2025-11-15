@@ -93,6 +93,7 @@ export interface IStorage {
   // Stage type settings operations
   getAllStageTypeSettings(): Promise<StageTypeSetting[]>;
   getStageTypeSettingByType(stageType: string): Promise<StageTypeSetting | undefined>;
+  createStageTypeSetting(data: InsertStageTypeSetting): Promise<StageTypeSetting>;
   updateStageTypeSetting(stageType: string, updates: UpdateStageTypeSetting): Promise<StageTypeSetting | undefined>;
 }
 
@@ -374,6 +375,13 @@ export class DatabaseStorage implements IStorage {
     const results = await db.select()
       .from(schema.stageTypeSettings)
       .where(eq(schema.stageTypeSettings.stageType, stageType as any));
+    return results[0];
+  }
+
+  async createStageTypeSetting(data: InsertStageTypeSetting): Promise<StageTypeSetting> {
+    const results = await db.insert(schema.stageTypeSettings)
+      .values(data)
+      .returning();
     return results[0];
   }
 

@@ -169,6 +169,7 @@ export const insertStageTypeSettingSchema = createInsertSchema(stageTypeSettings
   updatedAt: true
 });
 export const updateStageTypeSettingSchema = insertStageTypeSettingSchema.partial().omit({ stageType: true });
+export const createStageTypeSettingSchema = insertStageTypeSettingSchema;
 
 // Types
 export type Customer = typeof customers.$inferSelect;
