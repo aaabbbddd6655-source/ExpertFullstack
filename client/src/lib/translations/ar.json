@@ -25,7 +25,17 @@
     "dateRange": "نطاق التاريخ",
     "from": "من",
     "to": "إلى",
-    "apply": "تطبيق"
+    "apply": "تطبيق",
+    "pickDate": "اختر التاريخ",
+    "total": "المجموع",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "visible": "مرئي",
+    "hidden": "مخفي",
+    "required": "مطلوب",
+    "optional": "اختياري",
+    "yes": "نعم",
+    "no": "لا"
   },
   "header": {
     "switchToArabic": "العربية",
@@ -89,31 +99,73 @@
     "customersNav": "العملاء",
     "settingsNav": "الإعدادات",
     "logout": "تسجيل الخروج",
-    "login": "تسجيل الدخول",
+    "login": "تسجيل دخول المشرف",
     "welcome": "مرحباً بك في لوحة تحكم إيفيا",
+    "welcomeSubtitle": "سجل الدخول للوصول إلى لوحة الإدارة",
     "emailLabel": "البريد الإلكتروني",
     "passwordLabel": "كلمة المرور",
     "signIn": "تسجيل الدخول",
     "loginSuccess": "تم تسجيل الدخول بنجاح",
     "loginError": "بيانات اعتماد غير صالحة",
+    "sidebarTitle": "إيفيا",
+    "sidebarSubtitle": "مرحباً بك في لوحة تحكم إيفيا",
+    "navigation": "التنقل",
     "stats": {
       "totalOrders": "إجمالي الطلبات",
       "activeOrders": "الطلبات النشطة",
       "completedOrders": "الطلبات المكتملة",
       "totalCustomers": "إجمالي العملاء",
-      "recentActivity": "النشاط الأخير"
+      "recentActivity": "النشاط الأخير",
+      "newOrders": "طلبات جديدة",
+      "inProgress": "قيد التنفيذ",
+      "delayed": "متأخر",
+      "receivedToday": "استلمت اليوم",
+      "currentlyActive": "نشط حالياً",
+      "successfullyDelivered": "تم التسليم بنجاح",
+      "needsAttention": "يحتاج إلى انتباه"
+    },
+    "dashboard": {
+      "title": "لوحة التحكم",
+      "subtitle": "نظرة عامة على نظام إدارة الطلبات",
+      "todayOrders": "طلبات اليوم",
+      "productionPipeline": "خط الإنتاج",
+      "workloadOverview": "نظرة عامة على حجم العمل",
+      "delayedOrders": "الطلبات المتأخرة",
+      "rawMaterials": "المواد الخام",
+      "cutting": "القطع",
+      "sewing": "الخياطة",
+      "finalFinishing": "التشطيب النهائي",
+      "qualityCheck": "فحص الجودة",
+      "delivery": "التسليم",
+      "inProduction": "في الإنتاج",
+      "inDelivery": "في التسليم",
+      "awaitingPayment": "في انتظار الدفع",
+      "inInstallation": "في التركيب",
+      "daysDelayed": "أيام التأخير",
+      "currentStage": "المرحلة الحالية",
+      "customerName": "اسم العميل",
+      "orderId": "رقم الطلب",
+      "noDelayedOrders": "لا توجد طلبات متأخرة في الفترة المحددة"
     },
     "orders": {
-      "title": "إدارة الطلبات",
+      "title": "الطلبات",
+      "subtitle": "إدارة وتتبع جميع طلبات العملاء",
       "newOrder": "طلب جديد",
       "searchPlaceholder": "البحث في الطلبات...",
       "filter": "تصفية",
       "allStatuses": "جميع الحالات",
-      "id": "رقم الطلب",
+      "allStages": "جميع المراحل",
+      "currentStage": "المرحلة الحالية",
+      "orderStatus": "حالة الطلب",
+      "dateFrom": "التاريخ من",
+      "dateTo": "التاريخ إلى",
+      "progress": "التقدم",
+      "id": "# الطلب",
       "customer": "العميل",
       "status": "الحالة",
       "amount": "المبلغ",
       "date": "التاريخ",
+      "phone": "الهاتف",
       "actions": "إجراءات",
       "noOrders": "لم يتم العثور على طلبات",
       "orderDetails": "تفاصيل الطلب",
@@ -127,16 +179,31 @@
       "scheduleAppointment": "جدولة موعد",
       "updateAppointment": "تحديث الموعد",
       "rating": "تقييم العميل",
-      "noRating": "لم يتم التقييم بعد"
+      "noRating": "لم يتم التقييم بعد",
+      "mediaFiles": "ملفات الوسائط",
+      "noMedia": "لم يتم رفع ملفات وسائط بعد",
+      "viewFile": "عرض الملف",
+      "invalidFileUrl": "عنوان ملف غير صالح"
     },
     "customers": {
       "title": "العملاء",
+      "subtitle": "إدارة وعرض جميع معلومات العملاء",
       "searchPlaceholder": "البحث عن عملاء...",
+      "addNewCustomer": "إضافة عميل جديد",
       "name": "الاسم",
       "email": "البريد الإلكتروني",
       "phone": "الهاتف",
       "orderCount": "الطلبات",
-      "noCustomers": "لم يتم العثور على عملاء"
+      "noCustomers": "لم يتم العثور على عملاء",
+      "customerList": "قائمة العملاء",
+      "totalCustomers": "المجموع: {count} عميل",
+      "createNew": "إنشاء سجل عميل جديد في النظام",
+      "fullName": "الاسم الكامل",
+      "phoneNumber": "رقم الهاتف",
+      "emailOptional": "البريد الإلكتروني (اختياري)",
+      "creating": "جاري الإنشاء...",
+      "createCustomer": "إنشاء عميل",
+      "customerCreated": "تم إنشاء العميل بنجاح"
     },
     "stages": {
       "viewStages": "عرض المراحل",
@@ -158,6 +225,8 @@
       "stageAdded": "تمت إضافة المرحلة بنجاح",
       "stageUpdated": "تم تحديث المرحلة بنجاح",
       "stageDeleted": "تم حذف المرحلة بنجاح",
+      "updateStage": "تحديث المرحلة",
+      "updating": "جاري التحديث...",
       "types": {
         "ORDER_RECEIVED": "استلام الطلب",
         "SITE_MEASUREMENT": "قياس الموقع",
@@ -189,6 +258,33 @@
         "RATING": "شارك ملاحظاتك"
       }
     },
+    "stageSettings": {
+      "title": "إعدادات نوع المرحلة",
+      "subtitle": "تكوين أسماء العرض والرؤية والافتراضات لأنواع مراحل الطلبات",
+      "addNewStage": "إضافة نوع مرحلة جديد",
+      "displayName": "اسم العرض",
+      "sortOrder": "ترتيب الفرز",
+      "activeStatus": "نشط (مرئي في قائمة إضافة مرحلة)",
+      "stageTypeId": "نوع المرحلة (معرف فريد)",
+      "stageIcon": "أيقونة المرحلة",
+      "createStageType": "إنشاء نوع مرحلة مخصصة جديد لسير عمل الطلبات",
+      "stageTypeIdHelp": "استخدم أحرف كبيرة وشرطات سفلية فقط (مثال: CUSTOM_STAGE)",
+      "stageTypeIdPlaceholder": "CUSTOM_STAGE",
+      "displayNamePlaceholder": "اسم المرحلة المخصص",
+      "sortOrderPlaceholder": "مثال: 14",
+      "createStage": "إنشاء مرحلة",
+      "creating": "جاري الإنشاء...",
+      "order": "الترتيب:",
+      "stageTypeCreated": "تم إنشاء نوع المرحلة الجديد بنجاح",
+      "stageTypeUpdated": "تم تحديث نوع المرحلة بنجاح",
+      "activeOnly": "نشط فقط",
+      "limitedAccess": "وصول محدود",
+      "viewOnly": "عرض فقط",
+      "installationOnly": "التركيب فقط",
+      "productionOnly": "الإنتاج فقط",
+      "qualityOnly": "الجودة فقط",
+      "operationsOnly": "العمليات فقط"
+    },
     "newOrder": {
       "title": "إنشاء طلب جديد",
       "customerName": "اسم العميل",
@@ -202,7 +298,9 @@
       "emailPlaceholder": "customer@example.com",
       "phonePlaceholder": "0501234567",
       "amountPlaceholder": "0.00",
-      "externalIdPlaceholder": "EXT-123456"
+      "externalIdPlaceholder": "EXT-123456",
+      "formDescription": "أدخل تفاصيل العميل ومعلومات الطلب",
+      "creating": "جاري الإنشاء..."
     },
     "appointment": {
       "schedule": "جدولة موعد",
@@ -214,7 +312,9 @@
       "timePlaceholder": "مثال: 10:00 صباحاً",
       "addressPlaceholder": "أدخل عنوان التركيب",
       "scheduled": "تمت جدولة الموعد بنجاح",
-      "updated": "تم تحديث الموعد بنجاح"
+      "updated": "تم تحديث الموعد بنجاح",
+      "scheduling": "جاري الجدولة...",
+      "updating": "جاري التحديث..."
     },
     "email": {
       "sendUpdate": "إرسال تحديث بالبريد",
@@ -223,7 +323,8 @@
       "subjectPlaceholder": "موضوع البريد",
       "messagePlaceholder": "رسالتك للعميل...",
       "send": "إرسال البريد",
-      "sent": "تم إرسال البريد بنجاح"
+      "sent": "تم إرسال البريد بنجاح",
+      "sending": "جاري الإرسال..."
     },
     "media": {
       "addMedia": "إضافة وسائط",
@@ -234,17 +335,21 @@
       "document": "مستند",
       "urlPlaceholder": "https://example.com/file.jpg",
       "descriptionPlaceholder": "وصف الملف",
-      "added": "تمت إضافة الوسائط بنجاح"
+      "added": "تمت إضافة الوسائط بنجاح",
+      "adding": "جاري الإضافة...",
+      "selectType": "اختر نوع الملف"
     },
     "cancelOrder": {
       "title": "إلغاء الطلب",
       "confirm": "هل أنت متأكد من إلغاء هذا الطلب؟",
       "warning": "لا يمكن التراجع عن هذا الإجراء. سيتم وضع علامة على الطلب كملغى.",
       "confirmButton": "نعم، إلغاء الطلب",
-      "cancelled": "تم إلغاء الطلب بنجاح"
+      "cancelled": "تم إلغاء الطلب بنجاح",
+      "cancelling": "جاري الإلغاء..."
     },
     "settings": {
       "title": "الإعدادات",
+      "subtitle": "إدارة الملف الشخصي وتفضيلات النظام",
       "profile": "الملف الشخصي",
       "system": "معلومات النظام",
       "userName": "الاسم",
@@ -255,7 +360,31 @@
       "connected": "متصل",
       "languageChanged": "تم تغيير اللغة إلى {language}",
       "languageEnglish": "English",
-      "languageArabic": "العربية"
+      "languageArabic": "العربية",
+      "roleDescriptions": {
+        "ADMIN": "وصول كامل وإدارة النظام",
+        "OPERATIONS": "إدارة الطلبات وعمليات العملاء",
+        "PRODUCTION": "عرض الطلبات وإدارة مراحل الإنتاج",
+        "QUALITY": "إجراء فحوصات الجودة والموافقة على المنتجات النهائية",
+        "INSTALLATION": "عرض جداول التركيب وتحديث حالة المواعيد",
+        "SUPPORT": "عرض الطلبات والرد على استفسارات العملاء والتحديثات الأساسية"
+      },
+      "stageTypeSettings": "إعدادات نوع المرحلة",
+      "contactAdmin": "اتصل بمسؤول النظام لتغيير تعيينات الأدوار"
+    },
+    "timeline": {
+      "orderProgress": "تقدم الطلب",
+      "completed": "اكتمل",
+      "started": "بدأ",
+      "noNotes": "لا توجد ملاحظات"
+    },
+    "roles": {
+      "ADMIN": "مشرف",
+      "OPERATIONS": "عمليات",
+      "PRODUCTION": "إنتاج",
+      "QUALITY": "جودة",
+      "INSTALLATION": "تركيب",
+      "SUPPORT": "دعم"
     }
   },
   "statuses": {

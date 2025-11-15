@@ -25,7 +25,17 @@
     "dateRange": "Date Range",
     "from": "From",
     "to": "To",
-    "apply": "Apply"
+    "apply": "Apply",
+    "pickDate": "Pick a date",
+    "total": "Total",
+    "active": "Active",
+    "inactive": "Inactive",
+    "visible": "Visible",
+    "hidden": "Hidden",
+    "required": "Required",
+    "optional": "Optional",
+    "yes": "Yes",
+    "no": "No"
   },
   "header": {
     "switchToArabic": "العربية",
@@ -89,31 +99,73 @@
     "customersNav": "Customers",
     "settingsNav": "Settings",
     "logout": "Logout",
-    "login": "Login",
+    "login": "Admin Login",
     "welcome": "Welcome to Ivea Admin",
+    "welcomeSubtitle": "Sign in to access the admin dashboard",
     "emailLabel": "Email",
     "passwordLabel": "Password",
     "signIn": "Sign In",
     "loginSuccess": "Login successful",
     "loginError": "Invalid credentials",
+    "sidebarTitle": "Ivea",
+    "sidebarSubtitle": "Welcome to Ivea Admin",
+    "navigation": "Navigation",
     "stats": {
       "totalOrders": "Total Orders",
       "activeOrders": "Active Orders",
       "completedOrders": "Completed Orders",
       "totalCustomers": "Total Customers",
-      "recentActivity": "Recent Activity"
+      "recentActivity": "Recent Activity",
+      "newOrders": "New Orders",
+      "inProgress": "In Progress",
+      "delayed": "Delayed",
+      "receivedToday": "Received today",
+      "currentlyActive": "Currently active",
+      "successfullyDelivered": "Successfully delivered",
+      "needsAttention": "Needs attention"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Overview of your order management system",
+      "todayOrders": "Today's Orders",
+      "productionPipeline": "Production Pipeline",
+      "workloadOverview": "Workload Overview",
+      "delayedOrders": "Delayed Orders",
+      "rawMaterials": "Raw Materials",
+      "cutting": "Cutting",
+      "sewing": "Sewing",
+      "finalFinishing": "Final Finishing",
+      "qualityCheck": "Quality Check",
+      "delivery": "Delivery",
+      "inProduction": "In Production",
+      "inDelivery": "In Delivery",
+      "awaitingPayment": "Awaiting Payment",
+      "inInstallation": "In Installation",
+      "daysDelayed": "Days Delayed",
+      "currentStage": "Current Stage",
+      "customerName": "Customer Name",
+      "orderId": "Order ID",
+      "noDelayedOrders": "No delayed orders in selected period"
     },
     "orders": {
-      "title": "Orders Management",
+      "title": "Orders",
+      "subtitle": "Manage and track all customer orders",
       "newOrder": "New Order",
       "searchPlaceholder": "Search orders...",
       "filter": "Filter",
       "allStatuses": "All Statuses",
-      "id": "Order ID",
+      "allStages": "All Stages",
+      "currentStage": "Current Stage",
+      "orderStatus": "Order Status",
+      "dateFrom": "Date From",
+      "dateTo": "Date To",
+      "progress": "Progress",
+      "id": "# Order",
       "customer": "Customer",
       "status": "Status",
       "amount": "Amount",
       "date": "Date",
+      "phone": "Phone",
       "actions": "Actions",
       "noOrders": "No orders found",
       "orderDetails": "Order Details",
@@ -127,16 +179,31 @@
       "scheduleAppointment": "Schedule Appointment",
       "updateAppointment": "Update Appointment",
       "rating": "Customer Rating",
-      "noRating": "Not rated yet"
+      "noRating": "Not rated yet",
+      "mediaFiles": "Media Files",
+      "noMedia": "No media files uploaded yet",
+      "viewFile": "View file",
+      "invalidFileUrl": "Invalid file URL"
     },
     "customers": {
       "title": "Customers",
+      "subtitle": "Manage and view all customer information",
       "searchPlaceholder": "Search customers...",
+      "addNewCustomer": "Add New Customer",
       "name": "Name",
       "email": "Email",
       "phone": "Phone",
       "orderCount": "Orders",
-      "noCustomers": "No customers found"
+      "noCustomers": "No customers found",
+      "customerList": "Customer List",
+      "totalCustomers": "Total: {count} customers",
+      "createNew": "Create a new customer record in the system",
+      "fullName": "Full Name",
+      "phoneNumber": "Phone Number",
+      "emailOptional": "Email (Optional)",
+      "creating": "Creating...",
+      "createCustomer": "Create Customer",
+      "customerCreated": "Customer created successfully"
     },
     "stages": {
       "viewStages": "View Stages",
@@ -158,6 +225,8 @@
       "stageAdded": "Stage added successfully",
       "stageUpdated": "Stage updated successfully",
       "stageDeleted": "Stage deleted successfully",
+      "updateStage": "Update Stage",
+      "updating": "Updating...",
       "types": {
         "ORDER_RECEIVED": "Order Received",
         "SITE_MEASUREMENT": "Site Measurement",
@@ -189,6 +258,33 @@
         "RATING": "Share your feedback"
       }
     },
+    "stageSettings": {
+      "title": "Stage Type Settings",
+      "subtitle": "Configure display names, visibility, and defaults for order stage types",
+      "addNewStage": "Add New Stage Type",
+      "displayName": "Display Name",
+      "sortOrder": "Sort Order",
+      "activeStatus": "Active (visible in Add Stage dropdown)",
+      "stageTypeId": "Stage Type (Unique ID)",
+      "stageIcon": "Stage Icon",
+      "createStageType": "Create a new custom stage type for your order workflow",
+      "stageTypeIdHelp": "Use uppercase letters and underscores only (e.g., CUSTOM_STAGE)",
+      "stageTypeIdPlaceholder": "CUSTOM_STAGE",
+      "displayNamePlaceholder": "Custom Stage Name",
+      "sortOrderPlaceholder": "e.g., 14",
+      "createStage": "Create Stage",
+      "creating": "Creating...",
+      "order": "Order:",
+      "stageTypeCreated": "New stage type created successfully",
+      "stageTypeUpdated": "Stage type updated successfully",
+      "activeOnly": "Active Only",
+      "limitedAccess": "Limited Access",
+      "viewOnly": "View Only",
+      "installationOnly": "Installation Only",
+      "productionOnly": "Production Only",
+      "qualityOnly": "Quality Only",
+      "operationsOnly": "Operations Only"
+    },
     "newOrder": {
       "title": "Create New Order",
       "customerName": "Customer Name",
@@ -202,7 +298,9 @@
       "emailPlaceholder": "customer@example.com",
       "phonePlaceholder": "0501234567",
       "amountPlaceholder": "0.00",
-      "externalIdPlaceholder": "EXT-123456"
+      "externalIdPlaceholder": "EXT-123456",
+      "formDescription": "Enter customer details and order information",
+      "creating": "Creating..."
     },
     "appointment": {
       "schedule": "Schedule Appointment",
@@ -214,7 +312,9 @@
       "timePlaceholder": "e.g., 10:00 AM",
       "addressPlaceholder": "Enter installation address",
       "scheduled": "Appointment scheduled successfully",
-      "updated": "Appointment updated successfully"
+      "updated": "Appointment updated successfully",
+      "scheduling": "Scheduling...",
+      "updating": "Updating..."
     },
     "email": {
       "sendUpdate": "Send Email Update",
@@ -223,7 +323,8 @@
       "subjectPlaceholder": "Email subject",
       "messagePlaceholder": "Your message to the customer...",
       "send": "Send Email",
-      "sent": "Email sent successfully"
+      "sent": "Email sent successfully",
+      "sending": "Sending..."
     },
     "media": {
       "addMedia": "Add Media",
@@ -234,17 +335,21 @@
       "document": "Document",
       "urlPlaceholder": "https://example.com/file.jpg",
       "descriptionPlaceholder": "File description",
-      "added": "Media added successfully"
+      "added": "Media added successfully",
+      "adding": "Adding...",
+      "selectType": "Select file type"
     },
     "cancelOrder": {
       "title": "Cancel Order",
       "confirm": "Are you sure you want to cancel this order?",
       "warning": "This action cannot be undone. The order will be marked as cancelled.",
       "confirmButton": "Yes, Cancel Order",
-      "cancelled": "Order cancelled successfully"
+      "cancelled": "Order cancelled successfully",
+      "cancelling": "Cancelling..."
     },
     "settings": {
       "title": "Settings",
+      "subtitle": "Manage your profile and system preferences",
       "profile": "User Profile",
       "system": "System Information",
       "userName": "Name",
@@ -255,7 +360,31 @@
       "connected": "Connected",
       "languageChanged": "Language changed to {language}",
       "languageEnglish": "English",
-      "languageArabic": "العربية"
+      "languageArabic": "العربية",
+      "roleDescriptions": {
+        "ADMIN": "Full system access and management",
+        "OPERATIONS": "Manage orders and customer operations",
+        "PRODUCTION": "View orders, manage production stages",
+        "QUALITY": "Perform quality inspections, approve finished products",
+        "INSTALLATION": "View installation schedules, update appointment status",
+        "SUPPORT": "View orders, respond to customer inquiries, basic updates"
+      },
+      "stageTypeSettings": "Stage Type Settings",
+      "contactAdmin": "Contact a system administrator to change role assignments"
+    },
+    "timeline": {
+      "orderProgress": "Order Progress",
+      "completed": "Completed",
+      "started": "Started",
+      "noNotes": "No notes provided"
+    },
+    "roles": {
+      "ADMIN": "Admin",
+      "OPERATIONS": "Operations",
+      "PRODUCTION": "Production",
+      "QUALITY": "Quality",
+      "INSTALLATION": "Installation",
+      "SUPPORT": "Support"
     }
   },
   "statuses": {
