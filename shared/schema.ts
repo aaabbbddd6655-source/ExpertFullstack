@@ -133,6 +133,7 @@ export const stageTypeSettings = pgTable("stage_type_settings", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   stageType: stageTypeEnum("stage_type").notNull().unique(),
   displayName: text("display_name").notNull(),
+  icon: text("icon").notNull().default("Circle"),
   isActive: integer("is_active").notNull().default(1),
   sortOrder: integer("sort_order").notNull(),
   defaultNotes: text("default_notes"),
