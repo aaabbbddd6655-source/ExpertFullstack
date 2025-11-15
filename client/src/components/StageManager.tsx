@@ -171,7 +171,7 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
         {/* Scrollable content */}
         <CardContent 
           ref={scrollContainerRef}
-          className="space-y-3 max-h-[60vh] lg:max-h-[70vh] overflow-y-auto"
+          className="space-y-3 max-h-[60vh] lg:max-h-[70vh] overflow-visible overflow-y-auto"
           data-testid="stage-scroll-container"
         >
           {stages.length === 0 ? (

@@ -19,7 +19,10 @@ import type {
   InstallationAppointment,
   InsertInstallationAppointment,
   CustomerRating,
-  InsertCustomerRating
+  InsertCustomerRating,
+  StageTypeSetting,
+  InsertStageTypeSetting,
+  UpdateStageTypeSetting
 } from "@shared/schema";
 
 neonConfig.webSocketConstructor = ws;
@@ -86,6 +89,11 @@ export interface IStorage {
   // Customer rating operations
   getRatingByOrderId(orderId: string): Promise<CustomerRating | undefined>;
   createRating(rating: InsertCustomerRating): Promise<CustomerRating>;
+  
+  // Stage type settings operations
+  getAllStageTypeSettings(): Promise<StageTypeSetting[]>;
+  getStageTypeSettingByType(stageType: string): Promise<StageTypeSetting | undefined>;
+  updateStageTypeSetting(stageType: string, updates: UpdateStageTypeSetting): Promise<StageTypeSetting | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -351,6 +359,29 @@ export class DatabaseStorage implements IStorage {
 
   async createRating(rating: InsertCustomerRating): Promise<CustomerRating> {
     const results = await db.insert(schema.customerRatings).values(rating).returning();
+    return results[0];
+  }
+
+  // Stage type settings operations
+  async getAllStageTypeSettings(): Promise<StageTypeSetting[]> {
+    const results = await db.select()
+      .from(schema.stageTypeSettings)
+      .orderBy(schema.stageTypeSettings.sortOrder);
+    return results;
+  }
+
+  async getStageTypeSettingByType(stageType: string): Promise<StageTypeSetting | undefined> {
+    const results = await db.select()
+      .from(schema.stageTypeSettings)
+      .where(eq(schema.stageTypeSettings.stageType, stageType as any));
+    return results[0];
+  }
+
+  async updateStageTypeSetting(stageType: string, updates: UpdateStageTypeSetting): Promise<StageTypeSetting | undefined> {
+    const results = await db.update(schema.stageTypeSettings)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(schema.stageTypeSettings.stageType, stageType as any))
+      .returning();
     return results[0];
   }
 }

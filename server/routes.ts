@@ -1014,6 +1014,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Stage Type Settings APIs
+  app.get("/api/admin/stage-types", authenticateToken, async (req, res) => {
+    try {
+      const settings = await storage.getAllStageTypeSettings();
+      res.json(settings);
+    } catch (error) {
+      console.error("Get stage types error:", error);
+      res.status(500).json({ error: "Failed to fetch stage type settings" });
+    }
+  });
+
+  app.patch("/api/admin/stage-types/:stageType", authenticateToken, async (req, res) => {
+    try {
+      const { stageType } = req.params;
+      
+      // Validate request body using Zod
+      const { updateStageTypeSettingSchema } = await import("@shared/schema");
+      const updates = updateStageTypeSettingSchema.parse(req.body);
+
+      const setting = await storage.updateStageTypeSetting(stageType, updates);
+      if (!setting) {
+        return res.status(404).json({ error: "Stage type not found" });
+      }
+
+      res.json(setting);
+    } catch (error) {
+      console.error("Update stage type error:", error);
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: "Invalid request data", details: error.errors });
+      }
+      res.status(500).json({ error: "Failed to update stage type setting" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

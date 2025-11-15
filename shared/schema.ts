@@ -129,6 +129,17 @@ export const customerRatings = pgTable("customer_ratings", {
   createdAt: timestamp("created_at").notNull().defaultNow()
 });
 
+export const stageTypeSettings = pgTable("stage_type_settings", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  stageType: stageTypeEnum("stage_type").notNull().unique(),
+  displayName: text("display_name").notNull(),
+  isActive: integer("is_active").notNull().default(1),
+  sortOrder: integer("sort_order").notNull(),
+  defaultNotes: text("default_notes"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow()
+});
+
 // Insert schemas
 export const insertCustomerSchema = createInsertSchema(customers).omit({ id: true });
 export const insertOrderSchema = createInsertSchema(orders).omit({ 
@@ -151,6 +162,12 @@ export const insertCustomerRatingSchema = createInsertSchema(customerRatings).om
   id: true, 
   createdAt: true 
 });
+export const insertStageTypeSettingSchema = createInsertSchema(stageTypeSettings).omit({ 
+  id: true, 
+  createdAt: true,
+  updatedAt: true
+});
+export const updateStageTypeSettingSchema = insertStageTypeSettingSchema.partial().omit({ stageType: true });
 
 // Types
 export type Customer = typeof customers.$inferSelect;
@@ -176,3 +193,7 @@ export type InsertInstallationAppointment = z.infer<typeof insertInstallationApp
 
 export type CustomerRating = typeof customerRatings.$inferSelect;
 export type InsertCustomerRating = z.infer<typeof insertCustomerRatingSchema>;
+
+export type StageTypeSetting = typeof stageTypeSettings.$inferSelect;
+export type InsertStageTypeSetting = z.infer<typeof insertStageTypeSettingSchema>;
+export type UpdateStageTypeSetting = z.infer<typeof updateStageTypeSettingSchema>;
