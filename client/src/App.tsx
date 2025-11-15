@@ -8,6 +8,7 @@ import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { useToast } from "@/hooks/use-toast";
 import { LanguageProvider, useTranslation } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import ScrollIndicator from "@/components/ScrollIndicator";
 import NotFound from "@/pages/not-found";
 import OrderLookup from "@/components/OrderLookup";
 import CustomerTrackingPage from "@/pages/CustomerTrackingPage";
@@ -124,28 +125,30 @@ function AdminRouter() {
               <LanguageSwitcher />
             </div>
           </header>
-          <main className="flex-1 overflow-auto p-8">
-            {selectedOrderId ? (
-              <AdminOrderDetailsPage
-                orderId={selectedOrderId}
-                onBack={() => setSelectedOrderId(null)}
-              />
-            ) : (
-              <>
-                {activePage === "orders" && (
-                  <AdminOrdersPage onViewOrder={(id) => setSelectedOrderId(id)} />
-                )}
-                {activePage === "dashboard" && (
-                  <AdminDashboardPage />
-                )}
-                {activePage === "customers" && (
-                  <AdminCustomersPage />
-                )}
-                {activePage === "settings" && (
-                  <AdminSettingsPage />
-                )}
-              </>
-            )}
+          <main className="flex-1 overflow-hidden">
+            <ScrollIndicator className="p-8">
+              {selectedOrderId ? (
+                <AdminOrderDetailsPage
+                  orderId={selectedOrderId}
+                  onBack={() => setSelectedOrderId(null)}
+                />
+              ) : (
+                <>
+                  {activePage === "orders" && (
+                    <AdminOrdersPage onViewOrder={(id) => setSelectedOrderId(id)} />
+                  )}
+                  {activePage === "dashboard" && (
+                    <AdminDashboardPage />
+                  )}
+                  {activePage === "customers" && (
+                    <AdminCustomersPage />
+                  )}
+                  {activePage === "settings" && (
+                    <AdminSettingsPage />
+                  )}
+                </>
+              )}
+            </ScrollIndicator>
           </main>
         </div>
       </div>

@@ -195,7 +195,7 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
     mutationFn: async (mediaData: { mediaUrl: string; type: "IMAGE" | "DOCUMENT"; stageId: string; notes?: string }) => {
       if (!token) throw new Error("Not authenticated");
       return addMedia(token, orderId, {
-        url: mediaData.mediaUrl,
+        mediaUrl: mediaData.mediaUrl,
         type: mediaData.type,
         stageId: mediaData.stageId
       });
@@ -415,60 +415,63 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
         </div>
 
         <div className="space-y-6">
-          <StageManager
-            stages={stages}
-            onUpdate={(stageId, status, notes) => {
-              updateStageMutation.mutate({ stageId, status, notes });
-            }}
-            onAdd={(stageType, status, notes) => {
-              createStageMutation.mutate({ stageType, status, notes });
-            }}
-            onDelete={(stageId) => {
-              deleteStageMutation.mutate(stageId);
-            }}
-          />
+          {/* Sticky StageManager on desktop */}
+          <div className="lg:sticky lg:top-4 space-y-6">
+            <StageManager
+              stages={stages}
+              onUpdate={(stageId, status, notes) => {
+                updateStageMutation.mutate({ stageId, status, notes });
+              }}
+              onAdd={(stageType, status, notes) => {
+                createStageMutation.mutate({ stageType, status, notes });
+              }}
+              onDelete={(stageId) => {
+                deleteStageMutation.mutate(stageId);
+              }}
+            />
 
-          <AppointmentForm
-            appointment={appointment}
-            onSubmit={(appointmentData) => {
-              createAppointmentMutation.mutate(appointmentData);
-            }}
-          />
+            <AppointmentForm
+              appointment={appointment}
+              onSubmit={(appointmentData) => {
+                createAppointmentMutation.mutate(appointmentData);
+              }}
+            />
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Quick Actions</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2">
-              <Button 
-                variant="outline" 
-                className="w-full" 
-                onClick={() => setMediaDialogOpen(true)}
-                data-testid="button-add-media"
-              >
-                <ImagePlus className="w-4 h-4 mr-2" />
-                Add Media
-              </Button>
-              <Button 
-                variant="outline" 
-                className="w-full" 
-                onClick={() => setEmailDialogOpen(true)}
-                data-testid="button-send-email"
-              >
-                <Mail className="w-4 h-4 mr-2" />
-                Send Email Update
-              </Button>
-              <Button 
-                variant="outline" 
-                className="w-full text-destructive" 
-                onClick={() => setCancelDialogOpen(true)}
-                data-testid="button-cancel-order"
-              >
-                <XCircle className="w-4 h-4 mr-2" />
-                Cancel Order
-              </Button>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Quick Actions</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={() => setMediaDialogOpen(true)}
+                  data-testid="button-add-media"
+                >
+                  <ImagePlus className="w-4 h-4 mr-2" />
+                  Add Media
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full" 
+                  onClick={() => setEmailDialogOpen(true)}
+                  data-testid="button-send-email"
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  Send Email Update
+                </Button>
+                <Button 
+                  variant="outline" 
+                  className="w-full text-destructive" 
+                  onClick={() => setCancelDialogOpen(true)}
+                  data-testid="button-cancel-order"
+                >
+                  <XCircle className="w-4 h-4 mr-2" />
+                  Cancel Order
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
 

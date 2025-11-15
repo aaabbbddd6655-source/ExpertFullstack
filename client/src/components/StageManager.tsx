@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { CheckCircle2, Clock, Circle, Plus, Trash2 } from "lucide-react";
+import { CheckCircle2, Clock, Circle, Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -62,6 +62,11 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [stageToDelete, setStageToDelete] = useState<Stage | null>(null);
+  
+  // Scroll indicators state
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [canScrollUp, setCanScrollUp] = useState(false);
+  const [canScrollDown, setCanScrollDown] = useState(false);
 
   const formatStageType = (type: string) => {
     return type.split("_").map(word => 
@@ -101,9 +106,38 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
     }
   };
 
+  const checkScroll = () => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    const threshold = 10;
+
+    setCanScrollUp(scrollTop > threshold);
+    setCanScrollDown(scrollTop + clientHeight < scrollHeight - threshold);
+  };
+
+  useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    checkScroll();
+
+    const handleScroll = () => checkScroll();
+    const resizeObserver = new ResizeObserver(() => checkScroll());
+
+    container.addEventListener("scroll", handleScroll);
+    resizeObserver.observe(container);
+
+    return () => {
+      container.removeEventListener("scroll", handleScroll);
+      resizeObserver.disconnect();
+    };
+  }, [stages]);
+
   return (
     <>
-      <Card>
+      <Card className="relative">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between gap-2">
             <CardTitle>Stage Management</CardTitle>
@@ -120,7 +154,26 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
             )}
           </div>
         </CardHeader>
-        <CardContent className="space-y-3">
+
+        {/* Top scroll indicator */}
+        {canScrollUp && (
+          <div 
+            className="absolute left-0 right-0 z-10 pointer-events-none flex justify-center pt-2"
+            style={{ top: 'calc(var(--header-height, 4rem))' }}
+            data-testid="stage-scroll-indicator-top"
+          >
+            <div className="bg-background/80 backdrop-blur-sm rounded-full p-1 border shadow-sm">
+              <ChevronUp className="w-4 h-4 text-muted-foreground" />
+            </div>
+          </div>
+        )}
+
+        {/* Scrollable content */}
+        <CardContent 
+          ref={scrollContainerRef}
+          className="space-y-3 max-h-[60vh] lg:max-h-[70vh] overflow-y-auto"
+          data-testid="stage-scroll-container"
+        >
           {stages.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
               No stages yet. Click "Add Stage" to create one.
@@ -141,6 +194,18 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
             ))
           )}
         </CardContent>
+
+        {/* Bottom scroll indicator */}
+        {canScrollDown && (
+          <div 
+            className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none flex justify-center pb-2"
+            data-testid="stage-scroll-indicator-bottom"
+          >
+            <div className="bg-background/80 backdrop-blur-sm rounded-full p-1 border shadow-sm">
+              <ChevronDown className="w-4 h-4 text-muted-foreground" />
+            </div>
+          </div>
+        )}
       </Card>
 
       {/* Add Stage Dialog */}
