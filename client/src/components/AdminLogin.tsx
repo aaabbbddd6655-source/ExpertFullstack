@@ -24,7 +24,7 @@ export default function AdminLogin({ onLogin }: AdminLoginProps) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-muted/30 px-4 relative">
       {/* Language Switcher - Top Right */}
-      <div className="absolute top-4 right-4">
+      <div className="absolute top-4 end-4">
         <LanguageSwitcher />
       </div>
 

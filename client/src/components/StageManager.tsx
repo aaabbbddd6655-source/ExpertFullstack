@@ -167,7 +167,7 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
         {/* Top scroll indicator */}
         {canScrollUp && (
           <div 
-            className="absolute left-0 right-0 z-10 pointer-events-none flex justify-center pt-2"
+            className="absolute start-0 end-0 z-10 pointer-events-none flex justify-center pt-2"
             style={{ top: 'calc(var(--header-height, 4rem))' }}
             data-testid="stage-scroll-indicator-top"
           >
@@ -209,7 +209,7 @@ export default function StageManager({ stages, onUpdate, onAdd, onDelete }: Stag
         {/* Bottom scroll indicator */}
         {canScrollDown && (
           <div 
-            className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none flex justify-center pb-2"
+            className="absolute bottom-0 start-0 end-0 z-10 pointer-events-none flex justify-center pb-2"
             data-testid="stage-scroll-indicator-bottom"
           >
             <div className="bg-background/80 backdrop-blur-sm rounded-full p-1 border shadow-sm">

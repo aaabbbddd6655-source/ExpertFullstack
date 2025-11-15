@@ -164,9 +164,9 @@ export default function AdminDashboardPage() {
     <div className="space-y-6 p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-serif font-semibold" data-testid="text-dashboard-title">Dashboard</h1>
+          <h1 className="text-3xl font-serif font-semibold" data-testid="text-dashboard-title">{t("admin.dashboard.title")}</h1>
           <p className="text-muted-foreground mt-1">
-            Overview of your order management system
+            {t("admin.dashboard.subtitle")}
           </p>
         </div>
 
@@ -219,55 +219,55 @@ export default function AdminDashboardPage() {
           {dateFilter === "today" && t("common.today")} 
           {dateFilter === "thisWeek" && t("common.thisWeek")} 
           {dateFilter === "thisMonth" && t("common.thisMonth")} 
-          {dateFilter === "custom" && t("common.custom")} Orders
+          {dateFilter === "custom" && t("common.custom")} {t("common.orders")}
         </h2>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <Card data-testid="card-new-orders">
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">New Orders</CardTitle>
+              <CardTitle className="text-sm font-medium">{t("admin.stats.newOrders")}</CardTitle>
               <Package className="w-4 h-4 text-blue-600" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold" data-testid="text-new-orders-count">{newOrders}</div>
               <p className="text-xs text-muted-foreground">
-                {dateFilter === "today" && "Received today"}
-                {dateFilter === "thisWeek" && "Received this week"}
-                {dateFilter === "thisMonth" && "Received this month"}
-                {dateFilter === "custom" && "In selected range"}
+                {dateFilter === "today" && t("admin.stats.receivedToday")}
+                {dateFilter === "thisWeek" && t("admin.stats.receivedThisWeek")}
+                {dateFilter === "thisMonth" && t("admin.stats.receivedThisMonth")}
+                {dateFilter === "custom" && t("admin.stats.inSelectedRange")}
               </p>
             </CardContent>
           </Card>
 
           <Card data-testid="card-in-progress">
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+              <CardTitle className="text-sm font-medium">{t("admin.stats.inProgress")}</CardTitle>
               <TrendingUp className="w-4 h-4 text-orange-600" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold" data-testid="text-in-progress-count">{inProgressOrders}</div>
-              <p className="text-xs text-muted-foreground">Currently active</p>
+              <p className="text-xs text-muted-foreground">{t("admin.stats.currentlyActive")}</p>
             </CardContent>
           </Card>
 
           <Card data-testid="card-completed">
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Completed</CardTitle>
+              <CardTitle className="text-sm font-medium">{t("admin.stats.completed")}</CardTitle>
               <CheckCircle className="w-4 h-4 text-green-600" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold" data-testid="text-completed-count">{completedOrders}</div>
-              <p className="text-xs text-muted-foreground">Successfully delivered</p>
+              <p className="text-xs text-muted-foreground">{t("admin.stats.successfullyDelivered")}</p>
             </CardContent>
           </Card>
 
           <Card data-testid="card-delayed">
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Delayed</CardTitle>
+              <CardTitle className="text-sm font-medium">{t("admin.stats.delayed")}</CardTitle>
               <AlertTriangle className="w-4 h-4 text-red-600" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold" data-testid="text-delayed-count">{delayedOrders}</div>
-              <p className="text-xs text-muted-foreground">Needs attention</p>
+              <p className="text-xs text-muted-foreground">{t("admin.stats.needsAttention")}</p>
             </CardContent>
           </Card>
         </div>
@@ -276,7 +276,7 @@ export default function AdminDashboardPage() {
       {/* 2. Production Pipeline */}
       <Card data-testid="card-production-pipeline">
         <CardHeader>
-          <CardTitle>Production Pipeline</CardTitle>
+          <CardTitle>{t("admin.dashboard.productionPipeline")}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-7">
@@ -285,7 +285,7 @@ export default function AdminDashboardPage() {
                 <Package className="w-6 h-6 text-muted-foreground" />
               </div>
               <div className="text-2xl font-bold" data-testid="text-pipeline-materials">{rawMaterials}</div>
-              <p className="text-xs text-muted-foreground">Raw Materials</p>
+              <p className="text-xs text-muted-foreground">{t("admin.dashboard.rawMaterials")}</p>
             </div>
 
             <div className="text-center">
@@ -293,7 +293,7 @@ export default function AdminDashboardPage() {
                 <Scissors className="w-6 h-6 text-muted-foreground" />
               </div>
               <div className="text-2xl font-bold" data-testid="text-pipeline-cutting">{cutting}</div>
-              <p className="text-xs text-muted-foreground">Cutting</p>
+              <p className="text-xs text-muted-foreground">{t("admin.dashboard.cutting")}</p>
             </div>
 
             <div className="text-center">
@@ -301,7 +301,7 @@ export default function AdminDashboardPage() {
                 <TrendingUp className="w-6 h-6 text-muted-foreground" />
               </div>
               <div className="text-2xl font-bold" data-testid="text-pipeline-sewing">{sewing}</div>
-              <p className="text-xs text-muted-foreground">Sewing</p>
+              <p className="text-xs text-muted-foreground">{t("admin.dashboard.sewing")}</p>
             </div>
 
             <div className="text-center">
@@ -309,7 +309,7 @@ export default function AdminDashboardPage() {
                 <Wrench className="w-6 h-6 text-muted-foreground" />
               </div>
               <div className="text-2xl font-bold" data-testid="text-pipeline-finishing">{finishing}</div>
-              <p className="text-xs text-muted-foreground">Final Finishing</p>
+              <p className="text-xs text-muted-foreground">{t("admin.dashboard.finalFinishing")}</p>
             </div>
 
             <div className="text-center">
@@ -317,7 +317,7 @@ export default function AdminDashboardPage() {
                 <ClipboardCheck className="w-6 h-6 text-muted-foreground" />
               </div>
               <div className="text-2xl font-bold" data-testid="text-pipeline-quality">{qualityCheck}</div>
-              <p className="text-xs text-muted-foreground">Quality Check</p>
+              <p className="text-xs text-muted-foreground">{t("admin.dashboard.qualityCheck")}</p>
             </div>
 
             <div className="text-center">
@@ -325,7 +325,7 @@ export default function AdminDashboardPage() {
                 <Truck className="w-6 h-6 text-muted-foreground" />
               </div>
               <div className="text-2xl font-bold" data-testid="text-pipeline-delivery">{delivery}</div>
-              <p className="text-xs text-muted-foreground">Delivery</p>
+              <p className="text-xs text-muted-foreground">{t("admin.dashboard.delivery")}</p>
             </div>
 
             <div className="text-center">
@@ -333,7 +333,7 @@ export default function AdminDashboardPage() {
                 <Wrench className="w-6 h-6 text-muted-foreground" />
               </div>
               <div className="text-2xl font-bold" data-testid="text-pipeline-installation">{installation}</div>
-              <p className="text-xs text-muted-foreground">Installation</p>
+              <p className="text-xs text-muted-foreground">{t("common.installation")}</p>
             </div>
           </div>
         </CardContent>
@@ -343,17 +343,17 @@ export default function AdminDashboardPage() {
         {/* 3. Delayed Orders Table */}
         <Card data-testid="card-delayed-orders">
           <CardHeader>
-            <CardTitle>Delayed Orders</CardTitle>
+            <CardTitle>{t("admin.dashboard.delayedOrders")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
                   <tr className="border-b">
-                    <th className="text-start text-xs font-medium text-muted-foreground pb-2">Order ID</th>
-                    <th className="text-start text-xs font-medium text-muted-foreground pb-2">Customer Name</th>
-                    <th className="text-start text-xs font-medium text-muted-foreground pb-2">Current Stage</th>
-                    <th className="text-start text-xs font-medium text-muted-foreground pb-2">Days Delayed</th>
+                    <th className="text-start text-xs font-medium text-muted-foreground pb-2">{t("admin.dashboard.orderId")}</th>
+                    <th className="text-start text-xs font-medium text-muted-foreground pb-2">{t("admin.dashboard.customerName")}</th>
+                    <th className="text-start text-xs font-medium text-muted-foreground pb-2">{t("admin.dashboard.currentStage")}</th>
+                    <th className="text-start text-xs font-medium text-muted-foreground pb-2">{t("admin.dashboard.daysDelayed")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -365,7 +365,7 @@ export default function AdminDashboardPage() {
                         <td className="py-3 text-sm">{order.stage}</td>
                         <td className="py-3 text-sm">
                           <span className="inline-flex items-center px-2 py-1 rounded-md bg-red-50 text-red-700 text-xs font-medium">
-                            {order.days} days
+                            {order.days} {t("common.days")}
                           </span>
                         </td>
                       </tr>
@@ -373,7 +373,7 @@ export default function AdminDashboardPage() {
                   ) : (
                     <tr>
                       <td colSpan={4} className="py-6 text-center text-sm text-muted-foreground">
-                        No delayed orders in selected period
+                        {t("admin.dashboard.noDelayedOrders")}
                       </td>
                     </tr>
                   )}
@@ -386,27 +386,27 @@ export default function AdminDashboardPage() {
         {/* 4. Workload Overview */}
         <Card data-testid="card-workload-overview">
           <CardHeader>
-            <CardTitle>Workload Overview</CardTitle>
+            <CardTitle>{t("admin.dashboard.workloadOverview")}</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 grid-cols-2">
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">In Production</p>
+                <p className="text-sm text-muted-foreground">{t("admin.dashboard.inProduction")}</p>
                 <p className="text-2xl font-bold" data-testid="text-workload-production">{inProduction}</p>
               </div>
 
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">In Delivery</p>
+                <p className="text-sm text-muted-foreground">{t("admin.dashboard.inDelivery")}</p>
                 <p className="text-2xl font-bold" data-testid="text-workload-delivery">{inDelivery}</p>
               </div>
 
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">In Installation</p>
+                <p className="text-sm text-muted-foreground">{t("admin.dashboard.inInstallation")}</p>
                 <p className="text-2xl font-bold" data-testid="text-workload-installation">{inInstallation}</p>
               </div>
 
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Awaiting Payment</p>
+                <p className="text-sm text-muted-foreground">{t("admin.dashboard.awaitingPayment")}</p>
                 <p className="text-2xl font-bold" data-testid="text-workload-payment">{awaitingPayment}</p>
               </div>
             </div>
@@ -419,7 +419,7 @@ export default function AdminDashboardPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Bell className="w-5 h-5" />
-            Notifications
+            {t("admin.dashboard.notifications")}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -439,7 +439,7 @@ export default function AdminDashboardPage() {
               ))
             ) : (
               <p className="text-sm text-muted-foreground text-center py-4">
-                No activity in selected period
+                {t("admin.dashboard.noActivity")}
               </p>
             )}
           </div>

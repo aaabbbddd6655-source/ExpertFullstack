@@ -68,7 +68,7 @@ export default function ScrollIndicator({
       {/* Top Scroll Indicator */}
       {showTopIndicator && canScrollUp && (
         <div 
-          className="absolute top-0 left-0 right-0 z-10 pointer-events-none"
+          className="absolute top-0 start-0 end-0 z-10 pointer-events-none"
           data-testid="scroll-indicator-top"
         >
           <div className="h-16 bg-gradient-to-b from-background to-transparent flex items-start justify-center pt-2">
@@ -96,7 +96,7 @@ export default function ScrollIndicator({
       {/* Bottom Scroll Indicator */}
       {showBottomIndicator && canScrollDown && (
         <div 
-          className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none"
+          className="absolute bottom-0 start-0 end-0 z-10 pointer-events-none"
           data-testid="scroll-indicator-bottom"
         >
           <div className="h-16 bg-gradient-to-t from-background to-transparent flex items-end justify-center pb-2">
