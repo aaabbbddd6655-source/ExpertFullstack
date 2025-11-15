@@ -5,8 +5,6 @@ import OrdersTable from "@/components/OrdersTable";
 import OrderFilters from "@/components/OrderFilters";
 import NewOrderDialog from "@/components/NewOrderDialog";
 import { Plus } from "lucide-react";
-import { getOrders } from "@/lib/api";
-import { getToken } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 
@@ -23,24 +21,20 @@ export default function AdminOrdersPage({ onViewOrder }: AdminOrdersPageProps) {
   const [dateTo, setDateTo] = useState<Date>();
   const [showNewOrderDialog, setShowNewOrderDialog] = useState(false);
 
-  const token = getToken();
+  // Build query parameters
+  const buildQueryKey = () => {
+    const params = new URLSearchParams();
+    if (status !== "all") params.append("status", status);
+    if (stage !== "all") params.append("stageType", stage);
+    if (dateFrom) params.append("fromDate", dateFrom.toISOString());
+    if (dateTo) params.append("toDate", dateTo.toISOString());
+    
+    const queryString = params.toString();
+    return queryString ? `/api/admin/orders?${queryString}` : "/api/admin/orders";
+  };
 
-  const { data: orders = [], isLoading, error } = useQuery({
-    queryKey: ["/api/admin/orders", status, stage, dateFrom?.toISOString(), dateTo?.toISOString()],
-    queryFn: async () => {
-      if (!token) {
-        throw new Error("Not authenticated");
-      }
-
-      const filters: any = {};
-      if (status !== "all") filters.status = status;
-      if (stage !== "all") filters.stageType = stage;
-      if (dateFrom) filters.fromDate = dateFrom.toISOString();
-      if (dateTo) filters.toDate = dateTo.toISOString();
-
-      return getOrders(token, filters);
-    },
-    enabled: !!token
+  const { data: orders = [], isLoading, error } = useQuery<any[]>({
+    queryKey: [buildQueryKey()],
   });
 
   useEffect(() => {

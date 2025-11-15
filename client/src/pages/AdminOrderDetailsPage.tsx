@@ -108,15 +108,8 @@ export default function AdminOrderDetailsPage({ orderId, onBack }: AdminOrderDet
   const [mediaDialogOpen, setMediaDialogOpen] = useState(false);
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
 
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["/api/admin/orders", orderId],
-    queryFn: async () => {
-      if (!token) {
-        throw new Error("Not authenticated");
-      }
-      return getOrderDetails(token, orderId);
-    },
-    enabled: !!token && !!orderId
+  const { data, isLoading, error } = useQuery<any>({
+    queryKey: [`/api/admin/orders/${orderId}`],
   });
 
   const updateStageMutation = useMutation({

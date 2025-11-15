@@ -27,12 +27,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useState } from "react";
-import { getToken } from "@/lib/auth";
 import { Search, UserPlus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { queryClient } from "@/lib/queryClient";
+import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { insertCustomerSchema } from "@shared/schema";
 import { useTranslation } from "@/lib/i18n";
@@ -48,23 +47,11 @@ type CreateCustomerForm = z.infer<typeof createCustomerFormSchema>;
 export default function AdminCustomersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [dialogOpen, setDialogOpen] = useState(false);
-  const token = getToken();
   const { toast } = useToast();
   const { t } = useTranslation();
 
-  const { data: customers = [], isLoading } = useQuery({
+  const { data: customers = [], isLoading } = useQuery<any[]>({
     queryKey: ["/api/admin/customers"],
-    queryFn: async () => {
-      if (!token) throw new Error("Not authenticated");
-      const res = await fetch("/api/admin/customers", {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      if (!res.ok) throw new Error("Failed to fetch customers");
-      return res.json();
-    },
-    enabled: !!token
   });
 
   const form = useForm<CreateCustomerForm>({
@@ -78,21 +65,7 @@ export default function AdminCustomersPage() {
 
   const createCustomerMutation = useMutation({
     mutationFn: async (data: CreateCustomerForm) => {
-      if (!token) throw new Error("Not authenticated");
-      const res = await fetch("/api/admin/customers", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data)
-      });
-      
-      if (!res.ok) {
-        const error = await res.json();
-        throw new Error(error.error || "Failed to create customer");
-      }
-      
+      const res = await apiRequest("POST", "/api/admin/customers", data);
       return res.json();
     },
     onSuccess: () => {

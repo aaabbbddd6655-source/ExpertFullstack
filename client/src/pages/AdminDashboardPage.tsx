@@ -12,8 +12,6 @@ import {
   Bell,
   Calendar
 } from "lucide-react";
-import { getOrders } from "@/lib/api";
-import { getToken } from "@/lib/auth";
 import { generateShortOrderId } from "@/lib/utils";
 import { useState } from "react";
 import {
@@ -30,19 +28,13 @@ import { useTranslation } from "@/lib/i18n";
 type DateFilter = "today" | "thisWeek" | "thisMonth" | "custom";
 
 export default function AdminDashboardPage() {
-  const token = getToken();
   const { t } = useTranslation();
   const [dateFilter, setDateFilter] = useState<DateFilter>("today");
   const [customStartDate, setCustomStartDate] = useState("");
   const [customEndDate, setCustomEndDate] = useState("");
 
-  const { data: orders = [] } = useQuery({
+  const { data: orders = [] } = useQuery<any[]>({
     queryKey: ["/api/admin/orders"],
-    queryFn: async () => {
-      if (!token) throw new Error("Not authenticated");
-      return getOrders(token);
-    },
-    enabled: !!token
   });
 
   // Calculate date range based on filter
