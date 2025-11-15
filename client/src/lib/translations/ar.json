@@ -17,7 +17,15 @@
     "next": "التالي",
     "previous": "السابق",
     "viewDetails": "عرض التفاصيل",
-    "noData": "لا توجد بيانات"
+    "noData": "لا توجد بيانات",
+    "today": "اليوم",
+    "thisWeek": "هذا الأسبوع",
+    "thisMonth": "هذا الشهر",
+    "custom": "مخصص",
+    "dateRange": "نطاق التاريخ",
+    "from": "من",
+    "to": "إلى",
+    "apply": "تطبيق"
   },
   "header": {
     "switchToArabic": "العربية",

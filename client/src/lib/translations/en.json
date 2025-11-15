@@ -17,7 +17,15 @@
     "next": "Next",
     "previous": "Previous",
     "viewDetails": "View Details",
-    "noData": "No data available"
+    "noData": "No data available",
+    "today": "Today",
+    "thisWeek": "This Week",
+    "thisMonth": "This Month",
+    "custom": "Custom",
+    "dateRange": "Date Range",
+    "from": "From",
+    "to": "To",
+    "apply": "Apply"
   },
   "header": {
     "switchToArabic": "العربية",

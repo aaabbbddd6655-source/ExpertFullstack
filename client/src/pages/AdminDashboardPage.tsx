@@ -9,14 +9,32 @@ import {
   Truck,
   Wrench,
   ClipboardCheck,
-  Bell
+  Bell,
+  Calendar
 } from "lucide-react";
 import { getOrders } from "@/lib/api";
 import { getToken } from "@/lib/auth";
 import { generateShortOrderId } from "@/lib/utils";
+import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { useTranslation } from "@/lib/i18n";
+
+type DateFilter = "today" | "thisWeek" | "thisMonth" | "custom";
 
 export default function AdminDashboardPage() {
   const token = getToken();
+  const { t } = useTranslation();
+  const [dateFilter, setDateFilter] = useState<DateFilter>("today");
+  const [customStartDate, setCustomStartDate] = useState("");
+  const [customEndDate, setCustomEndDate] = useState("");
 
   const { data: orders = [] } = useQuery({
     queryKey: ["/api/admin/orders"],
@@ -27,72 +45,182 @@ export default function AdminDashboardPage() {
     enabled: !!token
   });
 
-  // Today Orders Statistics
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  
-  const todayOrders = orders.filter((o: any) => {
+  // Calculate date range based on filter
+  const getDateRange = () => {
+    const now = new Date();
+    let startDate = new Date();
+    let endDate = new Date();
+
+    switch (dateFilter) {
+      case "today":
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case "thisWeek":
+        const dayOfWeek = now.getDay();
+        const diff = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+        startDate.setDate(now.getDate() - diff);
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(23, 59, 59, 999);
+        break;
+      case "thisMonth":
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
+        break;
+      case "custom":
+        if (customStartDate) {
+          startDate = new Date(customStartDate);
+          startDate.setHours(0, 0, 0, 0);
+        }
+        if (customEndDate) {
+          endDate = new Date(customEndDate);
+          endDate.setHours(23, 59, 59, 999);
+        }
+        break;
+    }
+
+    return { startDate, endDate };
+  };
+
+  const { startDate, endDate } = getDateRange();
+
+  // Filter orders by date range
+  const filteredOrders = orders.filter((o: any) => {
     const orderDate = new Date(o.createdAt);
-    orderDate.setHours(0, 0, 0, 0);
-    return orderDate.getTime() === today.getTime();
+    return orderDate >= startDate && orderDate <= endDate;
   });
 
-  const newOrders = todayOrders.length;
-  const inProgressOrders = orders.filter((o: any) => 
+  // Statistics based on filtered orders
+  const newOrders = filteredOrders.length;
+  const inProgressOrders = filteredOrders.filter((o: any) => 
     o.status === "IN_PRODUCTION" || 
     o.status === "MATERIALS_PROCUREMENT" ||
     o.status === "QUALITY_CHECK"
   ).length;
-  const completedOrders = orders.filter((o: any) => o.status === "COMPLETED").length;
-  const delayedOrders = 3; // Sample data
+  const completedOrders = filteredOrders.filter((o: any) => o.status === "COMPLETED").length;
+  
+  // Calculate delayed orders based on actual data
+  const delayedOrders = filteredOrders.filter((o: any) => {
+    if (!o.createdAt) return false;
+    const orderDate = new Date(o.createdAt);
+    const now = new Date();
+    const daysDiff = Math.floor((now.getTime() - orderDate.getTime()) / (1000 * 60 * 60 * 24));
+    // Consider delayed if older than 7 days and not completed
+    return daysDiff > 7 && o.status !== "COMPLETED";
+  }).length;
 
   // Production Pipeline Counts
-  const rawMaterials = orders.filter((o: any) => o.status === "MATERIALS_PROCUREMENT").length;
-  const cutting = orders.filter((o: any) => o.status === "IN_PRODUCTION").length;
-  const sewing = orders.filter((o: any) => o.status === "IN_PRODUCTION").length;
-  const finishing = orders.filter((o: any) => o.status === "IN_PRODUCTION").length;
-  const qualityCheck = orders.filter((o: any) => o.status === "QUALITY_CHECK").length;
-  const delivery = orders.filter((o: any) => o.status === "PACKAGING").length;
-  const installation = orders.filter((o: any) => o.status === "READY_FOR_INSTALL").length;
+  const rawMaterials = filteredOrders.filter((o: any) => o.status === "MATERIALS_PROCUREMENT").length;
+  const cutting = filteredOrders.filter((o: any) => o.status === "IN_PRODUCTION").length;
+  const sewing = filteredOrders.filter((o: any) => o.status === "IN_PRODUCTION").length;
+  const finishing = filteredOrders.filter((o: any) => o.status === "IN_PRODUCTION").length;
+  const qualityCheck = filteredOrders.filter((o: any) => o.status === "QUALITY_CHECK").length;
+  const delivery = filteredOrders.filter((o: any) => o.status === "PACKAGING").length;
+  const installation = filteredOrders.filter((o: any) => o.status === "READY_FOR_INSTALL").length;
 
   // Workload Overview
-  const inProduction = orders.filter((o: any) => o.status === "IN_PRODUCTION").length;
-  const inDelivery = orders.filter((o: any) => 
+  const inProduction = filteredOrders.filter((o: any) => o.status === "IN_PRODUCTION").length;
+  const inDelivery = filteredOrders.filter((o: any) => 
     o.status === "PACKAGING" || o.status === "READY_FOR_INSTALL"
   ).length;
-  const inInstallation = orders.filter((o: any) => o.status === "READY_FOR_INSTALL").length;
-  const awaitingPayment = orders.filter((o: any) => 
+  const inInstallation = filteredOrders.filter((o: any) => o.status === "READY_FOR_INSTALL").length;
+  const awaitingPayment = filteredOrders.filter((o: any) => 
     o.status === "PENDING_MEASUREMENT" || o.status === "DESIGN_APPROVAL"
   ).length;
 
-  // Sample Delayed Orders Data (using realistic full order IDs)
-  const delayedOrdersData = [
-    { id: "IV-1763076251234-AB12CD", customer: "Ahmed Hassan", stage: "Quality Check", days: 5 },
-    { id: "IV-1763076252345-EF34GH", customer: "Sara Mohamed", stage: "Delivery", days: 3 },
-    { id: "IV-1763076253456-IJ56KL", customer: "Omar Khalil", stage: "Installation", days: 7 }
-  ];
+  // Delayed Orders Data from filtered orders
+  const delayedOrdersData = filteredOrders
+    .filter((o: any) => {
+      if (!o.createdAt) return false;
+      const orderDate = new Date(o.createdAt);
+      const now = new Date();
+      const daysDiff = Math.floor((now.getTime() - orderDate.getTime()) / (1000 * 60 * 60 * 24));
+      return daysDiff > 7 && o.status !== "COMPLETED";
+    })
+    .map((o: any) => {
+      const orderDate = new Date(o.createdAt);
+      const now = new Date();
+      const daysDiff = Math.floor((now.getTime() - orderDate.getTime()) / (1000 * 60 * 60 * 24));
+      return {
+        id: o.orderNumber || o.id,
+        customer: o.customer?.fullName || "Unknown",
+        stage: o.currentStage || o.status || "Unknown",
+        days: daysDiff - 7 // Days beyond the 7-day threshold
+      };
+    })
+    .slice(0, 5); // Show only top 5
 
-  // Sample Notifications
-  const notifications = [
-    { message: "New order received from Ahmed Hassan", time: "2 hours ago" },
-    { message: "Order IV-1234567 moved to Quality Check", time: "4 hours ago" },
-    { message: "Installation scheduled for tomorrow", time: "5 hours ago" },
-    { message: "Payment confirmed for Order IV-9876543", time: "6 hours ago" },
-    { message: "Customer rating received: 5 stars", time: "8 hours ago" }
-  ];
+  // Notifications from filtered orders (recent events)
+  const notifications = filteredOrders
+    .filter((o: any) => o.createdAt)
+    .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .slice(0, 5)
+    .map((o: any) => ({
+      message: `Order ${o.orderNumber || o.id} - ${o.status}`,
+      time: new Date(o.createdAt).toLocaleDateString()
+    }));
 
   return (
     <div className="space-y-6 p-6">
-      <div>
-        <h1 className="text-3xl font-serif font-semibold" data-testid="text-dashboard-title">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">
-          Overview of your order management system
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-serif font-semibold" data-testid="text-dashboard-title">Dashboard</h1>
+          <p className="text-muted-foreground mt-1">
+            Overview of your order management system
+          </p>
+        </div>
+
+        {/* Date Filter */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
+          <Select
+            value={dateFilter}
+            onValueChange={(value) => setDateFilter(value as DateFilter)}
+          >
+            <SelectTrigger className="w-full sm:w-[180px]" data-testid="select-date-filter">
+              <Calendar className="w-4 h-4 mr-2" />
+              <SelectValue placeholder={t("common.dateRange")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="today" data-testid="option-today">{t("common.today")}</SelectItem>
+              <SelectItem value="thisWeek" data-testid="option-this-week">{t("common.thisWeek")}</SelectItem>
+              <SelectItem value="thisMonth" data-testid="option-this-month">{t("common.thisMonth")}</SelectItem>
+              <SelectItem value="custom" data-testid="option-custom">{t("common.custom")}</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {/* Custom Date Range Inputs */}
+          {dateFilter === "custom" && (
+            <div className="flex items-center gap-2">
+              <Input
+                type="date"
+                value={customStartDate}
+                onChange={(e) => setCustomStartDate(e.target.value)}
+                className="w-[140px]"
+                placeholder={t("common.from")}
+                data-testid="input-start-date"
+              />
+              <span className="text-muted-foreground">-</span>
+              <Input
+                type="date"
+                value={customEndDate}
+                onChange={(e) => setCustomEndDate(e.target.value)}
+                className="w-[140px]"
+                placeholder={t("common.to")}
+                data-testid="input-end-date"
+              />
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 1. Today Orders - 4 Stats Cards */}
       <div>
-        <h2 className="text-lg font-semibold mb-3">Today Orders</h2>
+        <h2 className="text-lg font-semibold mb-3">
+          {dateFilter === "today" && t("common.today")} 
+          {dateFilter === "thisWeek" && t("common.thisWeek")} 
+          {dateFilter === "thisMonth" && t("common.thisMonth")} 
+          {dateFilter === "custom" && t("common.custom")} Orders
+        </h2>
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           <Card data-testid="card-new-orders">
             <CardHeader className="flex flex-row items-center justify-between gap-2 space-y-0 pb-2">
@@ -101,7 +229,12 @@ export default function AdminDashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold" data-testid="text-new-orders-count">{newOrders}</div>
-              <p className="text-xs text-muted-foreground">Received today</p>
+              <p className="text-xs text-muted-foreground">
+                {dateFilter === "today" && "Received today"}
+                {dateFilter === "thisWeek" && "Received this week"}
+                {dateFilter === "thisMonth" && "Received this month"}
+                {dateFilter === "custom" && "In selected range"}
+              </p>
             </CardContent>
           </Card>
 
@@ -224,18 +357,26 @@ export default function AdminDashboardPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {delayedOrdersData.map((order, idx) => (
-                    <tr key={idx} className="border-b last:border-0" data-testid={`row-delayed-order-${idx}`}>
-                      <td className="py-3 text-sm font-medium">{generateShortOrderId(order.id)}</td>
-                      <td className="py-3 text-sm">{order.customer}</td>
-                      <td className="py-3 text-sm">{order.stage}</td>
-                      <td className="py-3 text-sm">
-                        <span className="inline-flex items-center px-2 py-1 rounded-md bg-red-50 text-red-700 text-xs font-medium">
-                          {order.days} days
-                        </span>
+                  {delayedOrdersData.length > 0 ? (
+                    delayedOrdersData.map((order, idx) => (
+                      <tr key={idx} className="border-b last:border-0" data-testid={`row-delayed-order-${idx}`}>
+                        <td className="py-3 text-sm font-medium">{order.id}</td>
+                        <td className="py-3 text-sm">{order.customer}</td>
+                        <td className="py-3 text-sm">{order.stage}</td>
+                        <td className="py-3 text-sm">
+                          <span className="inline-flex items-center px-2 py-1 rounded-md bg-red-50 text-red-700 text-xs font-medium">
+                            {order.days} days
+                          </span>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={4} className="py-6 text-center text-sm text-muted-foreground">
+                        No delayed orders in selected period
                       </td>
                     </tr>
-                  ))}
+                  )}
                 </tbody>
               </table>
             </div>
@@ -283,18 +424,24 @@ export default function AdminDashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
-            {notifications.map((notif, idx) => (
-              <div 
-                key={idx} 
-                className="flex items-start justify-between py-2 border-b last:border-0"
-                data-testid={`notification-${idx}`}
-              >
-                <p className="text-sm">{notif.message}</p>
-                <span className="text-xs text-muted-foreground whitespace-nowrap ml-4">
-                  {notif.time}
-                </span>
-              </div>
-            ))}
+            {notifications.length > 0 ? (
+              notifications.map((notif, idx) => (
+                <div 
+                  key={idx} 
+                  className="flex items-start justify-between py-2 border-b last:border-0"
+                  data-testid={`notification-${idx}`}
+                >
+                  <p className="text-sm">{notif.message}</p>
+                  <span className="text-xs text-muted-foreground whitespace-nowrap ml-4">
+                    {notif.time}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                No activity in selected period
+              </p>
+            )}
           </div>
         </CardContent>
       </Card>

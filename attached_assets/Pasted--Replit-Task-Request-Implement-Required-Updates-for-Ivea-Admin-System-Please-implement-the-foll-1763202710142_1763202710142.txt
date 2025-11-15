@@ -1,0 +1,121 @@
+🟦 Replit Task Request – Implement Required Updates for Ivea Admin System
+
+Please implement the following updates and enhancements in the Ivea Admin System exactly as described below:
+
+1. Dashboard Date Filter
+
+Add a date filter at the top of the dashboard (Today – This Week – This Month – Custom).
+
+When the date changes, update all dashboard blocks:
+
+Today Orders
+
+Production Pipeline
+
+Delayed Orders
+
+Workload Overview
+based on the selected date range.
+
+2. Add Customer from Customers Page
+
+Enable an Add Customer button/form inside the Customers page.
+
+Required fields:
+
+Customer Name
+
+Phone Number
+
+Email
+
+Address
+
+Notes (optional)
+
+After saving, the customer should appear immediately in the list and be selectable for new orders.
+
+3. Settings Page Enhancement (Roles & Language)
+
+Add Roles & Permissions with the following roles:
+
+Admin
+
+Sales
+
+Operations
+
+Define what each role can view/edit (orders, customers, settings, stages, etc.).
+
+Move language selection into Settings so each user can choose Arabic/English as their default.
+
+4. Full Language System Update (Arabic / English)
+
+Ensure complete translation of:
+
+Sidebar menus
+
+Titles
+
+Buttons
+
+Messages
+
+Stage statuses
+
+Language switching should be instant and without any UI issues.
+
+5. Add Scroll Indicators
+
+Add vertical and horizontal scroll indicators in pages with long content:
+
+Orders list
+
+Customers list
+
+Order page (with stages)
+
+Dashboard
+
+Goal: Inform users that additional content is available by scrolling.
+
+6. Sticky Stage Management in Order Page
+
+Keep the stage list fixed (sticky) during page scroll or updates.
+
+Add continuous arrow indicators ( → ) to make the stage flow visually clear.
+
+7. Stage Management in Settings
+
+Add Stages Management section inside Settings where the admin can:
+
+Add a new stage + choose the color
+
+Edit stage names and order
+
+Delete a stage (with warning if used in active orders)
+
+Any changes should reflect immediately across all orders.
+
+8. Installation Appointment Functionality Check
+
+Review Installation Appointment fields:
+
+Date & Time
+
+Location Address
+
+Additional Notes
+
+Ensure that:
+
+All fields save and update correctly
+
+The appointment appears inside the order page
+
+It shows in any schedule/calendar views
+
+It appears in the customer order tracking page (if available)
+
+✔️ All instructions above must be implemented exactly as written.
+✔️ No modifications, no omissions.
