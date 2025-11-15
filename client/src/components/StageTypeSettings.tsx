@@ -26,8 +26,17 @@ export default function StageTypeSettings() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editData, setEditData] = useState<Partial<StageTypeSetting>>({});
 
-  const { data: stageTypes = [] } = useQuery({
-    queryKey: ["/api/admin/stage-types"]
+  const { data: stageTypes = [], isLoading, error } = useQuery({
+    queryKey: ["/api/admin/stage-types"],
+    queryFn: async () => {
+      if (!token) throw new Error("Not authenticated");
+      const response = await fetch("/api/admin/stage-types", {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      if (!response.ok) throw new Error("Failed to fetch stage types");
+      return response.json();
+    },
+    enabled: !!token
   });
 
   const updateMutation = useMutation({
@@ -89,8 +98,15 @@ export default function StageTypeSettings() {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="space-y-3">
-          {(stageTypes as StageTypeSetting[]).map((stage: StageTypeSetting) => (
+        {isLoading && (
+          <p className="text-sm text-muted-foreground text-center py-4">Loading stage types...</p>
+        )}
+        {error && (
+          <p className="text-sm text-destructive text-center py-4">Failed to load stage types</p>
+        )}
+        {!isLoading && !error && (
+          <div className="space-y-3">
+            {(stageTypes as StageTypeSetting[]).map((stage: StageTypeSetting) => (
             <div
               key={stage.id}
               className="flex items-start gap-4 p-4 rounded-md border"
@@ -185,7 +201,8 @@ export default function StageTypeSettings() {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
