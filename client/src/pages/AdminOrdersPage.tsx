@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import OrdersTable from "@/components/OrdersTable";
@@ -43,13 +43,15 @@ export default function AdminOrdersPage({ onViewOrder }: AdminOrdersPageProps) {
     enabled: !!token
   });
 
-  if (error) {
-    toast({
-      title: t('common.error'),
-      description: t('errors.general'),
-      variant: "destructive"
-    });
-  }
+  useEffect(() => {
+    if (error) {
+      toast({
+        title: t('common.error'),
+        description: t('errors.general'),
+        variant: "destructive"
+      });
+    }
+  }, [error, toast, t]);
 
   const formattedOrders = orders.map((order: any) => ({
     id: order.id,
