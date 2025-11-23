@@ -109,14 +109,15 @@ async function seed() {
         continue;
       }
 
-      const order = await storage.createOrder({
+      const currentYear = new Date().getFullYear();
+      const order = await storage.createOrderWithSequence({
         externalOrderId: orderData.externalOrderId,
         customerId: orderData.customer.id,
         totalAmount: orderData.totalAmount,
         status: orderData.status,
         progressPercent: orderData.progressPercent,
         currentStageId: null
-      });
+      }, currentYear);
 
       console.log(`✅ Created order: ${order.externalOrderId}`);
 
