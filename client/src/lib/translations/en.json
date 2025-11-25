@@ -59,7 +59,7 @@
   },
   "customer": {
     "title": "Track Your Order",
-    "subtitle": "Enter your details to track your custom interior decor order",
+    "subtitle": "Enter your details to track your current order",
     "phoneNumber": "Phone Number",
     "orderNumber": "Order Number",
     "trackOrder": "Track Order",
