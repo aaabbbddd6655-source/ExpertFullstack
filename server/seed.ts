@@ -147,7 +147,7 @@ async function seed() {
       const order = await storage.createOrderWithSequence({
         externalOrderId: orderData.externalOrderId,
         customerId: orderData.customer.id,
-        totalAmount: orderData.totalAmount,
+        totalAmount: String(orderData.totalAmount),
         status: orderData.status,
         progressPercent: orderData.progressPercent,
         currentStageId: null

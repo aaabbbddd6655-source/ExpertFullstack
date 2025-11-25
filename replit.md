@@ -11,7 +11,22 @@ The system integrates with external e-commerce platforms via webhooks and provid
 
 **Current Status:** ✅ **Production Ready** - Fully bilingual (Arabic/English) with complete RTL support. All features implemented, tested, and verified working with real database and API integration.
 
-**Recent Updates (Nov 15, 2025):**
+**Recent Updates (Nov 25, 2025):**
+- ✅ **User Management System** - Complete admin user management
+  - List all users with roles and email
+  - Create new users with name, email, password, and role
+  - Edit existing users (name, email, role, password)
+  - Delete users with confirmation dialog
+  - Role-based badges (color-coded by role type)
+  - Only ADMIN role can access user management
+  - Full Arabic/English translations
+- ✅ **Stage Type Settings** - Pre-configured 13 workflow stages
+  - All stages seeded in database with Arabic names
+  - Icons: Ruler, Calendar, CheckCircle, Palette, ShoppingCart, Factory, ClipboardCheck, Package, Truck, CalendarCheck, Wrench, Home, CheckCircle2
+  - Added missing icons to IconPicker (Factory, CalendarCheck, CheckCircle2)
+  - Seed script updated to auto-create stages on fresh database
+
+**Previous Updates (Nov 15, 2025):**
 - ✅ **Complete RTL Layout Support** - Full Right-to-Left layout implementation
   - Converted all directional CSS utilities to logical properties (ms-/me-/ps-/pe-/start-/end-)
   - Fixed 17 UI components for RTL compatibility (dropdown, select, sidebar, sheet, dialog, etc.)
