@@ -4,6 +4,40 @@ import bcrypt from "bcryptjs";
 async function seed() {
   console.log("🌱 Starting database seed...\n");
 
+  // Create stage type settings first
+  console.log("Creating stage type settings...");
+  const stageTypeSettings = [
+    { stageType: "PENDING_MEASUREMENT", displayName: "في انتظار القياس", icon: "Ruler", sortOrder: 1 },
+    { stageType: "MEASUREMENT_SCHEDULED", displayName: "موعد القياس محدد", icon: "Calendar", sortOrder: 2 },
+    { stageType: "MEASUREMENT_COMPLETED", displayName: "تم القياس", icon: "CheckCircle", sortOrder: 3 },
+    { stageType: "DESIGN_APPROVAL", displayName: "الموافقة على التصميم", icon: "Palette", sortOrder: 4 },
+    { stageType: "MATERIALS_PROCUREMENT", displayName: "شراء المواد", icon: "ShoppingCart", sortOrder: 5 },
+    { stageType: "IN_PRODUCTION", displayName: "في الإنتاج", icon: "Factory", sortOrder: 6 },
+    { stageType: "QUALITY_CHECK", displayName: "فحص الجودة", icon: "ClipboardCheck", sortOrder: 7 },
+    { stageType: "PACKAGING", displayName: "التغليف", icon: "Package", sortOrder: 8 },
+    { stageType: "READY_FOR_DELIVERY", displayName: "جاهز للتسليم", icon: "Truck", sortOrder: 9 },
+    { stageType: "INSTALLATION_SCHEDULED", displayName: "موعد التركيب محدد", icon: "CalendarCheck", sortOrder: 10 },
+    { stageType: "INSTALLATION_IN_PROGRESS", displayName: "جاري التركيب", icon: "Wrench", sortOrder: 11 },
+    { stageType: "INSTALLED", displayName: "تم التركيب", icon: "Home", sortOrder: 12 },
+    { stageType: "COMPLETED", displayName: "مكتمل", icon: "CheckCircle2", sortOrder: 13 },
+  ];
+
+  for (const setting of stageTypeSettings) {
+    try {
+      await storage.createStageTypeSetting({
+        stageType: setting.stageType,
+        displayName: setting.displayName,
+        icon: setting.icon,
+        isActive: 1,
+        sortOrder: setting.sortOrder,
+        defaultNotes: null
+      });
+      console.log(`✅ Created stage type: ${setting.displayName}`);
+    } catch (error) {
+      console.log(`ℹ️  Stage type already exists: ${setting.stageType}`);
+    }
+  }
+
   // Create admin user
   console.log("Creating admin user...");
   const passwordHash = await bcrypt.hash("admin123", 10);

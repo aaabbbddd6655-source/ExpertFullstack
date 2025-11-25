@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { 
-  CheckCircle, Ruler, Palette, ShoppingCart, Scissors, 
+  CheckCircle, CheckCircle2, Ruler, Palette, ShoppingCart, Scissors, 
   Baseline, Layers, Sparkles, ClipboardCheck, Package, 
-  Calendar, Home, Star, Circle, Wrench, Truck, 
-  Box, Settings, FileCheck, Paintbrush, Hammer,
+  Calendar, CalendarCheck, Home, Star, Circle, Wrench, Truck, 
+  Box, Settings, FileCheck, Paintbrush, Hammer, Factory,
   type LucideIcon
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 // Available icons for stage types
 const AVAILABLE_ICONS: Record<string, LucideIcon> = {
   CheckCircle,
+  CheckCircle2,
   Ruler,
   Palette,
   ShoppingCart,
@@ -22,6 +23,7 @@ const AVAILABLE_ICONS: Record<string, LucideIcon> = {
   ClipboardCheck,
   Package,
   Calendar,
+  CalendarCheck,
   Home,
   Star,
   Circle,
@@ -31,7 +33,8 @@ const AVAILABLE_ICONS: Record<string, LucideIcon> = {
   Settings,
   FileCheck,
   Paintbrush,
-  Hammer
+  Hammer,
+  Factory
 };
 
 interface IconPickerProps {
