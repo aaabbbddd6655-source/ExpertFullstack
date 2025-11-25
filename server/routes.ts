@@ -366,6 +366,132 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // ===== USER MANAGEMENT ENDPOINTS (ADMIN ONLY) =====
+
+  // Get all users
+  app.get("/api/admin/users", authenticateToken, async (req: any, res) => {
+    try {
+      if (req.user.role !== "ADMIN") {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+
+      const users = await storage.getAllUsers();
+      const usersWithoutPassword = users.map(({ passwordHash, ...user }) => user);
+      res.json(usersWithoutPassword);
+    } catch (error) {
+      console.error("Get users error:", error);
+      res.status(500).json({ error: "Failed to fetch users" });
+    }
+  });
+
+  // Create new user
+  app.post("/api/admin/users", authenticateToken, async (req: any, res) => {
+    try {
+      if (req.user.role !== "ADMIN") {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+
+      const createUserSchema = z.object({
+        name: z.string().min(1, "Name is required"),
+        email: z.string().email("Invalid email format"),
+        password: z.string().min(6, "Password must be at least 6 characters"),
+        role: z.enum(["ADMIN", "OPERATIONS", "PRODUCTION", "QUALITY", "INSTALLATION", "SUPPORT"])
+      });
+
+      const validatedData = createUserSchema.parse(req.body);
+      const { name, email, password, role } = validatedData;
+
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(409).json({ error: "User with this email already exists" });
+      }
+
+      const passwordHash = await bcrypt.hash(password, 10);
+      const user = await storage.createUser({
+        name,
+        email,
+        passwordHash,
+        role
+      });
+
+      const { passwordHash: _, ...userWithoutPassword } = user;
+      res.status(201).json(userWithoutPassword);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
+      console.error("Create user error:", error);
+      res.status(500).json({ error: "Failed to create user" });
+    }
+  });
+
+  // Update user role
+  app.patch("/api/admin/users/:id", authenticateToken, async (req: any, res) => {
+    try {
+      if (req.user.role !== "ADMIN") {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+
+      const { id } = req.params;
+      const updateUserSchema = z.object({
+        name: z.string().min(1).optional(),
+        email: z.string().email().optional(),
+        role: z.enum(["ADMIN", "OPERATIONS", "PRODUCTION", "QUALITY", "INSTALLATION", "SUPPORT"]).optional(),
+        password: z.string().min(6).optional()
+      });
+
+      const validatedData = updateUserSchema.parse(req.body);
+      
+      const updates: any = {};
+      if (validatedData.name) updates.name = validatedData.name;
+      if (validatedData.email) updates.email = validatedData.email;
+      if (validatedData.role) updates.role = validatedData.role;
+      if (validatedData.password) {
+        updates.passwordHash = await bcrypt.hash(validatedData.password, 10);
+      }
+
+      const updatedUser = await storage.updateUser(id, updates);
+      if (!updatedUser) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      const { passwordHash: _, ...userWithoutPassword } = updatedUser;
+      res.json(userWithoutPassword);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ error: error.errors[0].message });
+      }
+      console.error("Update user error:", error);
+      res.status(500).json({ error: "Failed to update user" });
+    }
+  });
+
+  // Delete user
+  app.delete("/api/admin/users/:id", authenticateToken, async (req: any, res) => {
+    try {
+      if (req.user.role !== "ADMIN") {
+        return res.status(403).json({ error: "Admin access required" });
+      }
+
+      const { id } = req.params;
+
+      if (req.user.userId === id) {
+        return res.status(400).json({ error: "Cannot delete your own account" });
+      }
+
+      const user = await storage.getUserById(id);
+      if (!user) {
+        return res.status(404).json({ error: "User not found" });
+      }
+
+      await storage.deleteUser(id);
+      res.json({ success: true, message: "User deleted successfully" });
+    } catch (error) {
+      console.error("Delete user error:", error);
+      res.status(500).json({ error: "Failed to delete user" });
+    }
+  });
+
   // Get all customers (admin only)
   app.get("/api/admin/customers", authenticateToken, async (req, res) => {
     try {

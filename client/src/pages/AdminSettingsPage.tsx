@@ -15,6 +15,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from "@/lib/i18n";
 import { Globe, Shield } from "lucide-react";
 import StageTypeSettings from "@/components/StageTypeSettings";
+import UserManagement from "@/components/UserManagement";
 
 export default function AdminSettingsPage() {
   const user = getUser();
@@ -274,6 +275,8 @@ export default function AdminSettingsPage() {
             </div>
           </CardContent>
         </Card>
+
+        <UserManagement />
 
         <StageTypeSettings />
 

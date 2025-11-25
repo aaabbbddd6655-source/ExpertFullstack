@@ -78,7 +78,10 @@ export interface IStorage {
   // User operations (admin)
   getUserById(id: string): Promise<User | undefined>;
   getUserByEmail(email: string): Promise<User | undefined>;
+  getAllUsers(): Promise<User[]>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, updates: Partial<InsertUser>): Promise<User | undefined>;
+  deleteUser(id: string): Promise<void>;
   
   // Installation appointment operations
   getAppointmentByOrderId(orderId: string): Promise<InstallationAppointment | undefined>;
@@ -339,9 +342,26 @@ export class DatabaseStorage implements IStorage {
     return results[0];
   }
 
+  async getAllUsers(): Promise<User[]> {
+    const results = await db.select().from(schema.users).orderBy(schema.users.name);
+    return results;
+  }
+
   async createUser(user: InsertUser): Promise<User> {
     const results = await db.insert(schema.users).values(user).returning();
     return results[0];
+  }
+
+  async updateUser(id: string, updates: Partial<InsertUser>): Promise<User | undefined> {
+    const results = await db.update(schema.users)
+      .set(updates)
+      .where(eq(schema.users.id, id))
+      .returning();
+    return results[0];
+  }
+
+  async deleteUser(id: string): Promise<void> {
+    await db.delete(schema.users).where(eq(schema.users.id, id));
   }
 
   // Installation appointment operations
