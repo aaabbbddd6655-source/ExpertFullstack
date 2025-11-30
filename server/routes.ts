@@ -33,6 +33,27 @@ const authenticateToken = (req: any, res: any, next: any) => {
 export async function registerRoutes(app: Express): Promise<Server> {
   app.use(express.json());
 
+  // ===== HEALTH CHECK ENDPOINT =====
+  app.get("/api/health", async (_req, res) => {
+    try {
+      const dbCheck = await storage.getAllStageTypeSettings();
+      res.json({
+        status: "ok",
+        timestamp: new Date().toISOString(),
+        database: dbCheck ? "connected" : "error",
+        version: "1.0.0",
+        uptime: process.uptime()
+      });
+    } catch (error) {
+      res.status(503).json({
+        status: "error",
+        timestamp: new Date().toISOString(),
+        database: "disconnected",
+        message: "Service temporarily unavailable"
+      });
+    }
+  });
+
   // ===== PUBLIC / CUSTOMER-FACING ENDPOINTS =====
 
   // Order lookup
